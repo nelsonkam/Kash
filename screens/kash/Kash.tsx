@@ -40,6 +40,10 @@ const Kash = () => {
           <Button
             color={Colors.brand}
             disabled={amount < 25}
+            onPress={() => {
+              setAmount(0);
+              navigation.navigate('RequestRecipient', {amount});
+            }}
             style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
             Demander
           </Button>

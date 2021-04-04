@@ -10,32 +10,7 @@ import KBottomSheet from '../../components/KBottomSheet';
 import Button from '../../components/Button';
 import {useAsync} from '../../utils/hooks';
 import PaymentSheet from '../../components/PaymentSheet';
-
-const Avatar = ({profile, size = 42}) => {
-  return (
-    <View
-      style={{
-        height: size,
-        width: size,
-        backgroundColor: Colors.primary,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 100,
-        flexShrink: 0,
-        borderColor: 'white',
-        borderWidth: 1,
-      }}>
-      <Text
-        style={{
-          color: 'white',
-          fontSize: 20,
-          fontFamily: 'Inter-Bold',
-        }}>
-        {profile?.name[0]}
-      </Text>
-    </View>
-  );
-};
+import Avatar from '../../components/Avatar';
 
 const ConfirmSheet = ({
   recipientsQuery,
@@ -43,6 +18,7 @@ const ConfirmSheet = ({
   amount,
   loading,
   onConfirm,
+  onCancel,
 }) => {
   return (
     <View
@@ -72,7 +48,11 @@ const ConfirmSheet = ({
             </View>
           ))}
       </View>
-      <View style={{alignItems: 'center', marginTop: 32}}>
+      <View
+        style={{
+          alignItems: 'center',
+          marginTop: recipients.length > 1 ? 32 : 0,
+        }}>
         <Text
           style={{
             fontFamily: 'Inter-Semibold',
@@ -104,6 +84,7 @@ const ConfirmSheet = ({
           textColor={Colors.dark}
           style={{flex: 0.8}}
           disabled={loading}
+          onPress={onCancel}
           color={Colors.border}>
           Annuler
         </Button>
@@ -398,6 +379,7 @@ function SendRecipient(props) {
           recipientsQuery={recipientsQuery}
           recipients={recipients}
           loading={sendKash.loading}
+          onCancel={() => confirmRef.current?.close()}
           onConfirm={handleConfirm}
         />
       </KBottomSheet>
