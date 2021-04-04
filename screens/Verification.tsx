@@ -26,15 +26,13 @@ const Verification = () => {
       .then(res => res.data),
   );
 
-  const getProfile = useAsync(() => api.get(`/kash/profile/current/`));
+  const getProfile = useAsync(() => api.get(`/kash/profiles/current/`));
 
   if (!sessionToken || !phone) {
     navigation.navigate('Login');
   }
 
   const handleSubmit = async () => {
-    console.log(verificationCode, phone);
-
     verifyCode
       .execute({
         session_token: sessionToken,
@@ -52,6 +50,9 @@ const Verification = () => {
       })
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
+        if (!res.data.payment_methods) {
+          navigation.navigate('SetupPaymentMethod');
+        }
       })
       .catch(err => {
         if (err.response && err.response.status === 404) {

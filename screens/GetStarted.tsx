@@ -11,11 +11,7 @@ const GetStarted = () => {
   const auth = useSelector((s: RootState) => s.auth);
 
   const handleClick = () => {
-    if (auth.user) {
-      navigation.navigate('Register');
-    } else {
-      navigation.navigate('Login');
-    }
+    navigation.navigate('Login');
   };
 
   return (

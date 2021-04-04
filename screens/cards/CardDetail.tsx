@@ -130,7 +130,7 @@ const CardDetailsHeader = ({onDetailClick}) => {
   );
 };
 
-function CardDetail(props) {
+function CardDetail() {
   const {params} = useRoute();
   const navigation = useNavigation();
   const cardQuery = useSWR(`/kash/virtual-cards/${params.card.id}/`, fetcher);

@@ -29,7 +29,6 @@ export function useAsync<T>(
       .catch(err => {
         setLoading(false);
         setError(err);
-        console.log(err);
 
         console.warn(
           '[Request Error]',

@@ -54,7 +54,13 @@ function App() {
     return <Splash />;
   }
 
-  return auth.refresh && auth.profile ? <MainStack /> : <AuthStack />;
+  return auth.refresh &&
+    auth.profile &&
+    auth.profile.payout_methods?.length > 0 ? (
+    <MainStack />
+  ) : (
+    <AuthStack />
+  );
 }
 
 const styles = StyleSheet.create({

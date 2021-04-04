@@ -62,6 +62,7 @@ const CardForm = ({onVirtualCard}) => {
 
 const RechargeCard = ({onRecharge}) => {
   const [amount, setAmount] = useState(0);
+  const navigation = useNavigation();
   const handleNumChange = num => {
     if (num === 'backspace') {
       setAmount(
@@ -84,6 +85,7 @@ const RechargeCard = ({onRecharge}) => {
       <View style={{flex: 1}}>
         <View style={{flexDirection: 'row', marginHorizontal: 8}}>
           <Button
+            onPress={() => navigation.goBack()}
             color={Colors.border}
             textColor={Colors.dark}
             style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
@@ -91,7 +93,7 @@ const RechargeCard = ({onRecharge}) => {
           </Button>
           <Button
             color={Colors.brand}
-            disabled={amount < 1000}
+            disabled={amount < 1000 && amount > 50000}
             onPress={() => onRecharge(amount)}
             style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
             Recharger
@@ -358,7 +360,7 @@ function NewCard(props) {
         <CardCreation action={confirmPurchase} />
       </KBottomSheet>
 
-      <KBottomSheet ref={paymentRef} snapPoints={['65%', 0]}>
+      <KBottomSheet ref={paymentRef} snapPoints={['70%', 0]}>
         <PaymentSheet
           reference={reference}
           loading={purchaseVirtualCard.loading}

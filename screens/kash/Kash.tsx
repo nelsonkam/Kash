@@ -2,13 +2,14 @@ import React, {useState} from 'react';
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Colors from '../../utils/colors';
-import NumberPad, {Input, Display} from 'react-native-numpad';
 import NumPad from '../../components/NumPad';
 import Button from '../../components/Button';
 import {parse} from '../../utils';
+import {useNavigation} from '@react-navigation/native';
 
 const Kash = () => {
   const [amount, setAmount] = useState(0);
+  const navigation = useNavigation();
   const handleNumChange = num => {
     if (num === 'backspace') {
       setAmount(
@@ -45,6 +46,10 @@ const Kash = () => {
           <Button
             color={Colors.brand}
             disabled={amount < 25}
+            onPress={() => {
+              setAmount(0);
+              navigation.navigate('SendRecipient', {amount});
+            }}
             style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
             Envoyer
           </Button>

@@ -2,10 +2,10 @@ import React from 'react';
 import Main from '../screens/kash/Kash';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Colors from '../utils/colors';
-import {Image, View, Text} from 'react-native';
+import {Image} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Cards from '../screens/cards/Cards';
 import CardStack from './cards';
+import KashStack from './kash';
 
 const Tab = createBottomTabNavigator();
 
@@ -49,7 +49,7 @@ export default function MainTabs() {
       }}>
       <Tab.Screen name="Profile" component={Main} />
       <Tab.Screen name="Cartes" component={CardStack} />
-      <Tab.Screen name="Kash" component={Main} />
+      <Tab.Screen name="Kash" component={KashStack} />
       <Tab.Screen name="Découverte" component={Main} />
       <Tab.Screen name="Notifs" component={Main} />
     </Tab.Navigator>

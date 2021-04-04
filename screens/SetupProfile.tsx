@@ -78,7 +78,7 @@ function SetupProfile(props) {
           </Button>
           <Text style={{fontSize: 12, color: Colors.disabled, marginTop: 16}}>
             En cliquant "Suivant", tu acceptes notre Politique de
-            confidentialité et nos Conditions générales d'utilisations que tu
+            Confidentialité et nos Conditions Générales d'Utilisation que tu
             peux retrouver sur notre site web.
           </Text>
         </View>
