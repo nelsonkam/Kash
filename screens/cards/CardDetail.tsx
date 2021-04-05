@@ -20,7 +20,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 const TransactionItem = ({transaction}) => {
-  const isDebit = transaction.indicator === 'D';
+  const isDebit = transaction.type === 'Debit';
   return (
     <View style={{flexDirection: 'row', padding: 12, alignItems: 'center'}}>
       <View
@@ -56,21 +56,12 @@ const TransactionItem = ({transaction}) => {
               fontSize: 16,
               color: Colors.dark,
             }}>
-            {transaction.narration || transaction.product}
-          </Text>
-          <Text
-            style={{
-              marginTop: 8,
-              color: Colors.medium,
-              fontFamily: 'Inter-Regular',
-            }}>
-            {new Date(transaction.created_at).toLocaleTimeString()} · Frais:{' '}
-            {transaction.fee} {transaction.currency}
+            {transaction.merchant}
           </Text>
         </View>
         <Text
           style={{fontSize: 16, color: Colors.dark, fontFamily: 'Inter-Bold'}}>
-          {transaction.currency} {transaction.amount}
+          ${transaction.amount}
         </Text>
       </View>
     </View>
@@ -87,7 +78,7 @@ const CardDetailsHeader = ({onDetailClick}) => {
       <View
         style={{
           padding: 16,
-          paddingBottom: 32,
+          paddingBottom: 16,
           backgroundColor: 'white',
         }}>
         <CreditCard card={card} />
@@ -161,7 +152,7 @@ function CardDetail() {
 
   if (transactionsQuery.data) {
     const groups = transactionsQuery.data.reduce((groups, txn) => {
-      const date = txn.created_at.split('T')[0];
+      const date = txn.date;
       if (!groups[date]) {
         groups[date] = [];
       }
@@ -175,9 +166,9 @@ function CardDetail() {
           ? "Aujourd'hui"
           : new Date(date).toLocaleDateString(),
         data: groups[date].sort((a, b) => {
-          if (a.created_at > b.created_at) {
+          if (a.date > b.date) {
             return -1;
-          } else if (a.created_at < b.created_at) {
+          } else if (a.date < b.date) {
             return 1;
           } else {
             return 0;
