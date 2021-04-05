@@ -8,7 +8,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import useSWR from 'swr/esm';
 import {fetcher} from '../utils/api';
 
-export const PaymentForm = ({amount, onNext, loading}) => {
+export const PaymentForm = ({amount, fees, onNext, loading}) => {
   const [gateway, setGateway] = useState(null);
   const [phone, setPhone] = useState(null);
   return (
@@ -16,7 +16,7 @@ export const PaymentForm = ({amount, onNext, loading}) => {
       style={{
         backgroundColor: 'white',
         padding: 16,
-        height: Dimensions.get('window').height * 0.7,
+        height: Dimensions.get('window').height * 0.8,
       }}>
       <Text
         style={{
@@ -63,8 +63,26 @@ export const PaymentForm = ({amount, onNext, loading}) => {
             value={phone}
             onChangeText={text => setPhone(text.substring(0, 8))}
             keyboardType={'number-pad'}
-            label={'Numéro'}></Input>
+            label={'Numéro'}
+          />
         </View>
+        {fees ? (
+          <View style={{alignItems: 'center'}}>
+            <View
+              style={{
+                marginTop: 4,
+                marginBottom: 24,
+                backgroundColor: Colors.border,
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderRadius: 100,
+              }}>
+              <Text style={{color: Colors.dark, fontFamily: 'Inter-Bold'}}>
+                Frais d'envoi: CFA {fees}
+              </Text>
+            </View>
+          </View>
+        ) : null}
         <Button
           loading={loading}
           onPress={() => onNext({phone, gateway})}
@@ -95,7 +113,7 @@ const TransactionStatus = ({reference, onStatusChanged}) => {
           padding: 16,
           alignItems: 'center',
           justifyContent: 'center',
-          height: Dimensions.get('window').height * 0.7,
+          height: Dimensions.get('window').height * 0.8,
         }}>
         <AntDesign name={'closecircle'} color={Colors.danger} size={56} />
         <Text
@@ -116,7 +134,7 @@ const TransactionStatus = ({reference, onStatusChanged}) => {
         style={{
           backgroundColor: 'white',
           padding: 16,
-          height: Dimensions.get('window').height * 0.7,
+          height: Dimensions.get('window').height * 0.8,
           alignItems: 'center',
           justifyContent: 'center',
         }}>
@@ -139,7 +157,7 @@ const TransactionStatus = ({reference, onStatusChanged}) => {
         style={{
           backgroundColor: 'white',
           padding: 16,
-          height: Dimensions.get('window').height * 0.7,
+          height: Dimensions.get('window').height * 0.8,
           alignItems: 'center',
           justifyContent: 'center',
         }}>
@@ -159,16 +177,28 @@ const TransactionStatus = ({reference, onStatusChanged}) => {
   }
 };
 
-const PaymentSheet = ({amount, onPay, loading, reference, onStatusChanged}) => {
+const PaymentSheet = ({
+  amount,
+  fees,
+  onPay,
+  loading,
+  reference,
+  onStatusChanged,
+}) => {
   return (
-    <View style={{height: Dimensions.get('window').height * 0.7}}>
+    <View style={{height: Dimensions.get('window').height * 0.8}}>
       {reference ? (
         <TransactionStatus
           reference={reference}
           onStatusChanged={onStatusChanged}
         />
       ) : (
-        <PaymentForm amount={amount} onNext={onPay} loading={loading} />
+        <PaymentForm
+          fees={fees}
+          amount={amount}
+          onNext={onPay}
+          loading={loading}
+        />
       )}
     </View>
   );

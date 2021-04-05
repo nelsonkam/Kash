@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import Cards from '../screens/cards/Cards';
 import NewCard from '../screens/cards/NewCard';
 import Colors from '../utils/colors';
 import CardDetail from '../screens/cards/CardDetail';
 import EditNickname from '../screens/cards/EditNickname';
+import {useNavigation} from '@react-navigation/native';
+import OneSignal from 'react-native-onesignal';
 
 const Stack = createStackNavigator();
 

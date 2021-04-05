@@ -383,8 +383,9 @@ function SendRecipient(props) {
           onConfirm={handleConfirm}
         />
       </KBottomSheet>
-      <KBottomSheet ref={paymentRef} snapPoints={['70%', 0]}>
+      <KBottomSheet ref={paymentRef} snapPoints={['80%', 0]}>
         <PaymentSheet
+          fees={kashTxn?.fees?.amount}
           reference={txnRef}
           amount={kashTxn?.total?.amount}
           onPay={handlePay}

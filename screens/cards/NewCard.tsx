@@ -360,11 +360,12 @@ function NewCard(props) {
         <CardCreation action={confirmPurchase} />
       </KBottomSheet>
 
-      <KBottomSheet ref={paymentRef} snapPoints={['70%', 0]}>
+      <KBottomSheet ref={paymentRef} snapPoints={['80%', 0]}>
         <PaymentSheet
           reference={reference}
           loading={purchaseVirtualCard.loading}
           amount={amount + (virtualCard?.issuance_cost?.amount || 0)}
+          fees={0}
           onPay={handlePay}
           onStatusChanged={handleStatusChanged}
         />

@@ -174,7 +174,15 @@ function CardDetail() {
         title: isToday(new Date(date))
           ? "Aujourd'hui"
           : new Date(date).toLocaleDateString(),
-        data: groups[date],
+        data: groups[date].sort((a, b) => {
+          if (a.created_at > b.created_at) {
+            return -1;
+          } else if (a.created_at < b.created_at) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }),
       };
     });
     return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Main from '../screens/kash/Kash';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Colors from '../utils/colors';
@@ -6,6 +6,10 @@ import {Image} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CardStack from './cards';
 import KashStack from './kash';
+import Notifications from '../screens/notifications/Notifications';
+import NotificationStack from './notifications';
+import OneSignal from 'react-native-onesignal';
+import {useNavigation} from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,7 +55,7 @@ export default function MainTabs() {
       <Tab.Screen name="Cartes" component={CardStack} />
       <Tab.Screen name="Kash" component={KashStack} />
       <Tab.Screen name="Découverte" component={Main} />
-      <Tab.Screen name="Notifs" component={Main} />
+      <Tab.Screen name="Notifs" component={NotificationStack} />
     </Tab.Navigator>
   );
 }

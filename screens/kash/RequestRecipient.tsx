@@ -65,7 +65,7 @@ const ConfirmSheet = ({
             fontSize: 18,
             textAlign: 'center',
           }}>
-          Tu t'apprêtes à demander CFA {amount} (en tout) à{' '}
+          Tu t'apprêtes à demander CFA {amount} à{' '}
           {recipients.length === 1
             ? '$' + recipients[0]
             : `${recipients.length} personnes.`}
@@ -125,7 +125,7 @@ function RequestRecipient(props) {
     fetcher,
   );
   const confirmRef = useRef<KBottomSheet>(null);
-  const requestKash = useAsync(data => api.post(`/kash/request/`, data), true);
+  const requestKash = useAsync(data => api.post(`/kash/requests/`, data), true);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
