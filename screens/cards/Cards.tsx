@@ -16,10 +16,11 @@ import {useNavigation} from '@react-navigation/native';
 import useSWR from 'swr';
 import {fetcher} from '../../utils/api';
 import CreditCard from '../../components/CreditCard';
+import useSWRNative from '@nandorojo/swr-react-native';
 
 function Cards(props) {
   const navigation = useNavigation();
-  const cards = useSWR(`/kash/virtual-cards/`, fetcher);
+  const cards = useSWRNative(`/kash/virtual-cards/`, fetcher);
   const data = cards.data?.filter(c => c.card_details);
 
   React.useLayoutEffect(() => {
@@ -60,6 +61,8 @@ function Cards(props) {
       )}
       {data?.length > 0 && (
         <FlatList
+          onRefresh={() => cards.revalidate()}
+          refreshing={cards.isValidating}
           data={data}
           renderItem={({item}) => (
             <CreditCard

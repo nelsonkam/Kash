@@ -93,7 +93,7 @@ const RechargeCard = ({onRecharge}) => {
           </Button>
           <Button
             color={Colors.brand}
-            disabled={amount < 1000 && amount > 50000}
+            disabled={amount < 3000 || amount > 50000}
             onPress={() => onRecharge(amount)}
             style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
             Recharger
@@ -216,7 +216,7 @@ const RecapSheet = ({amount, onNext, virtualCard}) => {
 const CardCreation = ({action}) => {
   const navigation = useNavigation();
   useEffect(() => {
-    if (action.data) {
+    if (action.value) {
       setTimeout(() => {
         navigation.goBack();
       }, 2000);
@@ -287,7 +287,7 @@ const CardCreation = ({action}) => {
             fontSize: 16,
             textAlign: 'center',
           }}>
-          Un instant, la création de carte est en cours...
+          Un instant, la création de ta carte est en cours...
         </Text>
       </View>
     );

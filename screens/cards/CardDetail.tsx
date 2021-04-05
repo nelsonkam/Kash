@@ -188,6 +188,11 @@ function CardDetail() {
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
         <SectionList
+          onRefresh={() => {
+            cardQuery.revalidate();
+            transactionsQuery.revalidate();
+          }}
+          refreshing={cardQuery.isValidating || transactionsQuery.isValidating}
           ListHeaderComponent={
             <CardDetailsHeader
               onDetailClick={() => detailsRef.current?.open()}
@@ -201,6 +206,26 @@ function CardDetail() {
                 width: '100%',
               }}
             />
+          )}
+          ListEmptyComponent={() => (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginHorizontal: 24,
+                marginVertical: 56,
+              }}>
+              <AntDesign name="swap" size={64} color={Colors.disabled} />
+              <Text
+                style={{
+                  fontFamily: 'Inter-Semibold',
+                  color: Colors.disabled,
+                  marginTop: 16,
+                }}>
+                Aucune transaction effectuée
+              </Text>
+            </View>
           )}
           contentContainerStyle={{paddingBottom: 16, backgroundColor: 'white'}}
           sections={sections}
@@ -238,8 +263,8 @@ function CardDetail() {
             </View>
           )}
         />
-        <KBottomSheet ref={detailsRef} snapPoints={[200, 0]}>
-          <View style={{backgroundColor: 'white', padding: 16, height: 200}}>
+        <KBottomSheet ref={detailsRef} snapPoints={[280, 0]}>
+          <View style={{backgroundColor: 'white', padding: 16, height: 320}}>
             <Text
               style={{fontFamily: 'Inter-Medium', fontSize: 18, marginTop: 16}}>
               {card.card_details.name_on_card}
@@ -305,6 +330,28 @@ function CardDetail() {
                     marginTop: 4,
                   }}>
                   {card.card_details.cvv || card.card_details.cvc}
+                </Text>
+              </View>
+            </View>
+            <View style={{flexDirection: 'row', marginTop: 20}}>
+              <View style={{marginRight: 48}}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: 'Inter-Semibold',
+                    color: Colors.medium,
+                  }}>
+                  Adresse de facturation
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: 'Inter-Medium',
+                    color: Colors.dark,
+                    marginTop: 8,
+                  }}>
+                  {card.card_details.address_1}, {card.card_details.city},{' '}
+                  {card.card_details.state}, {card.card_details.zip_code}
                 </Text>
               </View>
             </View>
@@ -407,7 +454,11 @@ function CardDetail() {
       </View>
     );
   }
-  return <ActivityIndicator color={Colors.brand} />;
+  return (
+    <View style={{flex: 1, backgroundColor: 'white', paddingVertical: 32}}>
+      <ActivityIndicator color={Colors.brand} />
+    </View>
+  );
 }
 
 export default CardDetail;
