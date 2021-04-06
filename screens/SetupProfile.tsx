@@ -10,8 +10,10 @@ import api from '../utils/api';
 import toast from '../utils/toast';
 import authSlice from '../slices/auth';
 import {useDispatch} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
 function SetupProfile(props) {
+  const navigation = useNavigation();
   const [kashtag, setKashTag] = useState<string>('');
   const [name, setName] = useState<string>('');
   const [showKashtagSection, setShowKashtagSection] = useState(false);
@@ -23,6 +25,7 @@ function SetupProfile(props) {
       .execute({name, kashtag})
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
+        navigation.navigate('SetupPaymentMethod');
       })
       .catch(err => {
         if (err.response && err.response.status === 400) {
