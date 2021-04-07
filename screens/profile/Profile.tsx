@@ -193,7 +193,37 @@ function Profile(props) {
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
         </TouchableOpacity>
+        {/*<TouchableOpacity*/}
+        {/*  style={{*/}
+        {/*    flexDirection: 'row',*/}
+        {/*    justifyContent: 'space-between',*/}
+        {/*    alignItems: 'center',*/}
+        {/*    paddingVertical: 16,*/}
+        {/*    paddingRight: 16,*/}
+        {/*    marginLeft: 16,*/}
+        {/*    borderBottomColor: Colors.border,*/}
+        {/*    borderBottomWidth: 1,*/}
+        {/*  }}>*/}
+        {/*  <View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
+        {/*    <AntDesign name={'checkcircleo'} color={'black'} size={24} />*/}
+        {/*    <Text*/}
+        {/*      style={{*/}
+        {/*        fontFamily: 'Inter-Semibold',*/}
+        {/*        color: Colors.dark,*/}
+        {/*        fontSize: 16,*/}
+        {/*        marginLeft: 12,*/}
+        {/*      }}>*/}
+        {/*      Vérifier mon identité*/}
+        {/*    </Text>*/}
+        {/*  </View>*/}
+        {/*  <AntDesign name={'right'} color={Colors.medium} size={20} />*/}
+        {/*</TouchableOpacity>*/}
         <TouchableOpacity
+          onPress={() =>
+            Linking.openURL(
+              'https://www.notion.so/Centre-d-aide-464a7a6e4ebd4ba8af090e99320edbea',
+            )
+          }
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -201,11 +231,9 @@ function Profile(props) {
             paddingVertical: 16,
             paddingRight: 16,
             marginLeft: 16,
-            borderBottomColor: Colors.border,
-            borderBottomWidth: 1,
           }}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <AntDesign name={'checkcircleo'} color={'black'} size={24} />
+            <Ionicons name={'help-circle-outline'} color={'black'} size={24} />
             <Text
               style={{
                 fontFamily: 'Inter-Semibold',
@@ -213,30 +241,7 @@ function Profile(props) {
                 fontSize: 16,
                 marginLeft: 12,
               }}>
-              Vérifier mon identité
-            </Text>
-          </View>
-          <AntDesign name={'right'} color={Colors.medium} size={20} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingVertical: 16,
-            paddingRight: 16,
-            marginLeft: 16,
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name={'logo-whatsapp'} color={'black'} size={24} />
-            <Text
-              style={{
-                fontFamily: 'Inter-Semibold',
-                color: Colors.dark,
-                fontSize: 16,
-                marginLeft: 12,
-              }}>
-              Contacter le service client
+              Questions & service client
             </Text>
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />

@@ -37,6 +37,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Nous utilisons votre localisation pour détecter votre pays d'origine à l'inscription</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Nous utilisons ta gallerie pour te permettre d'ajouter une photo de profil.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Black.ttf</string>

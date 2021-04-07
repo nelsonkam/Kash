@@ -11,6 +11,7 @@ import NotificationStack from './notifications';
 import OneSignal from 'react-native-onesignal';
 import {useNavigation} from '@react-navigation/native';
 import ProfileStack from './profile';
+import Search from '../screens/Search';
 
 const Tab = createBottomTabNavigator();
 
@@ -42,7 +43,6 @@ export default function MainTabs() {
             );
           } else {
             return (
-              // <Text></Text>
               <Ionicons name={icons[route.name]} size={size} color={color} />
             );
           }
@@ -55,7 +55,7 @@ export default function MainTabs() {
       <Tab.Screen name="Profile" component={ProfileStack} />
       <Tab.Screen name="Cartes" component={CardStack} />
       <Tab.Screen name="Kash" component={KashStack} />
-      <Tab.Screen name="Découverte" component={Main} />
+      <Tab.Screen name="Découverte" component={Search} />
       <Tab.Screen name="Notifs" component={NotificationStack} />
     </Tab.Navigator>
   );

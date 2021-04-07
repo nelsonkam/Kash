@@ -15,7 +15,12 @@ import Splash from './screens/Splash';
 import {useAsync} from './utils/hooks';
 import api from './utils/api';
 import Colors from './utils/colors';
+import * as Sentry from '@sentry/react-native';
 
+Sentry.init({
+  dsn:
+    'https://7d9127654ac6459f8f60a0c28f285590@o441760.ingest.sentry.io/5709350',
+});
 const KashTheme = {
   ...DefaultTheme,
   colors: {

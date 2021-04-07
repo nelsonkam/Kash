@@ -11,6 +11,7 @@ import api from '../utils/api';
 import {useDispatch} from 'react-redux';
 import authSlice from '../slices/auth';
 import toast from '../utils/toast';
+import {track} from '../utils/track';
 
 export function CreatePaymentMethod(props) {
   const [gateway, setGateway] = useState(null);

@@ -12,6 +12,7 @@ import toast from '../utils/toast';
 import {RootState} from '../utils/store';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {identify} from '../utils/track';
 
 const Verification = () => {
   const {sessionToken, phone} = useSelector((s: RootState) => s.auth);
@@ -50,6 +51,7 @@ const Verification = () => {
       })
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
+        identify(res.data.kashtag);
         if (!res.data.invite) {
           navigation.navigate('InviteCode');
           return;
