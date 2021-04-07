@@ -25,7 +25,7 @@ function SetupProfile(props) {
       .execute({name, kashtag})
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
-        navigation.navigate('SetupPaymentMethod');
+        navigation.navigate('InviteCode');
       })
       .catch(err => {
         if (err.response && err.response.status === 400) {

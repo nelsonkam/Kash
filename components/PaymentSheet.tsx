@@ -63,7 +63,7 @@ export const PaymentForm = ({amount, fees, onNext, loading}) => {
             value={phone}
             onChangeText={text => setPhone(text.substring(0, 8))}
             keyboardType={'number-pad'}
-            label={'Numéro'}
+            label={'Ton numéro momo'}
           />
         </View>
         {fees ? (
@@ -118,7 +118,7 @@ const TransactionStatus = ({reference, onStatusChanged}) => {
         <AntDesign name={'closecircle'} color={Colors.danger} size={56} />
         <Text
           style={{
-            fontFamily: 'Inter-Medium',
+            fontFamily: 'Inter-Semibold',
             color: Colors.dark,
             marginVertical: 24,
             fontSize: 16,
@@ -141,7 +141,7 @@ const TransactionStatus = ({reference, onStatusChanged}) => {
         <AntDesign name={'checkcircle'} color={Colors.success} size={56} />
         <Text
           style={{
-            fontFamily: 'Inter-Medium',
+            fontFamily: 'Inter-Semibold',
             color: Colors.dark,
             marginVertical: 24,
             fontSize: 16,
@@ -164,7 +164,7 @@ const TransactionStatus = ({reference, onStatusChanged}) => {
         <ActivityIndicator size={'large'} color={Colors.brand} />
         <Text
           style={{
-            fontFamily: 'Inter-Medium',
+            fontFamily: 'Inter-Semibold',
             color: Colors.dark,
             marginVertical: 24,
             fontSize: 16,

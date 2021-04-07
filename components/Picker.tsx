@@ -20,7 +20,7 @@ function ButtonPicker({source, text, active, onPress, style}) {
         source={source}></Image>
       <Text
         style={{
-          fontFamily: 'Inter-Medium',
+          fontFamily: 'Inter-Semibold',
           fontSize: 16,
           marginLeft: 12,
           color: Colors.dark,

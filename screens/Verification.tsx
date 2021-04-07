@@ -50,8 +50,13 @@ const Verification = () => {
       })
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
-        if (!res.data.payment_methods) {
+        if (!res.data.invite) {
+          navigation.navigate('InviteCode');
+          return;
+        }
+        if (!res.data.payout_methods) {
           navigation.navigate('SetupPaymentMethod');
+          return;
         }
       })
       .catch(err => {

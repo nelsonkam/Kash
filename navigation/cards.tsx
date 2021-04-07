@@ -7,6 +7,8 @@ import CardDetail from '../screens/cards/CardDetail';
 import EditNickname from '../screens/cards/EditNickname';
 import {useNavigation} from '@react-navigation/native';
 import OneSignal from 'react-native-onesignal';
+import RechargeCard from '../screens/cards/RechargeCard';
+import Withdrawal from '../screens/cards/Withdrawal';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +34,16 @@ export default function CardStack() {
         options={{title: 'Changer le nom'}}
         name="EditNickname"
         component={EditNickname}
+      />
+      <Stack.Screen
+        options={{title: 'Recharger la carte'}}
+        name="RechargeCard"
+        component={RechargeCard}
+      />
+      <Stack.Screen
+        options={{title: "Retirer de l'argent"}}
+        name="Withdrawal"
+        component={Withdrawal}
       />
     </Stack.Navigator>
   );

@@ -12,15 +12,20 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Colors from '../../utils/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import CreditCard from '../../components/CreditCard';
-import useSWR from '@nandorojo/swr-react-native';
-import {fetcher} from '../../utils/api';
+import api, {fetcher} from '../../utils/api';
 import KBottomSheet from '../../components/KBottomSheet';
 import {isToday, spaceFour} from '../../utils';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Clipboard from '@react-native-clipboard/clipboard';
+import AsyncActionSheet from '../../components/AsyncActionSheet';
+import {useAsync} from '../../utils/hooks';
+import useSWRNative from '@nandorojo/swr-react-native';
+import ConfirmSheet from '../../components/ConfirmSheet';
 
 const TransactionItem = ({transaction}) => {
-  const isDebit = transaction.type === 'Debit';
+  const isDebit = transaction.indicator === 'D';
+  let iconName = isDebit ? 'arrow-top-right' : 'arrow-bottom-left';
+  iconName = transaction.status.toLowerCase() === 'failed' ? 'close' : iconName;
   return (
     <View style={{flexDirection: 'row', padding: 12, alignItems: 'center'}}>
       <View
@@ -37,7 +42,7 @@ const TransactionItem = ({transaction}) => {
         }}>
         <MaterialCommunityIcons
           size={24}
-          name={isDebit ? 'arrow-top-right' : 'arrow-bottom-left'}
+          name={iconName}
           color={isDebit ? Colors.danger : Colors.success}
         />
       </View>
@@ -56,25 +61,41 @@ const TransactionItem = ({transaction}) => {
               fontSize: 16,
               color: Colors.dark,
             }}>
-            {transaction.merchant}
+            {transaction.gateway_reference_details}
+          </Text>
+          <Text
+            style={{
+              marginTop: 8,
+              color: Colors.medium,
+              fontFamily: 'Inter-Regular',
+            }}>
+            {transaction.narration || transaction.product}
           </Text>
         </View>
         <Text
           style={{fontSize: 16, color: Colors.dark, fontFamily: 'Inter-Bold'}}>
-          ${transaction.amount}
+          ${transaction.amount + transaction.fee}
         </Text>
       </View>
     </View>
   );
 };
 
-const CardDetailsHeader = ({onDetailClick}) => {
-  const {params} = useRoute();
-  const cardQuery = useSWR(`/kash/virtual-cards/${params.card.id}/`, fetcher);
-  const card = cardQuery.data || params.card;
-
+const CardDetailsHeader = ({card, onDetailClick}) => {
   return (
     <React.Fragment>
+      {!card.is_active && (
+        <View style={{backgroundColor: Colors.warning, padding: 12}}>
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: 'Inter-Semibold',
+              textAlign: 'center',
+            }}>
+            Cette carte est désactivée
+          </Text>
+        </View>
+      )}
       <View
         style={{
           padding: 16,
@@ -124,13 +145,29 @@ const CardDetailsHeader = ({onDetailClick}) => {
 function CardDetail() {
   const {params} = useRoute();
   const navigation = useNavigation();
-  const cardQuery = useSWR(`/kash/virtual-cards/${params.card.id}/`, fetcher);
-  const transactionsQuery = useSWR(
+  const cardQuery = useSWRNative(
+    `/kash/virtual-cards/${params.card.id}/`,
+    fetcher,
+  );
+  const transactionsQuery = useSWRNative(
     `/kash/virtual-cards/${params.card.id}/transactions/`,
     fetcher,
   );
+  const freezeCard = useAsync(() =>
+    api.post(`/kash/virtual-cards/${params.card.id}/freeze/`),
+  );
+  const unfreezeCard = useAsync(() =>
+    api.post(`/kash/virtual-cards/${params.card.id}/unfreeze/`),
+  );
+  const terminateCard = useAsync(() =>
+    api.post(`/kash/virtual-cards/${params.card.id}/terminate/`),
+  );
   const menuRef = useRef<KBottomSheet>(null);
   const detailsRef = useRef<KBottomSheet>(null);
+  const freezeActionRef = useRef<KBottomSheet>(null);
+  const unfreezeActionRef = useRef<KBottomSheet>(null);
+  const terminateActionRef = useRef<KBottomSheet>(null);
+  const terminateConfirmRef = useRef<KBottomSheet>(null);
   const card = cardQuery.data || params.card;
 
   React.useLayoutEffect(() => {
@@ -150,9 +187,35 @@ function CardDetail() {
     });
   }, [navigation, card]);
 
+  const handleFreezeToggle = () => {
+    menuRef.current?.close();
+    if (card.is_active) {
+      freezeActionRef.current?.open();
+      freezeCard
+        .execute()
+        .then(() => {
+          cardQuery.mutate();
+        })
+        .finally(() => {
+          setTimeout(() => freezeActionRef.current?.close(), 1000);
+        });
+    } else {
+      unfreezeActionRef.current?.open();
+      unfreezeCard
+        .execute()
+        .then(() => {
+          cardQuery.mutate();
+        })
+        .finally(() => {
+          setTimeout(() => unfreezeActionRef.current?.close(), 1000);
+        });
+    }
+  };
+
   if (transactionsQuery.data) {
-    const groups = transactionsQuery.data.reduce((groups, txn) => {
-      const date = txn.date;
+    const data = transactionsQuery.data.filter(item => item.currency === 'USD');
+    const groups = data.reduce((groups, txn) => {
+      const date = txn.created_at.split('T')[0];
       if (!groups[date]) {
         groups[date] = [];
       }
@@ -186,6 +249,7 @@ function CardDetail() {
           refreshing={cardQuery.isValidating || transactionsQuery.isValidating}
           ListHeaderComponent={
             <CardDetailsHeader
+              card={card}
               onDetailClick={() => detailsRef.current?.open()}
             />
           }
@@ -257,7 +321,11 @@ function CardDetail() {
         <KBottomSheet ref={detailsRef} snapPoints={[280, 0]}>
           <View style={{backgroundColor: 'white', padding: 16, height: 320}}>
             <Text
-              style={{fontFamily: 'Inter-Medium', fontSize: 18, marginTop: 16}}>
+              style={{
+                fontFamily: 'Inter-Semibold',
+                fontSize: 18,
+                marginTop: 16,
+              }}>
               {card.card_details.name_on_card}
             </Text>
             <View
@@ -337,7 +405,7 @@ function CardDetail() {
                 <Text
                   style={{
                     fontSize: 18,
-                    fontFamily: 'Inter-Medium',
+                    fontFamily: 'Inter-Semibold',
                     color: Colors.dark,
                     marginTop: 8,
                   }}>
@@ -348,19 +416,19 @@ function CardDetail() {
             </View>
           </View>
         </KBottomSheet>
-        <KBottomSheet ref={menuRef} snapPoints={[250, 0]}>
-          <TouchableOpacity
-            onPress={() => {
-              menuRef.current.close();
-              navigation.navigate('EditNickname', {card});
-            }}
+        <KBottomSheet ref={menuRef} snapPoints={[300, 0]}>
+          <View
             style={{
               backgroundColor: 'white',
               padding: 16,
               paddingTop: 24,
-              height: 250,
+              height: 300,
             }}>
-            <View
+            <TouchableOpacity
+              onPress={() => {
+                menuRef.current.close();
+                navigation.navigate('EditNickname', {card});
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -370,14 +438,18 @@ function CardDetail() {
               <Text
                 style={{
                   marginLeft: 16,
-                  fontFamily: 'Inter-Medium',
+                  fontFamily: 'Inter-Semibold',
                   fontSize: 16,
                   color: Colors.dark,
                 }}>
                 Changer le nom de la carte
               </Text>
-            </View>
-            <View
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                menuRef.current.close();
+                navigation.navigate('RechargeCard', {card});
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -391,14 +463,18 @@ function CardDetail() {
               <Text
                 style={{
                   marginLeft: 16,
-                  fontFamily: 'Inter-Medium',
+                  fontFamily: 'Inter-Semibold',
                   fontSize: 16,
                   color: Colors.dark,
                 }}>
                 Recharger la carte
               </Text>
-            </View>
-            <View
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                menuRef.current.close();
+                navigation.navigate('Withdrawal', {card});
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -412,14 +488,43 @@ function CardDetail() {
               <Text
                 style={{
                   marginLeft: 16,
-                  fontFamily: 'Inter-Medium',
+                  fontFamily: 'Inter-Semibold',
                   fontSize: 16,
                   color: Colors.dark,
                 }}>
                 Retirer de l'argent
               </Text>
-            </View>
-            <View
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleFreezeToggle}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginVertical: 12,
+              }}>
+              <AntDesign
+                name={card.is_active ? 'pausecircleo' : 'playcircleo'}
+                color={Colors.medium}
+                size={28}
+              />
+              <Text
+                style={{
+                  marginLeft: 16,
+                  fontFamily: 'Inter-Semibold',
+                  fontSize: 16,
+                  color: Colors.dark,
+                }}>
+                {card.is_active
+                  ? 'Désactiver la carte temporairement'
+                  : 'Activer la carte'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                menuRef.current?.close();
+                terminateConfirmRef.current?.open();
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -427,21 +532,62 @@ function CardDetail() {
               }}>
               <AntDesign
                 name={'closecircleo'}
-                color={Colors.medium}
+                color={Colors.danger}
                 size={28}
               />
               <Text
                 style={{
                   marginLeft: 16,
-                  fontFamily: 'Inter-Medium',
+                  fontFamily: 'Inter-Semibold',
                   fontSize: 16,
-                  color: Colors.dark,
+                  color: Colors.danger,
                 }}>
-                Désactiver la carte
+                Supprimer la carte
               </Text>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         </KBottomSheet>
+        <AsyncActionSheet
+          ref={freezeActionRef}
+          asyncAction={freezeCard}
+          statusTexts={{
+            loading: 'Un instant, la désactivation de ta carte est en cours...',
+            error: "Oops, nous n'avons pas pu désactiver ta carte",
+            success: 'Ta carte a été désactivée',
+          }}
+        />
+        <AsyncActionSheet
+          ref={unfreezeActionRef}
+          asyncAction={unfreezeCard}
+          statusTexts={{
+            loading: "Un instant, l'activation de ta carte est en cours...",
+            error: "Oops, nous n'avons pas pu activer ta carte",
+            success: 'Ta carte a été activée',
+          }}
+        />
+        <AsyncActionSheet
+          ref={terminateActionRef}
+          asyncAction={terminateCard}
+          statusTexts={{
+            loading: 'Un instant, la suppression de ta carte est en cours...',
+            error: "Oops, nous n'avons pas pu supprimer ta carte",
+            success: 'Ta carte a été supprimée',
+          }}
+        />
+        <ConfirmSheet
+          ref={terminateConfirmRef}
+          confirmText={'Es-tu sûr de vouloir supprimer cette carte?'}
+          onConfirm={() => {
+            terminateConfirmRef.current?.close();
+            terminateCard.execute().then(() => {
+              setTimeout(() => navigation.goBack(), 1000);
+            });
+            terminateActionRef.current?.open();
+          }}
+          onCancel={() => {
+            terminateConfirmRef.current?.close();
+          }}
+        />
       </View>
     );
   }

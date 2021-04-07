@@ -417,7 +417,7 @@ function SendRecipient(props) {
           </Text>
           <Text
             style={{
-              fontFamily: 'Inter-Medium',
+              fontFamily: 'Inter-Semibold',
               textAlign: 'center',
               fontSize: 16,
               marginTop: 16,

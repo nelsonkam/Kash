@@ -12,7 +12,7 @@ import {useDispatch} from 'react-redux';
 import authSlice from '../slices/auth';
 import toast from '../utils/toast';
 
-function SetupPaymentMethod(props) {
+export function CreatePaymentMethod(props) {
   const [gateway, setGateway] = useState(null);
   const [phone, setPhone] = useState(null);
   const createPayoutMethod = useAsync(data =>
@@ -29,6 +29,7 @@ function SetupPaymentMethod(props) {
       })
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
+        props.onCreated && props.onCreated();
       })
       .catch(err => {
         toast.error(
@@ -38,66 +39,61 @@ function SetupPaymentMethod(props) {
       });
   };
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <StatusBar barStyle="default" />
-        <Text style={styles.title}>Ajoutes ton compte momo</Text>
-        <Text style={styles.subtitle}>
-          Dis nous vers quel compte momo tu aimerais qu'on envoie ton kash.
-        </Text>
-        <View
-          style={{
-            backgroundColor: 'white',
-            height: Dimensions.get('window').height * 0.65,
-          }}>
-          <View style={{marginTop: 24}}>
-            <Text
+    <View>
+      <Text style={styles.subtitle}>
+        Dis nous vers quel compte momo tu aimerais qu'on envoie ton kash.
+      </Text>
+      <View
+        style={{
+          backgroundColor: 'white',
+          height: Dimensions.get('window').height * 0.65,
+        }}>
+        <View style={{marginTop: 24}}>
+          <Text
+            style={{
+              fontFamily: 'Inter-Bold',
+              color: Colors.dark,
+              marginBottom: 12,
+            }}>
+            Choisis un opérateur mobile
+          </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            <ButtonPicker
               style={{
-                fontFamily: 'Inter-Bold',
-                color: Colors.dark,
-                marginBottom: 12,
-              }}>
-              Choisis un opérateur mobile
-            </Text>
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-              <ButtonPicker
-                style={{
-                  flex: 48,
-                }}
-                source={require('../assets/mtn.png')}
-                text="MTN Momo"
-                active={gateway === 'mtn-bj'}
-                onPress={() => setGateway('mtn-bj')}
-              />
-              <View style={{flex: 4}}></View>
-              <ButtonPicker
-                style={{
-                  flex: 48,
-                }}
-                source={require('../assets/moov-africa.jpeg')}
-                text="Moov Money"
-                active={gateway === 'moov-bj'}
-                onPress={() => setGateway('moov-bj')}
-              />
-            </View>
-            <View style={{marginVertical: 12}}>
-              <Input
-                value={phone}
-                onChangeText={text => setPhone(text.substring(0, 8))}
-                keyboardType={'number-pad'}
-                label={'Numéro'}></Input>
-            </View>
-            <Button
-              loading={createPayoutMethod.loading}
-              onPress={handleNext}
-              disabled={!(gateway && phone)}>
-              Suivant
-            </Button>
+                flex: 48,
+              }}
+              source={require('../assets/mtn.png')}
+              text="MTN Momo"
+              active={gateway === 'mtn-bj'}
+              onPress={() => setGateway('mtn-bj')}
+            />
+            <View style={{flex: 4}}></View>
+            <ButtonPicker
+              style={{
+                flex: 48,
+              }}
+              source={require('../assets/moov-africa.jpeg')}
+              text="Moov Money"
+              active={gateway === 'moov-bj'}
+              onPress={() => setGateway('moov-bj')}
+            />
           </View>
+          <View style={{marginVertical: 12}}>
+            <Input
+              value={phone}
+              onChangeText={text => setPhone(text.substring(0, 8))}
+              keyboardType={'number-pad'}
+              label={'Numéro'}></Input>
+          </View>
+          <Button
+            loading={createPayoutMethod.loading}
+            onPress={handleNext}
+            disabled={!(gateway && phone)}>
+            Suivant
+          </Button>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -123,4 +119,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SetupPaymentMethod;
+export default () => (
+  <SafeAreaView style={styles.container}>
+    <Text style={styles.title}>Ajoutes ton compte momo</Text>
+    <CreatePaymentMethod />
+  </SafeAreaView>
+);

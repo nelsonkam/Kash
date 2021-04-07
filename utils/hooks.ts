@@ -1,7 +1,8 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Alert, Platform} from 'react-native';
+import KBottomSheet from '../components/KBottomSheet';
 
-type AsyncHook<T> = {
+export type AsyncHook<T> = {
   execute: (...args: any) => Promise<T>;
   loading: boolean;
   value: T | null;
@@ -41,3 +42,10 @@ export function useAsync<T>(
 
   return {execute, loading, value, error};
 }
+
+export const usePayment = () => {
+  const viewRef = useRef<KBottomSheet>(null);
+  const [reference, setReference] = useState(null);
+
+  return {viewRef, reference, setReference};
+};

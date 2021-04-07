@@ -235,7 +235,7 @@ const CardCreation = ({action}) => {
         <AntDesign name={'closecircle'} color={Colors.danger} size={56} />
         <Text
           style={{
-            fontFamily: 'Inter-Medium',
+            fontFamily: 'Inter-Semibold',
             color: Colors.dark,
             marginVertical: 24,
             fontSize: 16,
@@ -245,7 +245,7 @@ const CardCreation = ({action}) => {
         </Text>
       </View>
     );
-  } else if (action.data) {
+  } else if (action.value) {
     return (
       <View
         style={{
@@ -258,7 +258,7 @@ const CardCreation = ({action}) => {
         <AntDesign name={'checkcircle'} color={Colors.success} size={56} />
         <Text
           style={{
-            fontFamily: 'Inter-Medium',
+            fontFamily: 'Inter-Semibold',
             color: Colors.dark,
             marginVertical: 24,
             fontSize: 16,
@@ -281,7 +281,7 @@ const CardCreation = ({action}) => {
         <ActivityIndicator size={'large'} color={Colors.brand} />
         <Text
           style={{
-            fontFamily: 'Inter-Medium',
+            fontFamily: 'Inter-Semibold',
             color: Colors.dark,
             marginVertical: 24,
             fontSize: 16,

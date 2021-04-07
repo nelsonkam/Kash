@@ -53,7 +53,7 @@ const authSlice = createSlice<State, SliceCaseReducers<State>>({
       state.deviceId = action.payload;
     },
     logout(state) {
-      state = initialState;
+      return initialState;
     },
   },
 });

@@ -38,18 +38,22 @@ const NotificationItem = ({notification, onPress}) => {
       onPress={() => canAccept && onPress(notification.content_object)}
       activeOpacity={canAccept ? 0.4 : 1}
       style={{flexDirection: 'row', padding: 12, alignItems: 'center'}}>
-      <View
-        style={{
-          height: 48,
-          width: 48,
-          borderRadius: 50,
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          backgroundColor: Colors.lightGrey,
-        }}>
-        <Text style={{fontSize: 18}}>💸</Text>
-      </View>
+      {isRequest && notification.content_object.initiator ? (
+        <Avatar size={48} profile={notification.content_object.initiator} />
+      ) : (
+        <View
+          style={{
+            height: 48,
+            width: 48,
+            borderRadius: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            backgroundColor: Colors.lightGrey,
+          }}>
+          <Text style={{fontSize: 18}}>💸</Text>
+        </View>
+      )}
       <View
         style={{
           marginLeft: 16,

@@ -5,6 +5,7 @@ import Verification from '../screens/Verification';
 import GetStarted from '../screens/GetStarted';
 import SetupProfile from '../screens/SetupProfile';
 import SetupPaymentMethod from '../screens/SetupPaymentMethod';
+import InviteCode from '../screens/onboarding/InviteCode';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ export default function AuthStack() {
       <Stack.Screen name="Verification" component={Verification} />
       <Stack.Screen name="SetupProfile" component={SetupProfile} />
       <Stack.Screen name="SetupPaymentMethod" component={SetupPaymentMethod} />
+      <Stack.Screen name="InviteCode" component={InviteCode} />
     </Stack.Navigator>
   );
 }

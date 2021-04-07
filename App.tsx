@@ -38,6 +38,10 @@ function App() {
     OneSignal.setRequiresUserPrivacyConsent(false);
     OneSignal.promptForPushNotificationsWithUserResponse(() => null);
 
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
     async function setDeviceID() {
       const deviceState = await OneSignal.getDeviceState();
       if (auth.profile) {
@@ -47,8 +51,7 @@ function App() {
     }
 
     setDeviceID();
-    setReady(true);
-  }, []);
+  }, [auth.profile]);
 
   if (!ready) {
     return <Splash />;
@@ -56,6 +59,7 @@ function App() {
 
   return auth.refresh &&
     auth.profile &&
+    auth.profile.invite &&
     auth.profile.payout_methods?.length > 0 ? (
     <MainStack />
   ) : (

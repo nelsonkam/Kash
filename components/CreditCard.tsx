@@ -1,4 +1,3 @@
-import {useNavigation} from '@react-navigation/native';
 import {
   Image,
   ImageBackground,
@@ -8,10 +7,8 @@ import {
 } from 'react-native';
 import Colors from '../utils/colors';
 import React from 'react';
-import {spaceFour} from '../utils';
 
 const CreditCard = ({card, onPress}) => {
-  const navigation = useNavigation();
   return (
     <TouchableOpacity
       onPress={() => onPress && onPress(card)}
@@ -32,13 +29,15 @@ const CreditCard = ({card, onPress}) => {
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <View
               style={{
-                backgroundColor: Colors.brand,
+                backgroundColor: card.is_active ? Colors.brand : Colors.warning,
                 borderRadius: 100,
                 paddingVertical: 4,
                 paddingHorizontal: 12,
               }}>
               <Text style={{fontFamily: 'Inter-Semibold', color: 'white'}}>
-                {card.card_details.amount} {card.card_details.currency}
+                {card.is_active
+                  ? `${card.card_details.amount} ${card.card_details.currency}`
+                  : 'Désactivée'}
               </Text>
             </View>
             <View
@@ -48,7 +47,7 @@ const CreditCard = ({card, onPress}) => {
                 paddingVertical: 4,
                 paddingHorizontal: 8,
               }}>
-              <Text style={{fontFamily: 'Inter-Medium', fontSize: 15}}>
+              <Text style={{fontFamily: 'Inter-Semibold', fontSize: 15}}>
                 {card.nickname}
               </Text>
             </View>

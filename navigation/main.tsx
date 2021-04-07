@@ -10,6 +10,7 @@ import Notifications from '../screens/notifications/Notifications';
 import NotificationStack from './notifications';
 import OneSignal from 'react-native-onesignal';
 import {useNavigation} from '@react-navigation/native';
+import ProfileStack from './profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,7 +52,7 @@ export default function MainTabs() {
         activeTintColor: Colors.brand,
         inactiveTintColor: Colors.disabled,
       }}>
-      <Tab.Screen name="Profile" component={Main} />
+      <Tab.Screen name="Profile" component={ProfileStack} />
       <Tab.Screen name="Cartes" component={CardStack} />
       <Tab.Screen name="Kash" component={KashStack} />
       <Tab.Screen name="Découverte" component={Main} />

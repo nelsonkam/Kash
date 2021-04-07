@@ -9,6 +9,7 @@ import PaymentSheet from '../../components/PaymentSheet';
 import KBottomSheet from '../../components/KBottomSheet';
 import {useAsync} from '../../utils/hooks';
 import api from '../../utils/api';
+import {mutate} from 'swr';
 
 function SendRequestKash(props) {
   const {params} = useRoute();
@@ -105,6 +106,7 @@ function SendRequestKash(props) {
           onStatusChanged={() => {
             setTimeout(() => {
               acceptedRequest.execute({transaction_id: kashTxn?.id});
+              mutate('/kash/notifications/');
               navigation.goBack();
             }, 2000);
           }}

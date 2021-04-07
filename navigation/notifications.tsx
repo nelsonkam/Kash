@@ -7,10 +7,10 @@ const Stack = createStackNavigator();
 
 export default function NotificationStack() {
   return (
-    <Stack.Navigator initialRouteName="Cards">
+    <Stack.Navigator initialRouteName="Notifications">
       <Stack.Screen
-        options={{title: 'Notifications'}}
-        name="Notification"
+        options={{title: 'Mes Notifications'}}
+        name="Notifications"
         component={Notifications}
       />
       <Stack.Screen

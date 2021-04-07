@@ -8,6 +8,7 @@ import {
   StyleProp,
   StyleSheet,
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const styles = StyleSheet.create({
   input: {
@@ -167,11 +168,7 @@ export default class NumPad extends React.Component<InputProps> {
               key="backspace"
               style={styles.button}
               onPress={() => this.props.onChange('backspace')}>
-              {this.props.backspaceIcon ? (
-                this.props.backspaceIcon
-              ) : (
-                <Text style={styles.buttonText}>←</Text>
-              )}
+              <Ionicons name={'backspace'} size={26} color={'#888'} />
             </TouchableOpacity>
           </View>
         </View>
