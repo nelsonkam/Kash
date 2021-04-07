@@ -1,17 +1,17 @@
-import React, {useEffect} from 'react';
-import Main from '../screens/kash/Kash';
+import React, {useEffect, useRef} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Colors from '../utils/colors';
-import {Image} from 'react-native';
+import {Image, Linking, Platform, Text, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CardStack from './cards';
 import KashStack from './kash';
-import Notifications from '../screens/notifications/Notifications';
 import NotificationStack from './notifications';
-import OneSignal from 'react-native-onesignal';
-import {useNavigation} from '@react-navigation/native';
 import ProfileStack from './profile';
 import Search from '../screens/Search';
+import useSWRNative from '@nandorojo/swr-react-native';
+import {fetcher} from '../utils/api';
+import KBottomSheet from '../components/KBottomSheet';
+import Button from '../components/Button';
 
 const Tab = createBottomTabNavigator();
 

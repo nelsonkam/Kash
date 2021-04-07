@@ -49,7 +49,7 @@ function InviteCode(props) {
         } else {
           toast.error(
             'Erreur lors de la vérification',
-            'Vérifies le code de vérification puis réessaies.',
+            "Vérifies le code d'invitation puis réessaies.",
           );
         }
       });
