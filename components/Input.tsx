@@ -13,7 +13,11 @@ const Input = ({label, description, error, ...rest}: Props) => {
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       {!!description && <Text style={styles.description}>{description}</Text>}
-      <TextInput {...rest} style={styles.input} />
+      <TextInput
+        {...rest}
+        style={styles.input}
+        placeholderTextColor={Colors.disabled}
+      />
       {!!error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
@@ -27,6 +31,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderColor: Colors.border,
+    color: 'black',
     fontSize: 16,
     borderWidth: 2,
     marginTop: 8,

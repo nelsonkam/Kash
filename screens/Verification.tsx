@@ -56,7 +56,7 @@ const Verification = () => {
           navigation.navigate('InviteCode');
           return;
         }
-        if (!res.data.payout_methods) {
+        if (res.data.payout_methods?.length !== 0) {
           navigation.navigate('SetupPaymentMethod');
           return;
         }

@@ -184,6 +184,7 @@ function RequestRecipient(props) {
             fontSize: 16,
             paddingVertical: 8,
             flex: 1,
+            color: 'black',
           }}
           value={search}
           onChangeText={text => setSearch(text)}
@@ -214,6 +215,7 @@ function RequestRecipient(props) {
             fontSize: 16,
             paddingVertical: 8,
             flex: 1,
+            color: 'black',
           }}
           value={note}
           onChangeText={text => setNote(text)}

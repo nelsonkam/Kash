@@ -5,6 +5,7 @@ import SendRecipient from '../screens/kash/SendRecipient';
 import RequestRecipient from '../screens/kash/RequestRecipient';
 import {useNavigation} from '@react-navigation/native';
 import OneSignal from 'react-native-onesignal';
+import Home from '../screens/home/Home';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,11 @@ export default function KashStack() {
       <Stack.Screen
         options={{headerShown: false}}
         name="Kash"
+        component={Kash}
+      />
+      <Stack.Screen
+        options={{headerShown: false}}
+        name="SendKash"
         component={Kash}
       />
       <Stack.Screen

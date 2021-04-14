@@ -175,7 +175,7 @@ function CardDetail() {
       title: card.nickname,
       headerRight: () => (
         <TouchableOpacity
-          onPress={() => menuRef.current.open()}
+          onPress={() => menuRef.current?.open()}
           style={{paddingHorizontal: 16}}>
           <Ionicons
             name={'ellipsis-horizontal'}

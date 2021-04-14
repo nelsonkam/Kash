@@ -16,7 +16,7 @@ const Avatar = ({profile, size = 42}) => {
         borderColor: 'white',
         borderWidth: 1,
       }}
-      source={{uri: profile.avatar_url}}
+      source={{uri: profile?.avatar_url}}
     />
   ) : (
     <View

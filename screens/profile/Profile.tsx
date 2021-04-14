@@ -31,7 +31,7 @@ const createFormData = (photo, body = {}) => {
   data.append('avatar', {
     name: photo.fileName,
     type: photo.type,
-    uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+    uri: Platform.OS === 'ios' ? photo?.uri?.replace('file://', '') : photo.uri,
   });
 
   Object.keys(body).forEach(key => {

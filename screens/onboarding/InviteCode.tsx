@@ -39,7 +39,7 @@ function InviteCode(props) {
       })
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
-        if (!res.data.payout_methods) {
+        if (res.data.payout_methods?.length !== 0) {
           navigation.navigate('SetupPaymentMethod');
         }
       })

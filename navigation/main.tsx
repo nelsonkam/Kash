@@ -1,17 +1,14 @@
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Colors from '../utils/colors';
-import {Image, Linking, Platform, Text, View} from 'react-native';
+import {Image} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CardStack from './cards';
 import KashStack from './kash';
 import NotificationStack from './notifications';
 import ProfileStack from './profile';
 import Search from '../screens/Search';
-import useSWRNative from '@nandorojo/swr-react-native';
-import {fetcher} from '../utils/api';
-import KBottomSheet from '../components/KBottomSheet';
-import Button from '../components/Button';
+import HomeStack from './home';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,7 +20,7 @@ export default function MainTabs() {
         tabBarLabel: () => null,
         tabBarIcon: ({focused, color, size}) => {
           const icons = {
-            Profile: 'person-circle',
+            Home: 'home',
             Cartes: 'card',
             Découverte: 'search',
             Notifs: 'notifications-circle',
@@ -52,7 +49,7 @@ export default function MainTabs() {
         activeTintColor: Colors.brand,
         inactiveTintColor: Colors.disabled,
       }}>
-      <Tab.Screen name="Profile" component={ProfileStack} />
+      <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Cartes" component={CardStack} />
       <Tab.Screen name="Kash" component={KashStack} />
       <Tab.Screen name="Découverte" component={Search} />
