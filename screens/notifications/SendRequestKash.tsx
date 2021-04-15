@@ -87,7 +87,6 @@ function SendRequestKash(props) {
           </Button>
           <Button
             color={Colors.brand}
-            disabled={amount < 1000 && amount > 50000}
             onPress={handleSend}
             loading={sendKash.loading}
             style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>

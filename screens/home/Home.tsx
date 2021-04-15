@@ -27,67 +27,9 @@ import {RootState} from '../../utils/store';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import RequestItem from '../../components/RequestItem';
 
 const VERSION = '1.0.0';
-
-const RequestItem = ({request, profile}) => {
-  const responded =
-    request.responses.filter(r => r.sender === profile.kashtag).length > 0;
-  const response = responded
-    ? request.responses.filter(r => r.sender === profile.kashtag)[0]
-    : null;
-  return (
-    <View
-      style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 4}}>
-      <Avatar profile={null} />
-      <View style={{flex: 1, marginLeft: 12}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              fontFamily: 'Inter-Semibold',
-              fontSize: 16,
-              color: Colors.dark,
-            }}>
-            {request.formatted?.title}
-          </Text>
-
-          {responded && (
-            <View
-              style={{
-                backgroundColor: response.accepted
-                  ? Colors.lightSuccess
-                  : Colors.lightDanger,
-                padding: 4,
-                paddingHorizontal: 10,
-                borderRadius: 6,
-              }}>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Semibold',
-                  color: response.accepted ? Colors.brand : Colors.danger,
-                }}>
-                {response.accepted ? 'Accepté' : 'Refusé'}
-              </Text>
-            </View>
-          )}
-        </View>
-        <Text
-          style={{
-            marginTop: 4,
-            color: Colors.medium,
-            fontFamily: 'Inter-Regular',
-          }}>
-          {request.formatted?.description}
-        </Text>
-      </View>
-    </View>
-  );
-};
 
 const EmptyState = ({icon, text}) => {
   return (
@@ -296,7 +238,7 @@ const Home = () => {
           style={{
             flexDirection: 'row',
             marginTop: 24,
-            marginBottom: 16,
+            marginBottom: 4,
             justifyContent: 'space-between',
           }}>
           <Text
@@ -308,6 +250,7 @@ const Home = () => {
             Requêtes reçues
           </Text>
           <TouchableOpacity
+            onPress={() => navigation.navigate('Requests')}
             style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text
               style={{
@@ -328,7 +271,6 @@ const Home = () => {
               {i !== requestsQuery.data?.results.length - 1 && (
                 <View
                   style={{
-                    marginVertical: 8,
                     width: '100%',
                     height: 1,
                     backgroundColor: Colors.grey,

@@ -1,8 +1,32 @@
 import React from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  ImageSourcePropType,
+  StyleProp,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import Colors from '../utils/colors';
 
-function ButtonPicker({source, text, active, onPress, style}) {
+type Props = {
+  source: ImageSourcePropType;
+  text: string;
+  active: boolean;
+  onPress: () => void;
+  style: StyleProp<ViewStyle>;
+  imageSize?: number;
+};
+
+function ButtonPicker({
+  source,
+  text,
+  active,
+  onPress,
+  style,
+  imageSize = 32,
+}: Props) {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -16,8 +40,9 @@ function ButtonPicker({source, text, active, onPress, style}) {
         ...style,
       }}>
       <Image
-        style={{height: 32, width: 32, borderRadius: 2}}
-        source={source}></Image>
+        style={{height: imageSize, width: imageSize, borderRadius: 2}}
+        source={source}
+      />
       <Text
         style={{
           fontFamily: 'Inter-Semibold',

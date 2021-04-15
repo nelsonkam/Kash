@@ -57,10 +57,12 @@ export const isToday = someDate => {
   );
 };
 
-export const spaceFour = str => {
+export const spaceString = (str: string, charCount: number) => {
   const segments = [];
-  for (let i = 0; i < str.length / 4; i++) {
-    segments.push(str.substring(i * 4, (i + 1) * 4));
+  for (let i = 0; i < str.length / charCount; i++) {
+    segments.push(str.substring(i * charCount, (i + 1) * charCount));
   }
   return segments.join(' ');
 };
+
+export const spaceFour = (str: string) => spaceString(str, 4);
