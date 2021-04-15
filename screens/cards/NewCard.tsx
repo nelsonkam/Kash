@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -73,8 +74,8 @@ const RechargeCard = ({onRecharge}) => {
     }
   };
   return (
-    <View style={{flex: 1}}>
-      <View style={{flex: 0.8, justifyContent: 'center', alignItems: 'center'}}>
+    <ScrollView contentContainerStyle={{flex: 1}}>
+      <View style={{flex: 0.6, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={styles.amount}>
           CFA{' '}
           <Text style={{color: amount === 0 ? Colors.disabled : Colors.dark}}>
@@ -83,7 +84,8 @@ const RechargeCard = ({onRecharge}) => {
         </Text>
       </View>
       <View style={{flex: 1}}>
-        <View style={{flexDirection: 'row', marginHorizontal: 8}}>
+        <View
+          style={{flexDirection: 'row', marginHorizontal: 8, marginBottom: 24}}>
           <Button
             onPress={() => navigation.goBack()}
             color={Colors.border}
@@ -101,7 +103,7 @@ const RechargeCard = ({onRecharge}) => {
         </View>
         <NumPad onChange={handleNumChange} height={320}></NumPad>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

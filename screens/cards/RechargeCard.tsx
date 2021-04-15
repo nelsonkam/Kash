@@ -88,7 +88,8 @@ const RechargeCard = ({}) => {
           </View>
         ) : null}
       </View>
-      <View style={{flex: 0.8, justifyContent: 'center', alignItems: 'center'}}>
+      <View
+        style={{flex: 0.65, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={styles.amount}>
           ${' '}
           <Text style={{color: amount === 0 ? Colors.disabled : Colors.dark}}>
@@ -97,7 +98,8 @@ const RechargeCard = ({}) => {
         </Text>
       </View>
       <View style={{flex: 1}}>
-        <View style={{flexDirection: 'row', marginHorizontal: 8}}>
+        <View
+          style={{flexDirection: 'row', marginHorizontal: 8, marginBottom: 24}}>
           <Button
             onPress={() => navigation.goBack()}
             color={Colors.border}
