@@ -6,6 +6,7 @@ import Requests from '../screens/home/Requests';
 import ConfirmRequest from '../screens/home/ConfirmRequest';
 import SendKash from '../screens/home/SendKash';
 import Pay from '../screens/home/Pay';
+import TransactionHistory from '../screens/home/TransactionHistory';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,11 @@ function HomeStack() {
         options={{title: 'Requêtes reçues'}}
         name="Requests"
         component={Requests}
+      />
+      <Stack.Screen
+        options={{title: 'Transactions récentes'}}
+        name="TransactionHistory"
+        component={TransactionHistory}
       />
       <Stack.Screen
         options={{headerShown: false, headerBackTitle: ''}}

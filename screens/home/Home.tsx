@@ -11,6 +11,7 @@ import {
   ScrollView,
   Dimensions,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Colors from '../../utils/colors';
@@ -28,6 +29,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import RequestItem from '../../components/RequestItem';
+import TransactionItem from '../../components/TransactionItem';
 
 const VERSION = '1.0.0';
 
@@ -42,74 +44,10 @@ const EmptyState = ({icon, text}) => {
   );
 };
 
-const TransactionItem = ({transaction}) => {
-  const isDebit = transaction.txn_type === 'debit';
-  let iconName = isDebit ? 'arrow-top-right' : 'arrow-bottom-left';
-  iconName = transaction.status.toLowerCase() === 'failed' ? 'close' : iconName;
-  iconName = transaction.status === 'refunded' ? 'cash-refund' : iconName;
-  return (
-    <View
-      style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 4}}>
-      <View
-        style={{
-          height: 48,
-          width: 48,
-          borderRadius: 50,
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          backgroundColor: isDebit
-            ? 'rgba(244, 84, 29, 0.05)'
-            : 'rgba(26, 206, 76, 0.05)',
-        }}>
-        <MaterialCommunityIcons
-          size={24}
-          name={iconName}
-          color={isDebit ? Colors.danger : Colors.success}
-        />
-      </View>
-      <View
-        style={{
-          marginLeft: 12,
-          flex: 1,
-        }}>
-        <View>
-          <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
-            <Text
-              style={{
-                fontFamily: 'Inter-Semibold',
-                fontSize: 16,
-                color: Colors.dark,
-              }}>
-              {transaction.formatted?.title}
-            </Text>
-            <Text
-              style={{
-                fontFamily: 'Inter-Regular',
-                fontSize: 14,
-                color: isDebit ? Colors.danger : Colors.brand,
-              }}>
-              {transaction.amount} XOF
-            </Text>
-          </View>
-          <Text
-            style={{
-              marginTop: 8,
-              color: Colors.medium,
-              fontFamily: 'Inter-Regular',
-            }}>
-            {transaction.formatted?.description}
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-};
-
 const Home = () => {
-  const {profile} = useSelector((s: RootState) => s.auth);
   const navigation = useNavigation();
   const {top} = useSafeAreaInsets();
+  const profileQuery = useSWRNative(`/kash/profiles/current/`, fetcher);
   const versionQuery = useSWRNative(`/kash/version/`, fetcher);
   const requestsQuery = useSWRNative(
     `/kash/requests/received/?paginate=1&limit=3`,
@@ -119,6 +57,11 @@ const Home = () => {
     `/kash/txn_history/?paginate=1&limit=5`,
     fetcher,
   );
+  const profile = profileQuery.data || {};
+  const isRefreshing =
+    transactionsQuery.isValidating ||
+    requestsQuery.isValidating ||
+    profileQuery.isValidating;
   const handleDownload = () => {
     const url =
       Platform.OS === 'ios'
@@ -137,6 +80,12 @@ const Home = () => {
       );
     }
   }, [versionQuery.data]);
+
+  const handleRefresh = () => {
+    transactionsQuery.revalidate();
+    requestsQuery.revalidate();
+    profileQuery.revalidate();
+  };
 
   return (
     <View
@@ -166,7 +115,11 @@ const Home = () => {
           <Ionicons name={'person-circle-outline'} size={28} />
         </TouchableOpacity>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+        }>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View
             style={{
@@ -189,7 +142,10 @@ const Home = () => {
                 fontSize: 20,
                 color: Colors.brand,
               }}>
-              CFA 20,000
+              CFA{' '}
+              {profile.txn_summary
+                ? profile.txn_summary['30-days']?.received
+                : null}
             </Text>
             <Text
               style={{
@@ -197,7 +153,7 @@ const Home = () => {
                 color: Colors.medium,
                 marginTop: 8,
               }}>
-              Ce mois
+              30 derniers jours
             </Text>
           </View>
           <View style={{width: 16, height: 1}} />
@@ -222,7 +178,10 @@ const Home = () => {
                 fontSize: 20,
                 color: Colors.danger,
               }}>
-              CFA 20,000
+              CFA{' '}
+              {profile.txn_summary
+                ? profile.txn_summary['30-days']?.sent
+                : null}
             </Text>
             <Text
               style={{
@@ -230,44 +189,50 @@ const Home = () => {
                 color: Colors.medium,
                 marginTop: 8,
               }}>
-              Ce mois
+              30 derniers jours
             </Text>
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            marginTop: 24,
-            marginBottom: 4,
-            justifyContent: 'space-between',
-          }}>
-          <Text
+        {requestsQuery.data?.results?.length > 0 && (
+          <View
             style={{
-              fontFamily: 'Inter-SemiBold',
-              color: Colors.medium,
-              fontSize: 17,
+              flexDirection: 'row',
+              marginTop: 24,
+              marginBottom: 4,
+              justifyContent: 'space-between',
             }}>
-            Requêtes reçues
-          </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Requests')}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text
               style={{
                 fontFamily: 'Inter-SemiBold',
-                color: Colors.primary,
+                color: Colors.medium,
                 fontSize: 17,
-                marginRight: 2,
               }}>
-              Voir tout
+              Requêtes reçues
             </Text>
-            <Ionicons name={'arrow-forward'} size={24} color={Colors.primary} />
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Requests')}
+              style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text
+                style={{
+                  fontFamily: 'Inter-SemiBold',
+                  color: Colors.primary,
+                  fontSize: 17,
+                  marginRight: 2,
+                }}>
+                Voir tout
+              </Text>
+              <Ionicons
+                name={'arrow-forward'}
+                size={24}
+                color={Colors.primary}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
         <View style={styles.card}>
           {requestsQuery.data?.results?.map((item, i) => (
             <>
-              <RequestItem profile={profile} request={item} />
+              <RequestItem request={item} />
               {i !== requestsQuery.data?.results.length - 1 && (
                 <View
                   style={{
@@ -308,6 +273,7 @@ const Home = () => {
             Transactions récentes
           </Text>
           <TouchableOpacity
+            onPress={() => navigation.navigate('TransactionHistory')}
             style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text
               style={{

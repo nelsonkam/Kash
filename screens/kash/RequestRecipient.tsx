@@ -89,7 +89,7 @@ const ConfirmSheet = ({
   );
 };
 
-const RequestSent = props => {
+const RequestSent = () => {
   return (
     <View
       style={{

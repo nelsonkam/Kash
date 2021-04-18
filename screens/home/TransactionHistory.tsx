@@ -1,24 +1,28 @@
-import React from 'react';
-import {isToday} from '../../utils';
-import useSWRNative from '@nandorojo/swr-react-native';
-import {fetcher} from '../../utils/api';
-import {SectionList, Text, View} from 'react-native';
+import {ActivityIndicator, SectionList, Text, View} from 'react-native';
 import Colors from '../../utils/colors';
-import RequestItem from '../../components/RequestItem';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import RequestItem from '../../components/RequestItem';
+import React from 'react';
+import useSWRNative, {
+  useSWRNativeRevalidate,
+} from '@nandorojo/swr-react-native';
+import {fetcher, fetcherInfinite} from '../../utils/api';
+import {isToday} from '../../utils';
+import TransactionItem from '../../components/TransactionItem';
+import {useSWRInfinite} from 'swr/esm';
 import {useInfinite} from '../../utils/hooks';
 import InfiniteSectionList from '../../components/InfiniteSectionList';
 import SectionHeader from '../../components/SectionHeader';
 
-function Requests() {
-  const requestsQuery = useInfinite(`/kash/requests/received/`, 10);
+function TransactionHistory() {
+  const transactionsQuery = useInfinite(`/kash/txn_history/`, 10);
 
-  const groups = requestsQuery.data?.reduce((groups, notif) => {
-    const date = notif.created_at.split('T')[0];
+  const groups = transactionsQuery.data?.reduce((groups, transaction) => {
+    const date = transaction.timestamp.split('T')[0];
     if (!groups[date]) {
       groups[date] = [];
     }
-    groups[date].push(notif);
+    groups[date].push(transaction);
     return groups;
   }, {});
 
@@ -41,7 +45,16 @@ function Requests() {
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <InfiniteSectionList
-        query={requestsQuery}
+        query={transactionsQuery}
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: 1,
+              backgroundColor: Colors.grey,
+              width: '100%',
+            }}
+          />
+        )}
         ListEmptyComponent={() => (
           <View
             style={{
@@ -51,22 +64,22 @@ function Requests() {
               marginHorizontal: 24,
               marginVertical: 56,
             }}>
-            <AntDesign name="arrowdown" size={64} color={Colors.disabled} />
+            <AntDesign name="swap" size={64} color={Colors.disabled} />
             <Text
               style={{
                 fontFamily: 'Inter-Semibold',
                 color: Colors.disabled,
                 marginTop: 16,
               }}>
-              Tes requêtes s'afficheront ici
+              Tes transactions s'afficheront ici
             </Text>
           </View>
         )}
         contentContainerStyle={{paddingBottom: 16, backgroundColor: 'white'}}
         sections={sections}
         renderItem={({item}) => (
-          <View style={{paddingHorizontal: 16}}>
-            <RequestItem request={item} />
+          <View style={{paddingHorizontal: 16, paddingVertical: 8}}>
+            <TransactionItem transaction={item} />
           </View>
         )}
         renderSectionHeader={({section}) => <SectionHeader section={section} />}
@@ -75,4 +88,4 @@ function Requests() {
   );
 }
 
-export default Requests;
+export default TransactionHistory;

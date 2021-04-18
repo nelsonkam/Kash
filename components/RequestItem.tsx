@@ -8,8 +8,7 @@ import {useNavigation} from '@react-navigation/native';
 const RequestItem = ({request}) => {
   const navigation = useNavigation();
   const profile = useSelector(state => state.auth.profile);
-  const responded =
-    request.responses.filter(r => r.sender === profile.kashtag).length > 0;
+  const responded = request.accepted_at || request.rejected_at;
   const response = responded
     ? request.responses.filter(r => r.sender === profile.kashtag)[0]
     : null;
@@ -52,7 +51,7 @@ const RequestItem = ({request}) => {
           {responded && (
             <View
               style={{
-                backgroundColor: response.accepted
+                backgroundColor: request.accepted_at
                   ? Colors.lightSuccess
                   : Colors.lightDanger,
                 padding: 4,
@@ -62,9 +61,9 @@ const RequestItem = ({request}) => {
               <Text
                 style={{
                   fontFamily: 'Inter-Semibold',
-                  color: response.accepted ? Colors.brand : Colors.danger,
+                  color: request.accepted_at ? Colors.brand : Colors.danger,
                 }}>
-                {response.accepted ? 'Accepté' : 'Refusé'}
+                {request.accepted_at ? 'Accepté' : 'Refusé'}
               </Text>
             </View>
           )}

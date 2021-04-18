@@ -97,7 +97,7 @@ function ConfirmRequest() {
           </Button>
           <View style={{flex: 0.1}}></View>
           <Button
-            onPress={() => navigation.navigate('SendKash')}
+            onPress={() => navigation.navigate('Pay', request)}
             style={{flex: 0.8}}>
             Envoyer
           </Button>

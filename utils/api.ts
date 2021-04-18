@@ -48,9 +48,15 @@ api.interceptors.request.use(async config => {
   return config;
 });
 
-export function fetcher(url) {
+export function fetcher(url: string) {
   return api.get(url).then(res => {
     return res.data;
+  });
+}
+
+export function fetcherInfinite(url: string) {
+  return api.get(url).then(res => {
+    return res.data.results;
   });
 }
 

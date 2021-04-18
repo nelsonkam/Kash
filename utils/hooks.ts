@@ -1,6 +1,9 @@
 import {useEffect, useRef, useState} from 'react';
 import {Alert, Platform} from 'react-native';
 import KBottomSheet from '../components/KBottomSheet';
+import {useSWRInfinite} from 'swr/esm';
+import {fetcherInfinite} from './api';
+import {useSWRNativeRevalidate} from '@nandorojo/swr-react-native';
 
 export type AsyncHook<T> = {
   execute: (...args: any) => Promise<T>;
@@ -49,3 +52,49 @@ export const usePayment = () => {
 
   return {viewRef, reference, setReference};
 };
+
+export type InfiniteHook<T> = {
+  data: T[];
+  isLoading: boolean;
+  isLoadingMore: boolean;
+  isEmpty: boolean;
+  hasReachedEnd: boolean;
+  isRefreshing: boolean;
+  loadMore: () => void;
+  refresh: () => void;
+  error: Error;
+};
+
+export function useInfinite<T>(key: string, pageSize = 10): InfiniteHook<T> {
+  const {
+    size,
+    data,
+    error,
+    isValidating,
+    mutate,
+    revalidate,
+    setSize,
+  } = useSWRInfinite((index, prevPage) => {
+    if (prevPage && prevPage.length === 0) return null;
+    if (index === 0) return `${key}?paginate=1&limit=${pageSize}`;
+    return `${key}?paginate=1&limit=${pageSize}&offset=${pageSize * index}`;
+  }, fetcherInfinite);
+
+  useSWRNativeRevalidate({revalidate});
+
+  return {
+    data: data ? [].concat(...data) : [],
+    isLoading: !data && !error,
+    isLoadingMore:
+      (!data && !error) ||
+      (size > 0 && !!data && typeof data[size - 1] === 'undefined'),
+    isEmpty: data?.[0]?.length === 0,
+    hasReachedEnd:
+      data?.[0]?.length === 0 ||
+      (!!data && data[data.length - 1]?.length < pageSize),
+    isRefreshing: isValidating && !!data && data.length === size,
+    loadMore: () => setSize(size + 1),
+    refresh: mutate,
+    error,
+  };
+}

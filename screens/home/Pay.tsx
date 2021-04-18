@@ -1,16 +1,26 @@
-import React, {useState} from 'react';
-import {TouchableOpacity, View, Text, Image, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Colors from '../../utils/colors';
 import useSWRNative from '@nandorojo/swr-react-native';
-import {fetcher} from '../../utils/api';
+import api, {fetcher} from '../../utils/api';
 import {spaceString} from '../../utils';
 import ButtonPicker from '../../components/Picker';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import {useAsync} from '../../utils/hooks';
+import useSWR from 'swr/esm';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
-export const PaymentForm = ({amount, onNext, loading, fees = 0}) => {
+export const PaymentForm = ({amount, currency, onNext, loading, fees}) => {
   const [gateway, setGateway] = useState<string | null>(null);
   const [phone, setPhone] = useState<string | null>(null);
   return (
@@ -78,7 +88,7 @@ export const PaymentForm = ({amount, onNext, loading, fees = 0}) => {
               borderRadius: 100,
             }}>
             <Text style={{color: Colors.dark, fontFamily: 'Inter-Bold'}}>
-              Frais d'envoi: CFA {fees}
+              Frais d'envoi: {fees.currency} {fees.amount}
             </Text>
           </View>
         </View>
@@ -86,34 +96,46 @@ export const PaymentForm = ({amount, onNext, loading, fees = 0}) => {
           loading={loading}
           onPress={() => onNext({phone, gateway})}
           disabled={!(gateway && phone)}>
-          Payer CFA {amount}
+          Payer {currency} {amount}
         </Button>
       </View>
     </View>
   );
 };
 
-function Pay(props) {
-  const navigation = useNavigation();
-  const {params} = useRoute();
+function ChoosePaymentMethod({
+  total,
+  fees,
+  nextLoading,
+  onPaymentMethodSelected,
+}) {
   const momoAccountQuery = useSWRNative(`/kash/momo-accounts/`, fetcher);
-  const {amount, currency} = params;
   const [momoAccountId, setMomoAccountId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      title: `Payer ${currency}${amount}`,
-    });
-  }, [navigation]);
-
-  const handlePay = () => {};
+  const handlePay = () => {
+    if (momoAccountId) {
+      const momoAccount = momoAccountQuery.data?.filter(
+        item => item.id === momoAccountId,
+      )[0];
+      onPaymentMethodSelected({
+        phone: momoAccount.phone,
+        gateway: momoAccount.gateway,
+      });
+    }
+  };
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       {showForm ? (
         <>
-          <PaymentForm amount={amount} onNext={handlePay} loading={false} />
+          <PaymentForm
+            fees={fees}
+            amount={total.amount}
+            currency={total.currency}
+            onNext={onPaymentMethodSelected}
+            loading={false}
+          />
           <TouchableOpacity
             style={{
               alignItems: 'center',
@@ -210,16 +232,143 @@ function Pay(props) {
                   fontSize: 16,
                   color: Colors.dark,
                 }}>
-                CFA 300
+                {fees.currency} {fees.amount}
               </Text>
             </View>
-            <Button disabled={!momoAccountId}>
-              Payer {currency} {amount}
+            <Button
+              loading={nextLoading}
+              onPress={handlePay}
+              disabled={!momoAccountId}>
+              Payer {total.currency} {total.amount}
             </Button>
           </View>
         </>
       )}
     </View>
+  );
+}
+
+const TransactionStatus = ({reference, onStatusChanged}) => {
+  const transactionQuery = useSWR(`/kash/transactions/${reference}/`, fetcher, {
+    refreshInterval: 10,
+  });
+  const status = transactionQuery.data?.status;
+
+  useEffect(() => {
+    if (status === 'failed' || status === 'success') {
+      onStatusChanged(transactionQuery.data);
+    }
+  }, [transactionQuery.data]);
+  if (status === 'failed') {
+    return (
+      <View
+        style={{
+          backgroundColor: 'white',
+          padding: 16,
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: Dimensions.get('window').height * 0.8,
+        }}>
+        <AntDesign name={'closecircle'} color={Colors.danger} size={56} />
+        <Text
+          style={{
+            fontFamily: 'Inter-Semibold',
+            color: Colors.dark,
+            marginVertical: 24,
+            fontSize: 16,
+            textAlign: 'center',
+          }}>
+          Oops, ton paiement n'est pas passé.
+        </Text>
+      </View>
+    );
+  } else if (status === 'success') {
+    return (
+      <View
+        style={{
+          backgroundColor: 'white',
+          padding: 16,
+          height: Dimensions.get('window').height * 0.8,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <AntDesign name={'checkcircle'} color={Colors.success} size={56} />
+        <Text
+          style={{
+            fontFamily: 'Inter-Semibold',
+            color: Colors.dark,
+            marginVertical: 24,
+            fontSize: 16,
+            textAlign: 'center',
+          }}>
+          Super, nous avons reçu ton paiement!
+        </Text>
+      </View>
+    );
+  } else {
+    return (
+      <View
+        style={{
+          backgroundColor: 'white',
+          padding: 16,
+          height: Dimensions.get('window').height * 0.8,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <ActivityIndicator size={'large'} color={Colors.brand} />
+        <Text
+          style={{
+            fontFamily: 'Inter-Semibold',
+            color: Colors.dark,
+            marginVertical: 24,
+            fontSize: 16,
+            textAlign: 'center',
+          }}>
+          Un instant, ton paiement est en cours...
+        </Text>
+      </View>
+    );
+  }
+};
+
+function Pay() {
+  const {params} = useRoute();
+  const {id, total, fees} = params;
+  const navigation = useNavigation();
+  const acceptRequest = useAsync((id, data) =>
+    api.post(`/kash/requests/${id}/accept/`, data),
+  );
+  const [txnReference, setTxnReference] = useState(null);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: `Payer ${total.currency} ${total.amount}`,
+    });
+  }, [navigation]);
+
+  const handlePay = data => {
+    acceptRequest.execute(id, data).then(res => {
+      setTxnReference(res.data.txn_ref);
+    });
+  };
+  const handleStatusChanged = () => {
+    setTimeout(() => {
+      navigation.navigate('Requests');
+    }, 1000);
+  };
+
+  return txnReference ? (
+    <TransactionStatus
+      reference={txnReference}
+      onStatusChanged={handleStatusChanged}
+    />
+  ) : (
+    <ChoosePaymentMethod
+      total={total}
+      fees={fees}
+      nextLoading={acceptRequest.loading}
+      onPaymentMethodSelected={handlePay}
+    />
   );
 }
 
