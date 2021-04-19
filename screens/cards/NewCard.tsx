@@ -1,26 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  ActivityIndicator,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Colors from '../../utils/colors';
-import NumPad from '../../components/NumPad';
-import {parse} from '../../utils';
 import KBottomSheet from '../../components/KBottomSheet';
 import PaymentSheet from '../../components/PaymentSheet';
 import {useAsync} from '../../utils/hooks';
-import api from '../../utils/api';
+import api, {fetcher} from '../../utils/api';
 import toast from '../../utils/toast';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import KashPad from '../../components/KashPad';
+import useSWRNative from '@nandorojo/swr-react-native';
+import {CardPaymentOperationType} from '../../utils';
 
-const CardForm = ({onVirtualCard}) => {
+const CardForm = ({onVirtualCard}: {onVirtualCard: (card: any) => void}) => {
   const [name, setName] = useState<string>('');
   const createVirtualCard = useAsync(data =>
     api.post(`/kash/virtual-cards/`, data),
@@ -40,13 +34,15 @@ const CardForm = ({onVirtualCard}) => {
     <View style={{padding: 16}}>
       <Text style={styles.title}>Donnes un nom à ta carte</Text>
       <Text style={styles.subtitle}>
-        Ce nom te permettra de distinguer tes cartes à l'avenir.
+        Ce nom te permettra de distinguer tes cartes à l'avenir. Tu peux changer
+        ce nom à tout moment.
       </Text>
       <View style={{marginTop: 16}}>
         <Input
           value={name}
           onChangeText={text => setName(text)}
           label={'Nom de la carte'}
+          placeholder={'Ex. Netflix, Shopping...'}
         />
       </View>
       <Button
@@ -61,53 +57,14 @@ const CardForm = ({onVirtualCard}) => {
   );
 };
 
-const RechargeCard = ({onRecharge}) => {
-  const [amount, setAmount] = useState(0);
-  const navigation = useNavigation();
-  const handleNumChange = num => {
-    if (num === 'backspace') {
-      setAmount(
-        parse(amount.toString().substring(0, amount.toString().length - 1)),
-      );
-    } else {
-      setAmount(parse(`${amount}${num}`));
-    }
-  };
-  return (
-    <ScrollView contentContainerStyle={{flex: 1}}>
-      <View style={{flex: 0.6, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.amount}>
-          CFA{' '}
-          <Text style={{color: amount === 0 ? Colors.disabled : Colors.dark}}>
-            {amount}
-          </Text>
-        </Text>
-      </View>
-      <View style={{flex: 1}}>
-        <View
-          style={{flexDirection: 'row', marginHorizontal: 8, marginBottom: 24}}>
-          <Button
-            onPress={() => navigation.goBack()}
-            color={Colors.border}
-            textColor={Colors.dark}
-            style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
-            Annuler
-          </Button>
-          <Button
-            color={Colors.brand}
-            disabled={amount < 3000 || amount > 50000}
-            onPress={() => onRecharge(amount)}
-            style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
-            Recharger
-          </Button>
-        </View>
-        <NumPad onChange={handleNumChange} height={320}></NumPad>
-      </View>
-    </ScrollView>
-  );
+type RecapSheetProps = {
+  amount: number;
+  onNext: () => void;
+  fees: number;
+  virtualCard: any;
 };
 
-const RecapSheet = ({amount, onNext, virtualCard}) => {
+const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
   return (
     <View
       style={{
@@ -176,6 +133,33 @@ const RecapSheet = ({amount, onNext, virtualCard}) => {
             CFA {amount}
           </Text>
         </View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginVertical: 12,
+          }}>
+          <Text
+            style={{
+              fontFamily: 'Inter-Semibold',
+              fontSize: 16,
+              color: Colors.dark,
+            }}>
+            Frais de transaction
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Inter-Semibold',
+              fontSize: 16,
+              color: Colors.medium,
+            }}>
+            {' '}
+            CFA {fees}
+          </Text>
+        </View>
+
         <View
           style={{
             backgroundColor: Colors.disabled,
@@ -206,7 +190,7 @@ const RecapSheet = ({amount, onNext, virtualCard}) => {
               color: Colors.medium,
             }}>
             {' '}
-            CFA {amount + 1000}
+            CFA {amount + virtualCard?.issuance_cost?.amount + fees}
           </Text>
         </View>
       </View>
@@ -215,164 +199,68 @@ const RecapSheet = ({amount, onNext, virtualCard}) => {
   );
 };
 
-const CardCreation = ({action}) => {
+function NewCard() {
   const navigation = useNavigation();
-  useEffect(() => {
-    if (action.value) {
-      setTimeout(() => {
-        navigation.goBack();
-      }, 2000);
-    }
-  }, [action]);
-  if (action.error) {
-    return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          padding: 16,
-          height: 320,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <AntDesign name={'closecircle'} color={Colors.danger} size={56} />
-        <Text
-          style={{
-            fontFamily: 'Inter-Semibold',
-            color: Colors.dark,
-            marginVertical: 24,
-            fontSize: 16,
-            textAlign: 'center',
-          }}>
-          Oops, une erreur est survenue lors de la création de ta carte
-        </Text>
-      </View>
-    );
-  } else if (action.value) {
-    return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          padding: 16,
-          height: 320,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <AntDesign name={'checkcircle'} color={Colors.success} size={56} />
-        <Text
-          style={{
-            fontFamily: 'Inter-Semibold',
-            color: Colors.dark,
-            marginVertical: 24,
-            fontSize: 16,
-            textAlign: 'center',
-          }}>
-          Super, ta carte vient d'être créée!
-        </Text>
-      </View>
-    );
-  } else {
-    return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          padding: 16,
-          height: 320,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <ActivityIndicator size={'large'} color={Colors.brand} />
-        <Text
-          style={{
-            fontFamily: 'Inter-Semibold',
-            color: Colors.dark,
-            marginVertical: 24,
-            fontSize: 16,
-            textAlign: 'center',
-          }}>
-          Un instant, la création de ta carte est en cours...
-        </Text>
-      </View>
-    );
-  }
-};
-
-function NewCard(props) {
-  const navigation = useNavigation();
-  const [virtualCard, setVirtualCard] = useState(null);
+  const profileQuery = useSWRNative('/kash/profiles/current/', fetcher);
+  const [virtualCard, setVirtualCard] = useState<any>(null);
   const [amount, setAmount] = useState<number | null>(null);
-  const [reference, setReference] = useState<string | null>(null);
+  const [usdAmount, setUSDAmount] = useState<number | null>(null);
+  const [fees, setFees] = useState<number | null>(null);
   const recapRef = useRef<KBottomSheet>(null);
-  const paymentRef = useRef<KBottomSheet>(null);
-  const creationRef = useRef<KBottomSheet>(null);
-  const purchaseVirtualCard = useAsync((id, data) =>
-    api.post(`/kash/virtual-cards/${id}/purchase/`, data),
+  const convertAmount = useAsync((id, amount) =>
+    api.post(`/kash/virtual-cards/${id}/convert/`, {amount}),
   );
-  const confirmPurchase = useAsync((id, data) =>
-    api.post(`/kash/virtual-cards/${id}/purchase/confirm/`, data),
-  );
+  const limits = profileQuery.data?.limits || {};
 
-  const handleRecharge = (n: number) => {
-    setAmount(n);
-    recapRef.current?.open();
+  const handleRecharge = (usdAmount: number) => {
+    setUSDAmount(usdAmount);
+    convertAmount.execute(virtualCard?.id, usdAmount).then(res => {
+      setAmount(res.data.amount);
+      setFees(res.data.fees);
+      recapRef.current?.open();
+    });
   };
 
-  const handlePay = (data: {phone: string; gateway: string}) => {
-    return purchaseVirtualCard
-      .execute(virtualCard.id, {
-        initial_amount: amount,
-        phone: data.phone,
-        gateway: data.gateway,
-      })
-      .then(res => {
-        setReference(res.data.txn_ref);
-      });
-  };
-
-  const handleStatusChanged = txn => {
-    if (txn.status === 'failed') {
-      setTimeout(() => {
-        navigation.goBack();
-      }, 2000);
-    } else if (txn.status === 'success') {
-      recapRef.current?.close();
-      paymentRef.current?.close();
-      creationRef.current?.open();
-      confirmPurchase.execute(virtualCard.id, {txn_ref: txn.reference});
-    }
+  const handleNext = () => {
+    recapRef.current?.close();
+    const totalAmount = amount + virtualCard?.issuance_cost.amount;
+    navigation.navigate('PayCard', {
+      id: virtualCard.id,
+      total: {
+        amount: totalAmount,
+        currency: 'XOF',
+      },
+      fees: {amount: fees, currency: 'XOF'},
+      usdAmount,
+      type: CardPaymentOperationType.fund,
+    });
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       {!virtualCard ? (
         <CardForm onVirtualCard={setVirtualCard} />
       ) : (
-        <RechargeCard onRecharge={handleRecharge} />
-      )}
-      <KBottomSheet ref={recapRef} snapPoints={[320, 0]}>
-        <RecapSheet
-          virtualCard={virtualCard}
-          amount={amount}
-          onNext={() => {
-            recapRef.current?.close();
-            paymentRef.current?.open();
+        <KashPad
+          limits={limits['purchase-card'] || {}}
+          currency={'$'}
+          onNext={handleRecharge}
+          loading={convertAmount.loading}
+          buttonText={{
+            next: 'Recharger',
+            cancel: 'Annuler',
           }}
         />
-      </KBottomSheet>
-      <KBottomSheet ref={creationRef} snapPoints={[320, 0]}>
-        <CardCreation action={confirmPurchase} />
-      </KBottomSheet>
-
-      <KBottomSheet ref={paymentRef} snapPoints={['80%', 0]}>
-        <PaymentSheet
-          reference={reference}
-          loading={purchaseVirtualCard.loading}
-          amount={amount + (virtualCard?.issuance_cost?.amount || 0)}
-          fees={0}
-          onPay={handlePay}
-          onStatusChanged={handleStatusChanged}
+      )}
+      <KBottomSheet ref={recapRef} snapPoints={[360, 0]}>
+        <RecapSheet
+          virtualCard={virtualCard}
+          amount={amount!}
+          fees={fees!}
+          onNext={handleNext}
         />
       </KBottomSheet>
-    </SafeAreaView>
+    </View>
   );
 }
 

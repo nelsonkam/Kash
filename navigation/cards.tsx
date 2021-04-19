@@ -9,6 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 import OneSignal from 'react-native-onesignal';
 import RechargeCard from '../screens/cards/RechargeCard';
 import Withdrawal from '../screens/cards/Withdrawal';
+import PayCard from '../screens/cards/PayCard';
 
 const Stack = createStackNavigator();
 
@@ -45,6 +46,7 @@ export default function CardStack() {
         name="Withdrawal"
         component={Withdrawal}
       />
+      <Stack.Screen options={{title: ''}} name="PayCard" component={PayCard} />
     </Stack.Navigator>
   );
 }

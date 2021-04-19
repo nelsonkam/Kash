@@ -5,7 +5,7 @@ import Home from '../screens/home/Home';
 import Requests from '../screens/home/Requests';
 import ConfirmRequest from '../screens/home/ConfirmRequest';
 import SendKash from '../screens/home/SendKash';
-import Pay from '../screens/home/Pay';
+import PayRequest from '../screens/home/PayRequest';
 import TransactionHistory from '../screens/home/TransactionHistory';
 
 const Stack = createStackNavigator();
@@ -41,7 +41,7 @@ function HomeStack() {
       <Stack.Screen
         options={{title: 'Payer', headerBackTitle: ''}}
         name="Pay"
-        component={Pay}
+        component={PayRequest}
       />
       <Stack.Screen
         options={{headerShown: false}}

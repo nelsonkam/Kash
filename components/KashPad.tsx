@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Colors from '../utils/colors';
 import Button from './Button';
 import NumPad from './NumPad';
@@ -17,6 +17,7 @@ type Props = {
     cancel: string;
     next: string;
   };
+  loading: boolean;
 };
 
 function KashPad({
@@ -24,6 +25,7 @@ function KashPad({
   currency,
   onNext,
   buttonText = {cancel: 'Annuler', next: ''},
+  loading = false,
 }: Props) {
   const [amount, setAmount] = useState(0);
   const navigation = useNavigation();
@@ -39,36 +41,40 @@ function KashPad({
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white', position: 'relative'}}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          position: 'absolute',
-          width: '100%',
-        }}>
-        {limits.min && amount < limits.min ? (
-          <View style={styles.minMaxPill}>
-            <Text
-              style={{
-                color: Colors.dark,
-                fontFamily: 'Inter-Bold',
-              }}>
-              {`Minimum: ${currency}` + limits.min}
-            </Text>
-          </View>
-        ) : null}
-        {limits.max && amount > limits.max ? (
-          <View style={styles.minMaxPill}>
-            <Text
-              style={{
-                color: Colors.dark,
-                fontFamily: 'Inter-Bold',
-              }}>
-              {`Maximum: ${currency}` + limits.max}
-            </Text>
-          </View>
-        ) : null}
+    <ScrollView
+      contentContainerStyle={{flex: 1, paddingBottom: 24}}
+      style={{flex: 1, backgroundColor: 'white', position: 'relative'}}>
+      <View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            position: 'absolute',
+            width: '100%',
+          }}>
+          {limits.min && amount < limits.min ? (
+            <View style={styles.minMaxPill}>
+              <Text
+                style={{
+                  color: Colors.dark,
+                  fontFamily: 'Inter-Bold',
+                }}>
+                {`Minimum: ${currency}` + limits.min}
+              </Text>
+            </View>
+          ) : null}
+          {limits.max && amount > limits.max ? (
+            <View style={styles.minMaxPill}>
+              <Text
+                style={{
+                  color: Colors.dark,
+                  fontFamily: 'Inter-Bold',
+                }}>
+                {`Maximum: ${currency}` + limits.max}
+              </Text>
+            </View>
+          ) : null}
+        </View>
       </View>
       <View
         style={{flex: 0.65, justifyContent: 'center', alignItems: 'center'}}>
@@ -81,7 +87,7 @@ function KashPad({
       </View>
       <View style={{flex: 1}}>
         <View
-          style={{flexDirection: 'row', marginHorizontal: 8, marginBottom: 24}}>
+          style={{flexDirection: 'row', marginHorizontal: 8, marginBottom: 8}}>
           <Button
             onPress={() => navigation.goBack()}
             color={Colors.border}
@@ -95,14 +101,15 @@ function KashPad({
               (!!limits.min && amount < limits.min) ||
               (!!limits.max && amount > limits.max)
             }
+            loading={loading}
             onPress={() => onNext(amount)}
             style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
             {buttonText.next}
           </Button>
         </View>
-        <NumPad onChange={handleNumChange} height={320}></NumPad>
+        <NumPad onChange={handleNumChange} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

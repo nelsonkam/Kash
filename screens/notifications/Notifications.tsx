@@ -21,6 +21,9 @@ import {useNavigation} from '@react-navigation/native';
 
 const NotificationItem = ({notification, onPress}) => {
   const {profile} = useSelector((s: RootState) => s.auth);
+  if (!notification.content_object) {
+      return <View />;
+  }
   const isRequest = notification.content_object.type === 'request';
   const responded =
     isRequest &&

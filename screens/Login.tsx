@@ -78,7 +78,7 @@ const Login = () => {
           </Button>
         </View>
         <Text style={{fontSize: 14, color: Colors.disabled, marginTop: 16}}>
-          Kash n'est disponible qu'au Bénin🇧🇯 pour le moment.
+          Kash est uniquement disponible au Bénin🇧🇯 pour le moment.
         </Text>
       </View>
     </SafeAreaView>

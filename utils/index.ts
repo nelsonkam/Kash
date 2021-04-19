@@ -66,3 +66,8 @@ export const spaceString = (str: string, charCount: number) => {
 };
 
 export const spaceFour = (str: string) => spaceString(str, 4);
+
+export enum CardPaymentOperationType {
+  purchase,
+  fund,
+}
