@@ -39,6 +39,18 @@
 	<string>Nous utilisons votre localisation pour détecter votre pays d'origine à l'inscription</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Nous utilisons ta gallerie pour te permettre d'ajouter une photo de profil.</string>
+	<!-- Required with iOS 10 and higher -->
+    <key>NSCameraUsageDescription</key>
+    <string>Nous utilisons ta camera lors de la vérification de ton identité</string>
+
+    <!-- Required with iOS 11 and higher: include this only if you are planning to use the camera roll -->
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Nous utilisons ta gallerie pour te permettre d'ajouter une photo de profil.</string>
+
+
+    <!-- Include this only if you are planning to use the microphone for video recording -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Nous utilisons ton micro pour enregistrer des vidéos lors du processus de vérification.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Black.ttf</string>

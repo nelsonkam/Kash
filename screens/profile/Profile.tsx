@@ -25,7 +25,7 @@ import authSlice from '../../slices/auth';
 import {useNavigation} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
 
-const createFormData = (photo, body = {}) => {
+const createFormData = (photo: any, body: any = {}) => {
   const data = new FormData();
 
   data.append('avatar', {
@@ -41,7 +41,7 @@ const createFormData = (photo, body = {}) => {
   return data;
 };
 
-function Profile(props) {
+function Profile() {
   const navigation = useNavigation();
   const stateProfile = useSelector((s: RootState) => s.auth.profile);
   const profileQuery = useSWRNative(`/kash/profiles/current/`, fetcher);
@@ -193,31 +193,32 @@ function Profile(props) {
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
         </TouchableOpacity>
-        {/*<TouchableOpacity*/}
-        {/*  style={{*/}
-        {/*    flexDirection: 'row',*/}
-        {/*    justifyContent: 'space-between',*/}
-        {/*    alignItems: 'center',*/}
-        {/*    paddingVertical: 16,*/}
-        {/*    paddingRight: 16,*/}
-        {/*    marginLeft: 16,*/}
-        {/*    borderBottomColor: Colors.border,*/}
-        {/*    borderBottomWidth: 1,*/}
-        {/*  }}>*/}
-        {/*  <View style={{flexDirection: 'row', alignItems: 'center'}}>*/}
-        {/*    <AntDesign name={'checkcircleo'} color={'black'} size={24} />*/}
-        {/*    <Text*/}
-        {/*      style={{*/}
-        {/*        fontFamily: 'Inter-Semibold',*/}
-        {/*        color: Colors.dark,*/}
-        {/*        fontSize: 16,*/}
-        {/*        marginLeft: 12,*/}
-        {/*      }}>*/}
-        {/*      Vérifier mon identité*/}
-        {/*    </Text>*/}
-        {/*  </View>*/}
-        {/*  <AntDesign name={'right'} color={Colors.medium} size={20} />*/}
-        {/*</TouchableOpacity>*/}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('VerifyKYC')}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 16,
+            paddingRight: 16,
+            marginLeft: 16,
+            borderBottomColor: Colors.border,
+            borderBottomWidth: 1,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <AntDesign name={'checkcircleo'} color={'black'} size={24} />
+            <Text
+              style={{
+                fontFamily: 'Inter-Semibold',
+                color: Colors.dark,
+                fontSize: 16,
+                marginLeft: 12,
+              }}>
+              Vérifier mon identité
+            </Text>
+          </View>
+          <AntDesign name={'right'} color={Colors.medium} size={20} />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
             Linking.openURL(

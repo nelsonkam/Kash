@@ -3,10 +3,12 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Profile from '../screens/profile/Profile';
 import PaymentMethods from '../screens/profile/PaymentMethods';
 import AddPayoutMethod from '../screens/profile/AddPayoutMethod';
+import ListKYCDocs from '../screens/profile/ListKYCDocs';
+import VerifyKYCDoc from '../screens/profile/VerifyKYCDoc';
 
 const Stack = createStackNavigator();
 
-function ProfileStack(props) {
+function ProfileStack() {
   return (
     <Stack.Navigator initialRouteName="Profile">
       <Stack.Screen
@@ -23,6 +25,16 @@ function ProfileStack(props) {
         options={{title: 'Ajouter un compte'}}
         name="AddPaymentMethod"
         component={AddPayoutMethod}
+      />
+      <Stack.Screen
+        options={{title: 'Verifier mon identité'}}
+        name="VerifyKYC"
+        component={ListKYCDocs}
+      />
+      <Stack.Screen
+        options={{title: 'Vérification'}}
+        name="VerifyKYCDoc"
+        component={VerifyKYCDoc}
       />
     </Stack.Navigator>
   );
