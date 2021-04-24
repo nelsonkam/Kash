@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, TouchableOpacityProps} from 'react-native';
+import {ActivityIndicator, Platform, TouchableOpacityProps} from 'react-native';
 import {
   TouchableOpacity,
   Text,
@@ -9,6 +9,8 @@ import {
   ViewStyle,
 } from 'react-native';
 import Colors from '../utils/colors';
+import {useNavigation} from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type Props = {
   onPress?: () => void;
@@ -51,32 +53,24 @@ function Button(props: Props) {
   );
 }
 
-export function NextButton(props) {
+type BackButtonProps = {
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+};
+
+export const BackButton = ({onPress, style}: BackButtonProps) => {
+  const navigation = useNavigation();
+  const handleBack = () => navigation.goBack();
   return (
-    <TouchableOpacity
-      style={{
-        backgroundColor: Colors.primary,
-        paddingHorizontal: 18,
-        paddingVertical: 8,
-        flexDirection: 'row',
-        alignItems: 'center',
-        position: 'absolute',
-        borderRadius: 500,
-        bottom: 8,
-        right: 8,
-      }}>
-      <Text
-        style={{
-          color: 'white',
-          fontFamily: 'Inter-Bold',
-          marginRight: 6,
-          fontSize: 16,
-        }}>
-        {props.text}
-      </Text>
+    <TouchableOpacity onPress={onPress || handleBack} style={style}>
+      {Platform.OS === 'ios' ? (
+        <Ionicons name={'chevron-back'} color={'black'} size={28} />
+      ) : (
+        <Ionicons name={'arrow-back'} color={'black'} size={28} />
+      )}
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   button: {

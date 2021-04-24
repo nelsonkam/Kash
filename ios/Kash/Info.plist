@@ -51,6 +51,8 @@
     <!-- Include this only if you are planning to use the microphone for video recording -->
     <key>NSMicrophoneUsageDescription</key>
     <string>Nous utilisons ton micro pour enregistrer des vidéos lors du processus de vérification.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Nous utilisons tes contacts pour retrouver tes potes sur Kash </string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Black.ttf</string>

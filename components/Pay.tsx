@@ -1,9 +1,10 @@
 import useSWR from 'swr/esm';
-import {fetcher} from '../utils/api';
+import api, {fetcher} from '../utils/api';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -16,6 +17,8 @@ import ButtonPicker from './Picker';
 import {spaceString} from '../utils';
 import Button from './Button';
 import Input from './Input';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useAsync} from '../utils/hooks';
 
 type TransactionStatusProps = {
   reference: string;
@@ -26,10 +29,21 @@ export const TransactionStatus = ({
   reference,
   onStatusChanged,
 }: TransactionStatusProps) => {
-  const transactionQuery = useSWR(`/kash/transactions/${reference}/`, fetcher, {
-    refreshInterval: 10,
-  });
+  const transactionQuery = useSWRNative(
+    `/kash/transactions/${reference}/`,
+    fetcher,
+    {
+      refreshWhenHidden: false,
+    },
+  );
   const status = transactionQuery.data?.status;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      transactionQuery.revalidate();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (status === 'failed' || status === 'success') {
@@ -140,7 +154,7 @@ export const PaymentForm = ({
     }
   };
   return (
-    <View
+    <ScrollView
       style={{
         backgroundColor: 'white',
         padding: 16,
@@ -155,14 +169,14 @@ export const PaymentForm = ({
         }}>
         Saisis les infos pour le paiement
       </Text>
-      <View style={{marginTop: 24}}>
+      <View style={{marginTop: 32}}>
         <Text
           style={{
             fontFamily: 'Inter-Bold',
             color: Colors.dark,
             marginBottom: 12,
           }}>
-          Choisis un opérateur mobile
+          Choisis ton opérateur mobile
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
           <ButtonPicker
@@ -188,7 +202,9 @@ export const PaymentForm = ({
         <View style={{marginVertical: 12}}>
           <Input
             value={phone || ''}
-            onChangeText={text => setPhone(text.substring(0, 8))}
+            onChangeText={text =>
+              setPhone(text.replace(/[^\d]/g, '').substring(0, 8))
+            }
             keyboardType={'number-pad'}
             label={'Ton numéro momo'}
           />
@@ -215,7 +231,7 @@ export const PaymentForm = ({
           Payer {currency} {amount}
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -265,17 +281,6 @@ export function ChoosePaymentMethod({
             onNext={onPaymentMethodSelected}
             loading={false}
           />
-          <TouchableOpacity
-            style={{
-              alignItems: 'center',
-              paddingVertical: 10,
-              marginVertical: 6,
-            }}
-            onPress={() => setShowForm(false)}>
-            <Text style={{fontFamily: 'Inter-Bold', color: Colors.primary}}>
-              Utiliser un autre moyen de paiement
-            </Text>
-          </TouchableOpacity>
         </>
       ) : (
         <>
@@ -374,5 +379,52 @@ export function ChoosePaymentMethod({
         </>
       )}
     </View>
+  );
+}
+
+type PayProps = {
+  onPay: (data: any) => Promise<Partial<{txn_ref: string}>>;
+  onStatusChanged: (txn: any) => void;
+  total: {
+    amount: number;
+    currency: string;
+  };
+  fees: {
+    amount: number;
+    currency: string;
+  };
+  loading: boolean;
+};
+
+export default function Pay(props: PayProps) {
+  const {total, fees, onPay, onStatusChanged, loading} = props;
+  const navigation = useNavigation();
+  const [txnReference, setTxnReference] = useState('');
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: `Payer ${total.currency} ${total.amount}`,
+      headerBackTitle: '',
+    });
+  }, [navigation]);
+
+  const handlePay = (data: any) => {
+    onPay(data).then(({txn_ref}) => {
+      setTxnReference(txn_ref!);
+    });
+  };
+
+  return txnReference ? (
+    <TransactionStatus
+      reference={txnReference}
+      onStatusChanged={onStatusChanged}
+    />
+  ) : (
+    <ChoosePaymentMethod
+      total={total}
+      fees={fees}
+      nextLoading={loading}
+      onPaymentMethodSelected={handlePay}
+    />
   );
 }

@@ -56,7 +56,6 @@ function Profile() {
       },
     }),
   );
-  const [photo, setPhoto] = React.useState(null);
 
   const handleChoosePhoto = () => {
     launchImageLibrary({noData: true}, response => {

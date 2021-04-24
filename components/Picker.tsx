@@ -30,15 +30,17 @@ function ButtonPicker({
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={{
-        borderColor: active ? Colors.brand : Colors.border,
-        borderWidth: 2,
-        borderRadius: 4,
-        padding: 6,
-        flexDirection: 'row',
-        alignItems: 'center',
-        ...style,
-      }}>
+      style={[
+        {
+          borderColor: active ? Colors.brand : Colors.border,
+          borderWidth: 2,
+          borderRadius: 4,
+          padding: 6,
+          flexDirection: 'row',
+          alignItems: 'center',
+        },
+        style,
+      ]}>
       <Image
         style={{height: imageSize, width: imageSize, borderRadius: 2}}
         source={source}

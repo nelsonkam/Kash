@@ -17,7 +17,7 @@ type Props = {
     cancel: string;
     next: string;
   };
-  loading: boolean;
+  loading?: boolean;
 };
 
 function KashPad({
@@ -81,7 +81,7 @@ function KashPad({
         <Text style={styles.amount}>
           {currency}{' '}
           <Text style={{color: amount === 0 ? Colors.disabled : Colors.dark}}>
-            {amount}
+            {amount.toLocaleString()}
           </Text>
         </Text>
       </View>
@@ -115,7 +115,7 @@ function KashPad({
 
 const styles = StyleSheet.create({
   amount: {
-    fontFamily: 'Inter-Semibold',
+    fontFamily: 'Inter-Medium',
     fontSize: 44,
     color: Colors.dark,
     paddingHorizontal: 4,

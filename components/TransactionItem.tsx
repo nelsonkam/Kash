@@ -3,7 +3,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Colors from '../utils/colors';
 import React from 'react';
 
-const TransactionItem = ({transaction}) => {
+const TransactionItem = ({transaction}: {transaction: any}) => {
   const isDebit = transaction.txn_type === 'debit';
   let iconName = isDebit ? 'arrow-top-right' : 'arrow-bottom-left';
   iconName = transaction.status.toLowerCase() === 'failed' ? 'close' : iconName;
@@ -50,7 +50,7 @@ const TransactionItem = ({transaction}) => {
                 fontSize: 14,
                 color: isDebit ? Colors.danger : Colors.brand,
               }}>
-              {transaction.amount} XOF
+              CFA {parseFloat(transaction.amount).toLocaleString()}
             </Text>
           </View>
           <Text

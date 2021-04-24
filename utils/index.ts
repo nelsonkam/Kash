@@ -71,3 +71,8 @@ export enum CardPaymentOperationType {
   purchase,
   fund,
 }
+
+export enum P2PTxnType {
+  send,
+  request,
+}

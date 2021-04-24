@@ -7,6 +7,7 @@ import api from '../../utils/api';
 
 function SendKash() {
   const {params} = useRoute();
+  // @ts-ignore
   const request = params.request;
   const navigation = useNavigation();
   const sendKash = useAsync(data => api.post(`/kash/send/`, data), true);

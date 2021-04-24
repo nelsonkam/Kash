@@ -267,6 +267,8 @@ PODS:
     - React-Core
   - react-native-camera/RN (3.43.6):
     - React-Core
+  - react-native-contacts (7.0.0):
+    - React-Core
   - react-native-image-picker (3.3.2):
     - React-Core
   - react-native-netinfo (6.0.0):
@@ -432,6 +434,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
@@ -512,6 +515,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
+  react-native-contacts:
+    :path: "../node_modules/react-native-contacts"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
@@ -596,6 +601,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 06a9c77b56902ae7ffcdd7a4905f664adc5d237b
   React-jsinspector: 0ae35a37b20d5e031eb020a69cc5afdbd6406301
   react-native-camera: 9e55a09596b8c4e41eb7d4cce7c39826990c3cac
+  react-native-contacts: 493b583e87eb9cb1ab09268e89e526baf1a7cb30
   react-native-image-picker: b42940647478bf106ad3c491d6f5d9d40916d865
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
   react-native-onesignal: b4b93d774fd626e90c5a5abafa342f9af21c66dc
@@ -625,6 +631,6 @@ SPEC CHECKSUMS:
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 75cf0f43c9b01ca33ceafb8076dbf12a677b174b
+PODFILE CHECKSUM: e9124322640046eae087c774b971b94774811153
 
 COCOAPODS: 1.10.1

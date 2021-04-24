@@ -1,39 +1,28 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
+  Alert,
   Linking,
   Platform,
-  StatusBar,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
-  Image,
-  ScrollView,
-  Dimensions,
-  Alert,
-  RefreshControl,
+  View,
 } from 'react-native';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Colors from '../../utils/colors';
-import NumPad from '../../components/NumPad';
-import Button from '../../components/Button';
-import {parse} from '../../utils';
 import {useNavigation} from '@react-navigation/native';
-import KBottomSheet from '../../components/KBottomSheet';
 import useSWRNative from '@nandorojo/swr-react-native';
 import {fetcher} from '../../utils/api';
-import Avatar from '../../components/Avatar';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../utils/store';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import RequestItem from '../../components/RequestItem';
 import TransactionItem from '../../components/TransactionItem';
 
 const VERSION = '1.0.0';
 
-const EmptyState = ({icon, text}) => {
+const EmptyState = ({icon, text}: {icon: React.ReactElement; text: string}) => {
   return (
     <View style={{height: 160, justifyContent: 'center', alignItems: 'center'}}>
       {icon}
@@ -144,7 +133,9 @@ const Home = () => {
               }}>
               CFA{' '}
               {profile.txn_summary
-                ? profile.txn_summary['30-days']?.received
+                ? parseFloat(
+                    profile.txn_summary['30-days']?.received,
+                  ).toLocaleString()
                 : null}
             </Text>
             <Text
@@ -180,7 +171,9 @@ const Home = () => {
               }}>
               CFA{' '}
               {profile.txn_summary
-                ? profile.txn_summary['30-days']?.sent
+                ? parseFloat(
+                    profile.txn_summary['30-days']?.sent,
+                  ).toLocaleString()
                 : null}
             </Text>
             <Text
@@ -230,7 +223,7 @@ const Home = () => {
           </View>
         )}
         <View style={styles.card}>
-          {requestsQuery.data?.results?.map((item, i) => (
+          {requestsQuery.data?.results?.map((item: any, i: number) => (
             <>
               <RequestItem request={item} />
               {i !== requestsQuery.data?.results.length - 1 && (
@@ -288,7 +281,7 @@ const Home = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.card}>
-          {transactionsQuery.data?.results?.map((item, i) => (
+          {transactionsQuery.data?.results?.map((item: any, i: number) => (
             <>
               <TransactionItem transaction={item} />
               {i !== 4 && (
