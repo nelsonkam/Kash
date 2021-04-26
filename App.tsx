@@ -66,7 +66,6 @@ function App() {
 
   return auth.refresh &&
     auth.profile &&
-    auth.profile.invite &&
     auth.profile.payout_methods?.length > 0 ? (
     <MainStack />
   ) : (

@@ -1,8 +1,6 @@
 import React from 'react';
 import {isToday} from '../../utils';
-import useSWRNative from '@nandorojo/swr-react-native';
-import {fetcher} from '../../utils/api';
-import {SectionList, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import Colors from '../../utils/colors';
 import RequestItem from '../../components/RequestItem';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -13,7 +11,7 @@ import SectionHeader from '../../components/SectionHeader';
 function Requests() {
   const requestsQuery = useInfinite(`/kash/requests/received/`, 10);
 
-  const groups = requestsQuery.data?.reduce((groups, notif) => {
+  const groups: any = requestsQuery.data?.reduce((groups: any, notif: any) => {
     const date = notif.created_at.split('T')[0];
     if (!groups[date]) {
       groups[date] = [];
@@ -27,7 +25,7 @@ function Requests() {
       title: isToday(new Date(date))
         ? "Aujourd'hui"
         : new Date(date).toLocaleDateString(),
-      data: groups[date].sort((a, b) => {
+      data: groups[date].sort((a: any, b: any) => {
         if (a.created_at > b.created_at) {
           return -1;
         } else if (a.created_at < b.created_at) {

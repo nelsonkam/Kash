@@ -1491,6 +1491,14 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
   integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
 
+"@types/react-native-onboarding-swiper@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/react-native-onboarding-swiper/-/react-native-onboarding-swiper-1.1.1.tgz#72c07c21be009bbabd4394d6608e37988fd339ee"
+  integrity sha512-E7bIk+VidjP44gcLXfmda18iEK9OGwgkei8nh0p2vFvmJNOU479CIEYKpXRe5UT08Jb4D4opjdSQWrNw6Ke59w==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
 "@types/react-native-vector-icons@^6.4.6":
   version "6.4.6"
   resolved "https://registry.yarnpkg.com/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.6.tgz#848e3b14572def56212cafbf5cb1254b445bfb41"
@@ -6146,6 +6154,13 @@ react-native-numpad@^0.3.0:
   resolved "https://registry.yarnpkg.com/react-native-numpad/-/react-native-numpad-0.3.0.tgz#a16ae8325dcfd1ef928c2f9359888bda85f2a1c3"
   integrity sha512-sXXCfpupfdrJGOD1U5E3ZkyyHD8OLeRLJecjluNA45Z6DAiiqYYGQN/vvNDkjBLJ66ezdPbY9xwcNqAwfOpc3Q==
 
+react-native-onboarding-swiper@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-onboarding-swiper/-/react-native-onboarding-swiper-1.1.4.tgz#cb2d97c769542228d3904a9da13e02359ed6e3f5"
+  integrity sha512-dG2J6giQpt5kKlU+Xe68E9xy+OkmC9Yf5XD7S1mJQ5VvwySfCIXnPojai0PEQ9NmbbH06k9lqN5Ik1PGYnIdVA==
+  dependencies:
+    tinycolor2 "^1.4.1"
+
 react-native-onesignal@^4.0.4:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-4.0.6.tgz#e20dd164310113fc0fe9a97c8b70270d5cec6fcd"
@@ -7294,6 +7309,11 @@ through@^2.3.6:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
+
+tinycolor2@^1.4.1:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.2.tgz#3f6a4d1071ad07676d7fa472e1fac40a719d8803"
+  integrity sha512-vJhccZPs965sV/L2sU4oRQVAos0pQXwsvTLkWYdqJ+a8Q5kPFzJTuOFwy7UniPli44NKQGAglksjvOcpo95aZA==
 
 tmp@^0.0.33:
   version "0.0.33"

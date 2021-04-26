@@ -1,18 +1,16 @@
 import React, {useRef, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import Colors from '../utils/colors';
-import axios from 'axios';
 import Button from '../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
-import authSlice from '../slices/auth';
-import api, {BASE_URL} from '../utils/api';
+import api from '../utils/api';
 import {useAsync} from '../utils/hooks';
 import {useNavigation} from '@react-navigation/native';
 import toast from '../utils/toast';
 import {RootState} from '../utils/store';
+// @ts-ignore
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {identify} from '../utils/track';
 
 const Verification = () => {
   const {sessionToken, phone} = useSelector((s: RootState) => s.auth);
@@ -22,16 +20,10 @@ const Verification = () => {
   const pinInput = useRef(null);
 
   const verifyCode = useAsync(data =>
-    axios
-      .post('/phone/verify/', data, {baseURL: BASE_URL})
+    api
+      .post('/kash/profiles/current/otp/verify/phone/', data)
       .then(res => res.data),
   );
-
-  const getProfile = useAsync(() => api.get(`/kash/profiles/current/`));
-
-  if (!sessionToken || !phone) {
-    navigation.navigate('Login');
-  }
 
   const handleSubmit = async () => {
     verifyCode
@@ -40,26 +32,8 @@ const Verification = () => {
         phone_number: phone,
         security_code: verificationCode,
       })
-      .then(async data => {
-        dispatch(
-          authSlice.actions.setTokens({
-            access: data.access,
-            refresh: data.refresh,
-          }),
-        );
-        return getProfile.execute();
-      })
       .then(res => {
-        dispatch(authSlice.actions.setProfile(res.data));
-        identify(res.data.kashtag);
-        if (!res.data.invite) {
-          navigation.navigate('InviteCode');
-          return;
-        }
-        if (res.data.payout_methods?.length !== 0) {
-          navigation.navigate('SetupPaymentMethod');
-          return;
-        }
+        navigation.navigate('InviteCode');
       })
       .catch(err => {
         if (err.response && err.response.status === 404) {

@@ -1,31 +1,43 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, StyleSheet, Image, Text} from 'react-native';
+import {View, StyleSheet, Image} from 'react-native';
 import {useSelector} from 'react-redux';
-import Button from '../components/Button';
-import Colors from '../utils/colors';
-import {RootState} from '../utils/store';
+import Button from '../../components/Button';
+import Colors from '../../utils/colors';
+import {RootState} from '../../utils/store';
 
-const GetStarted = () => {
+export default function GetStarted() {
   const navigation = useNavigation();
   const auth = useSelector((s: RootState) => s.auth);
 
   const handleClick = () => {
-    navigation.navigate('Login');
+    navigation.navigate('Signup');
   };
 
   return (
     <View style={styles.container}>
       <View />
       <View style={{alignItems: 'center'}}>
-        <Image style={styles.logo} source={require('../assets/woodmark.png')} />
+        <Image
+          style={styles.logo}
+          source={require('../../assets/woodmark.png')}
+        />
       </View>
-      <Button color="white" textColor="black" onPress={handleClick}>
-        Démarrer
-      </Button>
+      <View style={{width: '100%'}}>
+        <Button
+          style={{width: '100%'}}
+          color="white"
+          textColor="black"
+          onPress={handleClick}>
+          Créer un compte
+        </Button>
+        <Button style={{marginTop: 16}} color={Colors.brand}>
+          J'ai déjà un compte
+        </Button>
+      </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -59,5 +71,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-export default GetStarted;

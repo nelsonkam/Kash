@@ -12,7 +12,7 @@ import authSlice from '../slices/auth';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 
-function SetupProfile(props) {
+function SetupProfile() {
   const navigation = useNavigation();
   const [kashtag, setKashTag] = useState<string>('');
   const [name, setName] = useState<string>('');

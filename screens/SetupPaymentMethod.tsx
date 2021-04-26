@@ -13,9 +13,9 @@ import authSlice from '../slices/auth';
 import toast from '../utils/toast';
 import {track} from '../utils/track';
 
-export function CreatePaymentMethod(props) {
-  const [gateway, setGateway] = useState(null);
-  const [phone, setPhone] = useState(null);
+export function CreatePaymentMethod(props: any) {
+  const [gateway, setGateway] = useState<string | null>(null);
+  const [phone, setPhone] = useState<string>('');
   const createPayoutMethod = useAsync(data =>
     api.post(`/kash/payout-methods/`, data),
   );
@@ -41,22 +41,19 @@ export function CreatePaymentMethod(props) {
   };
   return (
     <View>
-      <Text style={styles.subtitle}>
-        Dis nous vers quel compte momo tu aimerais qu'on envoie ton kash.
-      </Text>
       <View
         style={{
           backgroundColor: 'white',
           height: Dimensions.get('window').height * 0.65,
         }}>
-        <View style={{marginTop: 24}}>
+        <View style={{marginTop: 12}}>
           <Text
             style={{
               fontFamily: 'Inter-Bold',
               color: Colors.dark,
               marginBottom: 12,
             }}>
-            Choisis un opérateur mobile
+            Choisis ton opérateur mobile
           </Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
             <ButtonPicker
@@ -68,7 +65,7 @@ export function CreatePaymentMethod(props) {
               active={gateway === 'mtn-bj'}
               onPress={() => setGateway('mtn-bj')}
             />
-            <View style={{flex: 4}}></View>
+            <View style={{flex: 4}} />
             <ButtonPicker
               style={{
                 flex: 48,
@@ -84,7 +81,8 @@ export function CreatePaymentMethod(props) {
               value={phone}
               onChangeText={text => setPhone(text.substring(0, 8))}
               keyboardType={'number-pad'}
-              label={'Numéro'}></Input>
+              label={'Numéro'}
+            />
           </View>
           <Button
             loading={createPayoutMethod.loading}
@@ -104,7 +102,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
     paddingVertical: 24,
-    justifyContent: 'space-between',
   },
   title: {
     fontFamily: 'Inter-Black',

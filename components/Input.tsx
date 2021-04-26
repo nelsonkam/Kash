@@ -1,5 +1,12 @@
-import React from 'react';
-import {StyleSheet, View, Text, TextInput, TextInputProps} from 'react-native';
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TextInputProps,
+  TouchableOpacity,
+} from 'react-native';
 import Colors from '../utils/colors';
 
 type Props = {
@@ -9,14 +16,30 @@ type Props = {
 } & TextInputProps;
 
 const Input = ({label, description, error, ...rest}: Props) => {
+  const [isSecure, setSecure] = useState(rest.secureTextEntry);
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <Text style={styles.label}>{label}</Text>
+        {rest.secureTextEntry && (
+          <TouchableOpacity onPress={() => setSecure(!isSecure)}>
+            <Text style={{color: Colors.primary, fontFamily: 'Inter-Medium'}}>
+              {isSecure ? 'Afficher' : 'Cacher'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
       {!!description && <Text style={styles.description}>{description}</Text>}
       <TextInput
         {...rest}
         style={styles.input}
-        placeholderTextColor={Colors.disabled}
+        placeholderTextColor={Colors.medium}
+        secureTextEntry={isSecure}
       />
       {!!error && <Text style={styles.error}>{error}</Text>}
     </View>

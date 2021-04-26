@@ -16,7 +16,7 @@ const formatInviteCode = (code: string) => {
   return code.toUpperCase().substring(0, 4);
 };
 
-function InviteCode(props) {
+function InviteCode() {
   const navigation = useNavigation();
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -45,6 +45,7 @@ function InviteCode(props) {
       })
       .catch(err => {
         if (err.response && err.response.status === 400) {
+          // @ts-ignore
           setError(errorMessage[err.response.data.code]);
         } else {
           toast.error(
@@ -54,6 +55,7 @@ function InviteCode(props) {
         }
       });
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -77,6 +79,15 @@ function InviteCode(props) {
             loading={verifyCode.loading}
             onPress={handleNext}>
             Suivant
+          </Button>
+          <Button
+            onPress={() => navigation.navigate('SetupPaymentMethod')}
+            color={'white'}
+            textColor={Colors.primary}
+            style={{
+              marginTop: 24,
+            }}>
+            Je n'ai pas de code d'invitation
           </Button>
         </View>
       </View>
