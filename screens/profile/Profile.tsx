@@ -58,6 +58,7 @@ function Profile() {
   );
 
   const handleChoosePhoto = () => {
+    // @ts-ignore
     launchImageLibrary({noData: true}, response => {
       if (response) {
         uploadAvatar.execute(createFormData(response)).then(() => {
@@ -81,7 +82,9 @@ function Profile() {
           marginBottom: 12,
         }}>
         <View style={{alignItems: 'center'}}>
-          <View
+          <TouchableOpacity
+            disabled={uploadAvatar.loading}
+            onPress={handleChoosePhoto}
             style={{
               alignItems: 'center',
               marginBottom: 16,
@@ -91,11 +94,23 @@ function Profile() {
               padding: 4,
             }}>
             {profile.avatar_url ? (
-              <Avatar size={96} profile={profile} />
+              uploadAvatar.loading ? (
+                <View
+                  style={{
+                    height: 96,
+                    width: 96,
+                    borderRadius: 100,
+                    backgroundColor: Colors.brand,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <ActivityIndicator color={'white'} />
+                </View>
+              ) : (
+                <Avatar size={96} profile={profile} />
+              )
             ) : (
-              <TouchableOpacity
-                disabled={uploadAvatar.loading}
-                onPress={handleChoosePhoto}
+              <View
                 style={{
                   height: 96,
                   width: 96,
@@ -109,9 +124,9 @@ function Profile() {
                 ) : (
                   <Ionicons name={'camera'} color={'white'} size={32} />
                 )}
-              </TouchableOpacity>
+              </View>
             )}
-          </View>
+          </TouchableOpacity>
           <Text style={{fontFamily: 'Inter-Bold', fontSize: 20}}>
             {profile.name}
           </Text>
@@ -301,7 +316,7 @@ function Profile() {
         </View>
         <Text
           style={{marginVertical: 12, color: Colors.disabled, fontSize: 10}}>
-          © {new Date().getFullYear()} - Tous droits réservés. Futurix SAS.
+          © {new Date().getFullYear()} - Tous droits réservés. Futurix LLC.
         </Text>
       </View>
       <KBottomSheet ref={inviteRef} snapPoints={[360, 0]}>

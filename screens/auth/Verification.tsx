@@ -1,13 +1,13 @@
 import React, {useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import Colors from '../utils/colors';
-import Button from '../components/Button';
+import Colors from '../../utils/colors';
+import Button from '../../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
-import api from '../utils/api';
-import {useAsync} from '../utils/hooks';
+import api from '../../utils/api';
+import {useAsync} from '../../utils/hooks';
 import {useNavigation} from '@react-navigation/native';
-import toast from '../utils/toast';
-import {RootState} from '../utils/store';
+import toast from '../../utils/toast';
+import {RootState} from '../../utils/store';
 // @ts-ignore
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -36,14 +36,10 @@ const Verification = () => {
         navigation.navigate('InviteCode');
       })
       .catch(err => {
-        if (err.response && err.response.status === 404) {
-          navigation.navigate('SetupProfile');
-        } else {
-          toast.error(
-            'Erreur lors de la vérification',
-            'Vérifies le code de vérification puis réessaies.',
-          );
-        }
+        toast.error(
+          'Erreur lors de la vérification',
+          'Vérifies le code de vérification puis réessaies.',
+        );
       });
   };
 

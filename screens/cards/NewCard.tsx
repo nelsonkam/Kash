@@ -1,18 +1,17 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Colors from '../../utils/colors';
 import KBottomSheet from '../../components/KBottomSheet';
-import PaymentSheet from '../../components/PaymentSheet';
 import {useAsync} from '../../utils/hooks';
 import api, {fetcher} from '../../utils/api';
 import toast from '../../utils/toast';
 import {useNavigation} from '@react-navigation/native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import KashPad from '../../components/KashPad';
 import useSWRNative from '@nandorojo/swr-react-native';
 import {CardPaymentOperationType} from '../../utils';
+import VerificationOnboarding from '../../components/VerificationOnboarding';
 
 const CardForm = ({onVirtualCard}: {onVirtualCard: (card: any) => void}) => {
   const [name, setName] = useState<string>('');
@@ -201,7 +200,7 @@ const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
 
 function NewCard() {
   const navigation = useNavigation();
-  const profileQuery = useSWRNative('/kash/profiles/current/', fetcher);
+  const profileQuery = useSWRNative('/kash/profiles/current/', fetcher, {});
   const [virtualCard, setVirtualCard] = useState<any>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [usdAmount, setUSDAmount] = useState<number | null>(null);
@@ -211,6 +210,14 @@ function NewCard() {
     api.post(`/kash/virtual-cards/${id}/convert/`, {amount}),
   );
   const limits = profileQuery.data?.limits || {};
+
+  if (profileQuery.data && profileQuery.data.kyc_level < 2) {
+    return (
+      <VerificationOnboarding
+        onNext={() => navigation.navigate('VerifyKYC', {showOnboarding: false})}
+      />
+    );
+  }
 
   const handleRecharge = (usdAmount: number) => {
     setUSDAmount(usdAmount);

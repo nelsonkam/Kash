@@ -1,49 +1,19 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, Text, FlatList} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Colors from '../../utils/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from '../../components/Button';
 import useSWRNative from '@nandorojo/swr-react-native';
 import {fetcher} from '../../utils/api';
-
-function VerificationOnboarding({onNext}: {onNext: () => void}) {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-      }}>
-      <MaterialCommunityIcons name={'shield'} color={Colors.brand} size={96} />
-      <Text
-        style={{
-          textAlign: 'center',
-          fontFamily: 'Inter-Medium',
-          fontSize: 18,
-          marginVertical: 20,
-          marginHorizontal: 32,
-          color: Colors.dark,
-        }}>
-        Avant d'éffectuer certaines actions, tu dois vérifier ton identité. La
-        vérification de ton identité est requise afin de sécuriser ton compte et
-        de protéger les utilisateurs de Kash.
-      </Text>
-
-      <View style={{marginTop: 24}}>
-        <Button onPress={onNext} style={{paddingHorizontal: 32}}>
-          Continuer
-        </Button>
-      </View>
-    </View>
-  );
-}
+import VerificationOnboarding from '../../components/VerificationOnboarding';
 
 function ListKYCDocs() {
   const navigation = useNavigation();
-  const [isOnboardingVisible, showOnboarding] = useState(true);
+  const params = useRoute();
+  // @ts-ignore
+  const [isOnboardingVisible, showOnboarding] = useState(params.showOnboarding);
   const kycDocsQuery = useSWRNative(`/kash/kyc/`, fetcher);
 
   if (isOnboardingVisible) {

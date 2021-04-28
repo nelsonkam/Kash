@@ -80,7 +80,7 @@ function Signup() {
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
         identify(res.data.kashtag);
-        navigation.navigate('Login');
+        navigation.navigate('AddPhone');
       })
       .catch(err => {
         if (err.response && err.response.status === 400) {

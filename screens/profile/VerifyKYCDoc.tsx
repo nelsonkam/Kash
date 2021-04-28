@@ -364,9 +364,10 @@ function TakeSelfie({onNext}: {onNext: (photo: any) => void}) {
           }}>
           <Image
             source={{uri: photo?.uri}}
+            resizeMode={'center'}
             style={{
-              width: width - 96,
-              height: (width - 96) * 1.3,
+              width: 198,
+              height: 198,
               backgroundColor: Colors.border,
               borderRadius: 8,
             }}
@@ -486,7 +487,7 @@ function VerifyKYCDoc() {
   } else if (!verificationDoc.document) {
     return (
       <ScanDocument
-        onBack={() => setVerificationDoc({...verificationDoc, document: null})}
+        onBack={() => setVerificationDoc({...verificationDoc, type: undefined})}
         onNext={(photo: any) =>
           setVerificationDoc({...verificationDoc, document: photo})
         }

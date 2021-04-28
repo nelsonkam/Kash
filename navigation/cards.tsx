@@ -10,6 +10,8 @@ import OneSignal from 'react-native-onesignal';
 import RechargeCard from '../screens/cards/RechargeCard';
 import Withdrawal from '../screens/cards/Withdrawal';
 import PayCard from '../screens/cards/PayCard';
+import ListKYCDocs from '../screens/profile/ListKYCDocs';
+import VerifyKYCDoc from '../screens/profile/VerifyKYCDoc';
 
 const Stack = createStackNavigator();
 
@@ -45,6 +47,16 @@ export default function CardStack() {
         options={{title: "Retirer de l'argent"}}
         name="Withdrawal"
         component={Withdrawal}
+      />
+      <Stack.Screen
+        options={{title: 'Verifier mon identité'}}
+        name="VerifyKYC"
+        component={ListKYCDocs}
+      />
+      <Stack.Screen
+        options={{title: 'Vérification'}}
+        name="VerifyKYCDoc"
+        component={VerifyKYCDoc}
       />
       <Stack.Screen options={{title: ''}} name="PayCard" component={PayCard} />
     </Stack.Navigator>

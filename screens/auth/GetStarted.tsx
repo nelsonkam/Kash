@@ -31,7 +31,10 @@ export default function GetStarted() {
           onPress={handleClick}>
           Créer un compte
         </Button>
-        <Button style={{marginTop: 16}} color={Colors.brand}>
+        <Button
+          onPress={() => navigation.navigate('Login')}
+          style={{marginTop: 16}}
+          color={Colors.brand}>
           J'ai déjà un compte
         </Button>
       </View>

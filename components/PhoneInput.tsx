@@ -22,7 +22,7 @@ const PhoneInput = ({onChange, placeholder = 'Numéro de tél.'}: Props) => {
       codeTextStyle={{
         fontSize: 16,
         fontFamily: 'Inter-Regular',
-        height: Platform.select({ios: 20, android: 25}),
+        height: Platform.select({ios: 20, android: 20}),
       }}
       textInputStyle={{fontSize: 16, fontFamily: 'Inter-Regular', height: 50}}
     />

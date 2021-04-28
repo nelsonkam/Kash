@@ -123,7 +123,7 @@ const Home = () => {
                 fontFamily: 'Inter-SemiBold',
                 marginBottom: 8,
               }}>
-              Entrées
+              Reçu
             </Text>
             <Text
               style={{
@@ -134,7 +134,7 @@ const Home = () => {
               CFA{' '}
               {profile.txn_summary
                 ? parseFloat(
-                    profile.txn_summary['30-days']?.received,
+                    profile.txn_summary['30-days']?.received || 0,
                   ).toLocaleString()
                 : null}
             </Text>
@@ -161,7 +161,7 @@ const Home = () => {
                 fontFamily: 'Inter-SemiBold',
                 marginBottom: 8,
               }}>
-              Sorties
+              Envoyé
             </Text>
             <Text
               style={{
@@ -172,7 +172,7 @@ const Home = () => {
               CFA{' '}
               {profile.txn_summary
                 ? parseFloat(
-                    profile.txn_summary['30-days']?.sent,
+                    profile.txn_summary['30-days']?.sent || 0,
                   ).toLocaleString()
                 : null}
             </Text>

@@ -19,12 +19,12 @@ function HomeStack() {
         component={Home}
       />
       <Stack.Screen
-        options={{title: 'Requêtes reçues'}}
+        options={{title: 'Requêtes reçues', headerBackTitle: ''}}
         name="Requests"
         component={Requests}
       />
       <Stack.Screen
-        options={{title: 'Transactions récentes'}}
+        options={{title: 'Transactions récentes', headerBackTitle: ''}}
         name="TransactionHistory"
         component={TransactionHistory}
       />

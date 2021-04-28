@@ -1,27 +1,18 @@
 import React, {useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  KeyboardAvoidingView,
-  StatusBar,
-} from 'react-native';
-import Colors from '../utils/colors';
-import axios from 'axios';
-import Button from '../components/Button';
-import {useDispatch, useSelector} from 'react-redux';
-import authSlice from '../slices/auth';
-import api, {BASE_URL} from '../utils/api';
-import {useAsync} from '../utils/hooks';
+import {StatusBar, StyleSheet, Text, View} from 'react-native';
+import Colors from '../../utils/colors';
+import Button from '../../components/Button';
+import {useDispatch} from 'react-redux';
+import authSlice from '../../slices/auth';
+import api from '../../utils/api';
+import {useAsync} from '../../utils/hooks';
 import {useNavigation} from '@react-navigation/native';
-import toast from '../utils/toast';
+import toast from '../../utils/toast';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import PhoneInput from '../components/PhoneInput';
-import {RootState} from '../utils/store';
+import PhoneInput from '../../components/PhoneInput';
 
-const Login = () => {
+const AddPhone = () => {
   const dispatch = useDispatch();
-  const auth = useSelector((s: RootState) => s.auth);
   const navigation = useNavigation();
   const [phone, setPhone] = useState('');
 
@@ -71,9 +62,6 @@ const Login = () => {
             Vérifier mon numéro
           </Button>
         </View>
-        <Text style={{fontSize: 14, color: Colors.disabled, marginTop: 16}}>
-          Kash est uniquement disponible au Bénin🇧🇯 pour le moment.
-        </Text>
       </View>
     </SafeAreaView>
   );
@@ -107,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default AddPhone;
