@@ -18,7 +18,7 @@ import {fetcher} from '../../utils/api';
 import CreditCard from '../../components/CreditCard';
 import useSWRNative from '@nandorojo/swr-react-native';
 
-function Cards(props) {
+function Cards() {
   const navigation = useNavigation();
   const cards = useSWRNative(`/kash/virtual-cards/`, fetcher);
   const data = cards.data?.filter(c => c.card_details);

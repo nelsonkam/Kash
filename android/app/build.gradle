@@ -92,6 +92,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
@@ -145,8 +146,8 @@ android {
         applicationId "africa.kweek.kash"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1.0"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
     signingConfigs {

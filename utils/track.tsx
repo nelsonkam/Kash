@@ -1,17 +1,26 @@
 import {Mixpanel} from 'mixpanel-react-native';
+import {requestTrackingPermission} from 'react-native-tracking-transparency';
+import Analytics from 'appcenter-analytics';
 
-export async function track(event, props = {}) {
+export async function track(event: any, props = {}) {
   if (__DEV__) {
     return;
   }
-  const mixpanel = await Mixpanel.init('1e6c7231e8bd05c780b6c911a2788669');
-  return mixpanel.track(event, props);
+  const trackingStatus = await requestTrackingPermission();
+  if (trackingStatus === 'authorized' || trackingStatus === 'unavailable') {
+    const mixpanel = await Mixpanel.init('1e6c7231e8bd05c780b6c911a2788669');
+    return mixpanel.track(event, props);
+  }
 }
 
-export async function identify(id) {
+export async function identify(id: string) {
   if (__DEV__) {
     return;
   }
-  const mixpanel = await Mixpanel.init('1e6c7231e8bd05c780b6c911a2788669');
-  mixpanel.identify(id);
+  const trackingStatus = await requestTrackingPermission();
+  if (trackingStatus === 'authorized' || trackingStatus === 'unavailable') {
+    const mixpanel = await Mixpanel.init('1e6c7231e8bd05c780b6c911a2788669');
+    await Analytics.setEnabled(false);
+    return mixpanel.identify(id);
+  }
 }

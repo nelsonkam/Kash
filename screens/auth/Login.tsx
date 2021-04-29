@@ -66,8 +66,7 @@ function Login() {
             onPress={() => navigation.navigate('RecoverPassword')}
             style={{marginTop: 16}}
             color={'white'}
-            textColor={Colors.primary}
-            loading={login.loading}>
+            textColor={Colors.primary}>
             Mot de passe ou $kashtag oublié
           </Button>
         </View>

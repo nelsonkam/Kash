@@ -17,11 +17,13 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>CodePushDeploymentKey</key>
+	<string>qG9ILKO29W4EYh1DfWjLZyIzSjBnqE_ngscmI</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -35,24 +37,20 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Nous utilisons votre localisation pour détecter votre pays d'origine à l'inscription</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Nous utilisons ta gallerie pour te permettre d'ajouter une photo de profil.</string>
-	<!-- Required with iOS 10 and higher -->
-    <key>NSCameraUsageDescription</key>
-    <string>Nous utilisons ta camera lors de la vérification de ton identité</string>
-
-    <!-- Required with iOS 11 and higher: include this only if you are planning to use the camera roll -->
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Nous utilisons ta gallerie pour te permettre d'ajouter une photo de profil.</string>
-
-
-    <!-- Include this only if you are planning to use the microphone for video recording -->
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Nous utilisons ton micro pour enregistrer des vidéos lors du processus de vérification.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Nous utilisons ta camera lors de la vérification de ton identité</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Nous utilisons tes contacts pour retrouver tes potes sur Kash </string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Nous utilisons votre localisation pour détecter votre pays d'origine à l'inscription</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Nous utilisons ton micro pour enregistrer des vidéos lors du processus de vérification.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Nous utilisons ta gallerie pour te permettre d'ajouter une photo de profil.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Nous utilisons ta gallerie pour te permettre d'ajouter une photo de profil.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Nous collectons des données sur ton utilisation de l'application afin d'améliorer et personnaliser ton expérience utilisateur.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Black.ttf</string>
@@ -77,8 +75,6 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
-	<key>UIUserInterfaceStyle</key>
-    <string>Light</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -91,7 +87,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
 </dict>
 </plist>

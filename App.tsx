@@ -17,6 +17,8 @@ import api from './utils/api';
 import Colors from './utils/colors';
 import * as Sentry from '@sentry/react-native';
 
+import codePush from 'react-native-code-push';
+
 if (!__DEV__) {
   Sentry.init({
     dsn:
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default () => (
+export default codePush(() => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <NotifierWrapper>
@@ -92,4 +94,4 @@ export default () => (
       </NotifierWrapper>
     </PersistGate>
   </Provider>
-);
+));

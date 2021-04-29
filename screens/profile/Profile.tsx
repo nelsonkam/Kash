@@ -60,7 +60,7 @@ function Profile() {
   const handleChoosePhoto = () => {
     // @ts-ignore
     launchImageLibrary({noData: true}, response => {
-      if (response) {
+      if (response && response.uri) {
         uploadAvatar.execute(createFormData(response)).then(() => {
           profileQuery.mutate();
         });
@@ -305,7 +305,7 @@ function Profile() {
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => Linking.openURL('https://fb.me/kash_africa')}
+            onPress={() => Linking.openURL('https://fb.me/mykashafrica')}
             style={{marginHorizontal: 12}}>
             <Ionicons
               name={'logo-facebook'}
@@ -405,7 +405,7 @@ function Profile() {
             <Button
               onPress={() => {
                 Share.share({
-                  message: `Rejoins-moi sur Kash en téléchargeant l'appli et en utilisant le code d'invitation suivant: *${generateInviteCode.value?.data.code}*`,
+                  message: `Rejoins-moi sur Kash en téléchargeant l'appli sur: https://kashafrica.app.link/EKgDUkI0Hfb et en utilisant le code d'invitation suivant: *${generateInviteCode.value?.data.code}*`,
                 });
               }}>
               Partager
