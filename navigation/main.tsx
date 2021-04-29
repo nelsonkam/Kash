@@ -6,7 +6,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CardStack from './cards';
 import KashStack from './kash';
 import NotificationStack from './notifications';
-import ProfileStack from './profile';
 import Search from '../screens/Search';
 import HomeStack from './home';
 
@@ -40,7 +39,11 @@ export default function MainTabs() {
             );
           } else {
             return (
-              <Ionicons name={icons[route.name]} size={size} color={color} />
+              <Ionicons
+                name={icons[route.name as keyof typeof icons]}
+                size={size}
+                color={color}
+              />
             );
           }
         },

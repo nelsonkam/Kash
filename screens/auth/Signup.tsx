@@ -12,6 +12,7 @@ import authSlice from '../../slices/auth';
 import toast from '../../utils/toast';
 import {identify} from '../../utils/track';
 import {useNavigation} from '@react-navigation/native';
+import {AuthHeaderBar} from '../../components/HeaderBar';
 
 function Signup() {
   const [form, setForm] = useState({
@@ -98,70 +99,77 @@ function Signup() {
     <SafeAreaView style={styles.container}>
       {showKashtagSection ? (
         <View>
-          <Text style={styles.title}>Choisis ton $kashtag</Text>
-          <Text style={styles.subtitle}>
-            Ton $kashtag est ton nom d'utilisateur sur Kash, tes potes s'en
-            serviront pour t'envoyer du cash.
-          </Text>
-          <View style={{marginTop: 16}}>
-            <Input
-              value={'$' + kashtag}
-              description={
-                'Ton kashtag ne peut contenir que des lettres miniscules, des chiffres et/ou un tiret de huit ( _ )'
-              }
-              onChangeText={text => setKashTag(toUsername(text))}
-              error={getKashtagError()}
-              label={'Ton $kashtag'}
-            />
+          <AuthHeaderBar title={'Choisis ton $kashtag'} />
+          <View style={{padding: 18}}>
+            <Text style={styles.subtitle}>
+              Ton $kashtag est ton nom d'utilisateur sur Kash, tes potes s'en
+              serviront pour t'envoyer du cash.
+            </Text>
+            <View style={{marginTop: 16}}>
+              <Input
+                value={'$' + kashtag}
+                description={
+                  'Ton kashtag ne peut contenir que des lettres miniscules, des chiffres et/ou un tiret de huit ( _ )'
+                }
+                onChangeText={text => setKashTag(toUsername(text))}
+                error={getKashtagError()}
+                label={'Ton $kashtag'}
+              />
+            </View>
+            <Button
+              style={{marginTop: 16}}
+              color={Colors.brand}
+              disabled={!kashtag || !!getKashtagError()}
+              loading={createProfile.loading}
+              onPress={handleNext}>
+              Suivant
+            </Button>
+            <Text style={{fontSize: 12, color: Colors.disabled, marginTop: 16}}>
+              En cliquant "Suivant", tu acceptes notre Politique de
+              Confidentialité et nos Conditions Générales d'Utilisation que tu
+              peux retrouver sur notre site web.
+            </Text>
           </View>
-          <Button
-            style={{marginTop: 16}}
-            color={Colors.brand}
-            disabled={!kashtag || !!getKashtagError()}
-            loading={createProfile.loading}
-            onPress={handleNext}>
-            Suivant
-          </Button>
-          <Text style={{fontSize: 12, color: Colors.disabled, marginTop: 16}}>
-            En cliquant "Suivant", tu acceptes notre Politique de
-            Confidentialité et nos Conditions Générales d'Utilisation que tu
-            peux retrouver sur notre site web.
-          </Text>
         </View>
       ) : (
         <View>
           <StatusBar barStyle="default" />
-          <Text style={styles.title}>Crée ton compte</Text>
-          <Text style={styles.subtitle}>
-            Saisis les informations suivantes afin de créer ton compte.
-          </Text>
-          <View style={{marginTop: 16}}>
-            <Input
-              value={form.name}
-              onChangeText={text => setForm({...form, name: text})}
-              label={'Nom et prénom'}
-              error={errors.name}
-            />
-            <Input
-              value={form.password}
-              secureTextEntry={true}
-              onChangeText={text => setForm({...form, password: text})}
-              label={'Mot de passe'}
-              error={errors.password}
-            />
-            <Input
-              value={form.confirm}
-              secureTextEntry={true}
-              onChangeText={text => setForm({...form, confirm: text})}
-              label={'Confirmes ton mot de passe'}
-              error={errors.confirm}
-            />
-            <Button
-              onPress={handleAccountNext}
-              style={{marginTop: 16}}
-              color={Colors.brand}>
-              Suivant
-            </Button>
+          <AuthHeaderBar title={'Crée ton compte'} />
+          <View
+            style={{
+              padding: 18,
+            }}>
+            <Text style={styles.subtitle}>
+              Saisis les informations suivantes afin de créer ton compte.
+            </Text>
+            <View style={{marginTop: 16}}>
+              <Input
+                value={form.name}
+                onChangeText={text => setForm({...form, name: text})}
+                label={'Nom et prénom'}
+                error={errors.name}
+              />
+              <Input
+                value={form.password}
+                secureTextEntry={true}
+                onChangeText={text => setForm({...form, password: text})}
+                label={'Mot de passe'}
+                error={errors.password}
+              />
+              <Input
+                value={form.confirm}
+                secureTextEntry={true}
+                onChangeText={text => setForm({...form, confirm: text})}
+                label={'Confirmes ton mot de passe'}
+                error={errors.confirm}
+              />
+              <Button
+                onPress={handleAccountNext}
+                style={{marginTop: 16}}
+                color={Colors.brand}>
+                Suivant
+              </Button>
+            </View>
           </View>
         </View>
       )}
@@ -173,8 +181,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
-    paddingVertical: 24,
     justifyContent: 'space-between',
   },
   title: {

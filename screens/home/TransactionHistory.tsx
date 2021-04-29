@@ -17,21 +17,24 @@ import SectionHeader from '../../components/SectionHeader';
 function TransactionHistory() {
   const transactionsQuery = useInfinite(`/kash/txn_history/`, 10);
 
-  const groups = transactionsQuery.data?.reduce((groups, transaction) => {
-    const date = transaction.timestamp.split('T')[0];
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(transaction);
-    return groups;
-  }, {});
+  const groups = transactionsQuery.data?.reduce(
+    (groups: any, transaction: any) => {
+      const date = transaction.timestamp.split('T')[0];
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(transaction);
+      return groups;
+    },
+    {},
+  );
 
   const sections = Object.keys(groups || {}).map(date => {
     return {
       title: isToday(new Date(date))
         ? "Aujourd'hui"
         : new Date(date).toLocaleDateString(),
-      data: groups[date].sort((a, b) => {
+      data: groups[date].sort((a: any, b: any) => {
         if (a.created_at > b.created_at) {
           return -1;
         } else if (a.created_at < b.created_at) {

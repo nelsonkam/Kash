@@ -11,6 +11,7 @@ import toast from '../../utils/toast';
 import authSlice from '../../slices/auth';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import {AuthHeaderBar} from '../../components/HeaderBar';
 
 function Login() {
   const navigation = useNavigation();
@@ -34,6 +35,9 @@ function Login() {
       })
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
+        if (!(res.data.profile.payout_methods?.length > 0)) {
+          navigation.navigate('SetupPaymentMethod');
+        }
       })
       .catch(err => {
         toast.error('', 'Vérifie tes identifiants puis réessaie.');
@@ -42,33 +46,35 @@ function Login() {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text style={styles.title}>Connexion</Text>
-        <View style={{marginTop: 8}}>
-          <Input
-            value={'$' + kashtag}
-            onChangeText={text => setKashtag(toUsername(text))}
-            label={'Ton $kashtag'}
-          />
-          <Input
-            value={password}
-            secureTextEntry={true}
-            onChangeText={setPassword}
-            label={'Mot de passe'}
-          />
-          <Button
-            onPress={handleLogin}
-            style={{marginTop: 16}}
-            color={Colors.brand}
-            loading={login.loading}>
-            Suivant
-          </Button>
-          <Button
-            onPress={() => navigation.navigate('RecoverPassword')}
-            style={{marginTop: 16}}
-            color={'white'}
-            textColor={Colors.primary}>
-            Mot de passe ou $kashtag oublié
-          </Button>
+        <AuthHeaderBar title={'Connexion'} />
+        <View style={{padding: 18}}>
+          <View>
+            <Input
+              value={'$' + kashtag}
+              onChangeText={text => setKashtag(toUsername(text))}
+              label={'Ton $kashtag'}
+            />
+            <Input
+              value={password}
+              secureTextEntry={true}
+              onChangeText={setPassword}
+              label={'Mot de passe'}
+            />
+            <Button
+              onPress={handleLogin}
+              style={{marginTop: 16}}
+              color={Colors.brand}
+              loading={login.loading}>
+              Suivant
+            </Button>
+            <Button
+              onPress={() => navigation.navigate('RecoverPassword')}
+              style={{marginTop: 16}}
+              color={'white'}
+              textColor={Colors.primary}>
+              Mot de passe ou $kashtag oublié
+            </Button>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -79,8 +85,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
-    paddingVertical: 24,
     justifyContent: 'space-between',
   },
   title: {

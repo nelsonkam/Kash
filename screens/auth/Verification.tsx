@@ -5,15 +5,17 @@ import Button from '../../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import api from '../../utils/api';
 import {useAsync} from '../../utils/hooks';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import toast from '../../utils/toast';
 import {RootState} from '../../utils/store';
 // @ts-ignore
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {AuthHeaderBar} from '../../components/HeaderBar';
 
 const Verification = () => {
   const {sessionToken, phone} = useSelector((s: RootState) => s.auth);
+  const {params} = useRoute();
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [verificationCode, setVerificationCode] = useState('');
@@ -33,7 +35,12 @@ const Verification = () => {
         security_code: verificationCode,
       })
       .then(res => {
-        navigation.navigate('InviteCode');
+        // @ts-ignore
+        if (params.stack && params.stack === 'profile') {
+          navigation.navigate('Profile');
+        } else {
+          navigation.navigate('InviteCode');
+        }
       })
       .catch(err => {
         toast.error(
@@ -46,53 +53,55 @@ const Verification = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text style={styles.title}>Vérification</Text>
-        <Text style={styles.subtitle}>
-          Saisis le code que tu as reçu par SMS.
-        </Text>
-        <View style={{width: '100%'}}>
-          <View
-            style={{
-              marginVertical: 20,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-            }}>
-            <SmoothPinCodeInput
-              ref={pinInput}
-              codeLength={6}
-              value={verificationCode}
-              onTextChange={(code: string) => setVerificationCode(code)}
-              cellSpacing={8}
-              restrictToNumbers
-              containerStyle={{padding: 0}}
-              cellStyle={{
-                borderRadius: 4,
-                borderColor: 'gray',
-                borderWidth: 1,
-                height: 36,
-                width: 36,
-              }}
-              cellStyleFocused={{
-                borderColor: Colors.brand,
-                borderWidth: 2,
-                borderRadius: 4,
-              }}
-              textStyle={{
-                fontFamily: 'Inter-Regular',
-                fontSize: 18,
-                color: 'black',
-              }}
-            />
-          </View>
+        <AuthHeaderBar title={'Vérification'} />
+        <View style={{padding: 18}}>
+          <Text style={styles.subtitle}>
+            Saisis le code que tu as reçu par SMS.
+          </Text>
+          <View style={{width: '100%'}}>
+            <View
+              style={{
+                marginVertical: 20,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+              }}>
+              <SmoothPinCodeInput
+                ref={pinInput}
+                codeLength={6}
+                value={verificationCode}
+                onTextChange={(code: string) => setVerificationCode(code)}
+                cellSpacing={8}
+                restrictToNumbers
+                containerStyle={{padding: 0}}
+                cellStyle={{
+                  borderRadius: 4,
+                  borderColor: 'gray',
+                  borderWidth: 1,
+                  height: 36,
+                  width: 36,
+                }}
+                cellStyleFocused={{
+                  borderColor: Colors.brand,
+                  borderWidth: 2,
+                  borderRadius: 4,
+                }}
+                textStyle={{
+                  fontFamily: 'Inter-Regular',
+                  fontSize: 18,
+                  color: 'black',
+                }}
+              />
+            </View>
 
-          <Button
-            color={Colors.brand}
-            onPress={handleSubmit}
-            loading={verifyCode.loading}>
-            Vérifier le code
-          </Button>
+            <Button
+              color={Colors.brand}
+              onPress={handleSubmit}
+              loading={verifyCode.loading}>
+              Vérifier le code
+            </Button>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -103,8 +112,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
-    paddingVertical: 24,
     justifyContent: 'space-between',
   },
   title: {

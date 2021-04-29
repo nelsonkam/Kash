@@ -207,6 +207,34 @@ function Profile() {
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
         </TouchableOpacity>
+        {!profileQuery.data.phone_number && (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AddPhone')}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingVertical: 16,
+              paddingRight: 16,
+              marginLeft: 16,
+              borderBottomColor: Colors.border,
+              borderBottomWidth: 1,
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <AntDesign name={'lock1'} color={Colors.warning} size={24} />
+              <Text
+                style={{
+                  fontFamily: 'Inter-Semibold',
+                  color: Colors.warning,
+                  fontSize: 16,
+                  marginLeft: 12,
+                }}>
+                Ajouter mon numéro de tél.
+              </Text>
+            </View>
+            <AntDesign name={'right'} color={Colors.medium} size={20} />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           onPress={() => navigation.navigate('VerifyKYC')}
           style={{
@@ -220,7 +248,7 @@ function Profile() {
             borderBottomWidth: 1,
           }}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <AntDesign name={'checkcircleo'} color={'black'} size={24} />
+            <AntDesign name={'Safety'} color={'black'} size={24} />
             <Text
               style={{
                 fontFamily: 'Inter-Semibold',
@@ -248,7 +276,7 @@ function Profile() {
             marginLeft: 16,
           }}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name={'help-circle-outline'} color={'black'} size={24} />
+            <AntDesign name={'questioncircleo'} color={'black'} size={24} />
             <Text
               style={{
                 fontFamily: 'Inter-Semibold',

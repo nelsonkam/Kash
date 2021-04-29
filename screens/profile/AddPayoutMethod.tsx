@@ -1,6 +1,6 @@
 import React from 'react';
 import {View} from 'react-native';
-import {CreatePaymentMethod} from '../SetupPaymentMethod';
+import {CreatePaymentMethod} from '../auth/SetupPaymentMethod';
 import {useNavigation} from '@react-navigation/native';
 
 function AddPayoutMethod(props) {

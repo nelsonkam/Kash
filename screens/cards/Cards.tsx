@@ -21,7 +21,7 @@ import useSWRNative from '@nandorojo/swr-react-native';
 function Cards() {
   const navigation = useNavigation();
   const cards = useSWRNative(`/kash/virtual-cards/`, fetcher);
-  const data = cards.data?.filter(c => c.card_details);
+  const data = cards.data?.filter((c: any) => c.card_details);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -65,7 +65,7 @@ function Cards() {
         data={data}
         renderItem={({item}) => (
           <CreditCard
-            onPress={card => navigation.navigate('CardDetail', {card})}
+            onPress={(card: any) => navigation.navigate('CardDetail', {card})}
             card={item}
           />
         )}

@@ -297,7 +297,7 @@ const Home = () => {
             </>
           ))}
 
-          {transactionsQuery.data?.length === 0 && (
+          {transactionsQuery.data?.results?.length === 0 && (
             <EmptyState
               icon={
                 <AntDesign name={'swap'} size={48} color={Colors.disabled} />

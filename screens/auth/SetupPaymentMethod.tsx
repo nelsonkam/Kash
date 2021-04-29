@@ -1,17 +1,18 @@
 import React, {useState} from 'react';
 import {Dimensions, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Colors from '../utils/colors';
-import {PaymentForm} from '../components/PaymentSheet';
-import ButtonPicker from '../components/Picker';
-import Input from '../components/Input';
-import Button from '../components/Button';
-import {useAsync} from '../utils/hooks';
-import api from '../utils/api';
+import Colors from '../../utils/colors';
+import {PaymentForm} from '../../components/PaymentSheet';
+import ButtonPicker from '../../components/Picker';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
+import {useAsync} from '../../utils/hooks';
+import api from '../../utils/api';
 import {useDispatch} from 'react-redux';
-import authSlice from '../slices/auth';
-import toast from '../utils/toast';
-import {track} from '../utils/track';
+import authSlice from '../../slices/auth';
+import toast from '../../utils/toast';
+import {track} from '../../utils/track';
+import {AuthHeaderBar} from '../../components/HeaderBar';
 
 export function CreatePaymentMethod(props: any) {
   const [gateway, setGateway] = useState<string | null>(null);
@@ -60,7 +61,7 @@ export function CreatePaymentMethod(props: any) {
               style={{
                 flex: 48,
               }}
-              source={require('../assets/mtn.png')}
+              source={require('../../assets/mtn.png')}
               text="MTN Momo"
               active={gateway === 'mtn-bj'}
               onPress={() => setGateway('mtn-bj')}
@@ -70,7 +71,7 @@ export function CreatePaymentMethod(props: any) {
               style={{
                 flex: 48,
               }}
-              source={require('../assets/moov-africa.jpeg')}
+              source={require('../../assets/moov-africa.jpeg')}
               text="Moov Money"
               active={gateway === 'moov-bj'}
               onPress={() => setGateway('moov-bj')}
@@ -81,7 +82,7 @@ export function CreatePaymentMethod(props: any) {
               value={phone}
               onChangeText={text => setPhone(text.substring(0, 8))}
               keyboardType={'number-pad'}
-              label={'Numéro'}
+              label={'Ton numéro momo'}
             />
           </View>
           <Button
@@ -100,8 +101,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
-    paddingVertical: 24,
   },
   title: {
     fontFamily: 'Inter-Black',
@@ -119,7 +118,9 @@ const styles = StyleSheet.create({
 
 export default () => (
   <SafeAreaView style={styles.container}>
-    <Text style={styles.title}>Ajoutes ton compte momo</Text>
-    <CreatePaymentMethod />
+    <AuthHeaderBar title={'Compte momo'} />
+    <View style={{padding: 18}}>
+      <CreatePaymentMethod />
+    </View>
   </SafeAreaView>
 );

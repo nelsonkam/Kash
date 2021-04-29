@@ -5,6 +5,8 @@ import PaymentMethods from '../screens/profile/PaymentMethods';
 import AddPayoutMethod from '../screens/profile/AddPayoutMethod';
 import ListKYCDocs from '../screens/profile/ListKYCDocs';
 import VerifyKYCDoc from '../screens/profile/VerifyKYCDoc';
+import AddPhone from '../screens/auth/AddPhone';
+import Verification from '../screens/auth/Verification';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +37,18 @@ function ProfileStack() {
         options={{title: 'Vérification'}}
         name="VerifyKYCDoc"
         component={VerifyKYCDoc}
+      />
+      <Stack.Screen
+        options={{headerShown: false}}
+        initialParams={{stack: 'profile'}}
+        name="AddPhone"
+        component={AddPhone}
+      />
+      <Stack.Screen
+        initialParams={{stack: 'profile'}}
+        options={{headerShown: false}}
+        name="Verification"
+        component={Verification}
       />
     </Stack.Navigator>
   );

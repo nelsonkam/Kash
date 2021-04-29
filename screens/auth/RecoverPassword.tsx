@@ -13,6 +13,7 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import Input from '../../components/Input';
 import authSlice from '../../slices/auth';
 import {useDispatch} from 'react-redux';
+import {AuthHeaderBar} from '../../components/HeaderBar';
 
 function RecoverPassword() {
   const [phone, setPhone] = useState('');
@@ -115,65 +116,70 @@ function RecoverPassword() {
     <SafeAreaView style={styles.container}>
       {!sessionToken && (
         <View>
-          <Text style={styles.title}>Récupères ton compte</Text>
-          <Text style={styles.subtitle}>
-            Saisis le numéro de téléphone associé à ton compte afin de pouvoir
-            le récupérer.
-          </Text>
-          <View>
-            <PhoneInput
-              onChange={text => {
-                setPhone(text);
-              }}
-            />
-            <Button
-              style={{marginTop: 8}}
-              color={Colors.brand}
-              onPress={handleSendCode}
-              loading={sendCode.loading}>
-              Récupérer mon compte
-            </Button>
+          <AuthHeaderBar title={'Récupères ton compte'} />
+          <View style={{padding: 18}}>
+            <Text style={styles.subtitle}>
+              Saisis le numéro de téléphone associé à ton compte afin de pouvoir
+              le récupérer.
+            </Text>
+            <View>
+              <PhoneInput
+                onChange={text => {
+                  setPhone(text);
+                }}
+              />
+              <Button
+                style={{marginTop: 8}}
+                color={Colors.brand}
+                onPress={handleSendCode}
+                loading={sendCode.loading}>
+                Récupérer mon compte
+              </Button>
+            </View>
           </View>
         </View>
       )}
       {!!sessionToken && (
         <View>
-          <Text style={styles.title}>Changes ton mot de passe</Text>
+          <AuthHeaderBar title={'Nouveau mot de passe'} />
+          <View style={{padding: 18}}>
+            <View style={{width: '100%'}}>
+              <Input
+                value={resetForm.security_code}
+                onChangeText={text =>
+                  setResetForm({...resetForm, security_code: text})
+                }
+                label={'Code reçu par SMS'}
+                textContentType={'oneTimeCode'}
+                error={errors.security_code}
+              />
+              <Input
+                value={resetForm.password}
+                secureTextEntry={true}
+                onChangeText={text =>
+                  setResetForm({...resetForm, password: text})
+                }
+                label={'Nouveau mot de passe'}
+                error={errors.password}
+              />
+              <Input
+                value={resetForm.confirm}
+                secureTextEntry={true}
+                onChangeText={text =>
+                  setResetForm({...resetForm, confirm: text})
+                }
+                label={'Confirmes ton mot de passe'}
+                error={errors.confirm}
+              />
 
-          <View style={{width: '100%'}}>
-            <Input
-              value={resetForm.security_code}
-              onChangeText={text =>
-                setResetForm({...resetForm, security_code: text})
-              }
-              label={'Code reçu par SMS'}
-              textContentType={'oneTimeCode'}
-              error={errors.security_code}
-            />
-            <Input
-              value={resetForm.password}
-              secureTextEntry={true}
-              onChangeText={text =>
-                setResetForm({...resetForm, password: text})
-              }
-              label={'Nouveau mot de passe'}
-              error={errors.password}
-            />
-            <Input
-              value={resetForm.confirm}
-              secureTextEntry={true}
-              onChangeText={text => setResetForm({...resetForm, confirm: text})}
-              label={'Confirmes ton mot de passe'}
-              error={errors.confirm}
-            />
-
-            <Button
-              style={{marginTop: 8}}
-              color={Colors.brand}
-              onPress={handleSubmit}
-              loading={resetPassword.loading}>
-              Changer mon mot de passe
-            </Button>
+              <Button
+                style={{marginTop: 8}}
+                color={Colors.brand}
+                onPress={handleSubmit}
+                loading={resetPassword.loading}>
+                Changer mon mot de passe
+              </Button>
+            </View>
           </View>
         </View>
       )}
@@ -185,8 +191,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
-    paddingVertical: 24,
     justifyContent: 'space-between',
   },
   title: {

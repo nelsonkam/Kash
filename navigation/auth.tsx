@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AddPhone from '../screens/auth/AddPhone';
 import Verification from '../screens/auth/Verification';
 import GetStarted from '../screens/auth/GetStarted';
-import SetupPaymentMethod from '../screens/SetupPaymentMethod';
+import SetupPaymentMethod from '../screens/auth/SetupPaymentMethod';
 import InviteCode from '../screens/auth/InviteCode';
 import OnboardingScreen from '../screens/auth/Onboarding';
 import Signup from '../screens/auth/Signup';

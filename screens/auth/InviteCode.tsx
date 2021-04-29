@@ -11,6 +11,7 @@ import authSlice from '../../slices/auth';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import toast from '../../utils/toast';
+import {AuthHeaderBar} from '../../components/HeaderBar';
 
 const formatInviteCode = (code: string) => {
   return code.toUpperCase().substring(0, 4);
@@ -60,35 +61,37 @@ function InviteCode() {
     <SafeAreaView style={styles.container}>
       <View>
         <StatusBar barStyle="default" />
-        <Text style={styles.title}>Code d'invitation, svp!</Text>
-        <Text style={styles.subtitle}>
-          Saisis le code d'invitation que l'un de tes potes t'as envoyé pour
-          utiliser Kash.
-        </Text>
-        <View style={{marginTop: 16}}>
-          <Input
-            value={code}
-            onChangeText={text => setCode(formatInviteCode(text))}
-            label={"Code d'invitation"}
-            error={error}
-          />
-          <Button
-            style={{marginTop: 16}}
-            color={Colors.brand}
-            disabled={!(code && code.length >= 4)}
-            loading={verifyCode.loading}
-            onPress={handleNext}>
-            Suivant
-          </Button>
-          <Button
-            onPress={() => navigation.navigate('SetupPaymentMethod')}
-            color={'white'}
-            textColor={Colors.primary}
-            style={{
-              marginTop: 24,
-            }}>
-            Je n'ai pas de code d'invitation
-          </Button>
+        <AuthHeaderBar title={"Code d'invitation"} />
+        <View style={{padding: 18}}>
+          <Text style={styles.subtitle}>
+            Saisis le code d'invitation que l'un de tes potes t'as envoyé pour
+            utiliser Kash.
+          </Text>
+          <View style={{marginTop: 16}}>
+            <Input
+              value={code}
+              onChangeText={text => setCode(formatInviteCode(text))}
+              label={"Code d'invitation"}
+              error={error}
+            />
+            <Button
+              style={{marginTop: 16}}
+              color={Colors.brand}
+              disabled={!(code && code.length >= 4)}
+              loading={verifyCode.loading}
+              onPress={handleNext}>
+              Suivant
+            </Button>
+            <Button
+              onPress={() => navigation.navigate('SetupPaymentMethod')}
+              color={'white'}
+              textColor={Colors.primary}
+              style={{
+                marginTop: 24,
+              }}>
+              Je n'ai pas de code d'invitation
+            </Button>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -99,8 +102,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
-    paddingVertical: 24,
     justifyContent: 'space-between',
   },
   title: {
