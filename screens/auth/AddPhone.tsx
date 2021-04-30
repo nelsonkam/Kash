@@ -30,7 +30,7 @@ const AddPhone = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       // @ts-ignore
-      if (!params.stack) {
+      if (params.stack === 'auth') {
         setSkipVisible(true);
       }
     }, 60 * 1000);

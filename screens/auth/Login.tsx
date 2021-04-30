@@ -45,7 +45,7 @@ function Login() {
         }
       })
       .catch(err => {
-        toast.error('Vérifie tes identifiants puis réessaie.', err.toString());
+        toast.error('', 'Vérifie tes identifiants puis réessaie.');
       });
   };
   return (
