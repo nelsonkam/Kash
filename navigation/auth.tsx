@@ -24,8 +24,16 @@ export default function AuthStack() {
       <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="RecoverPassword" component={RecoverPassword} />
-      <Stack.Screen name="AddPhone" component={AddPhone} />
-      <Stack.Screen name="Verification" component={Verification} />
+      <Stack.Screen
+        initialParams={{stack: 'auth'}}
+        name="AddPhone"
+        component={AddPhone}
+      />
+      <Stack.Screen
+        initialParams={{stack: 'auth'}}
+        name="Verification"
+        component={Verification}
+      />
       <Stack.Screen name="SetupPaymentMethod" component={SetupPaymentMethod} />
       <Stack.Screen name="InviteCode" component={InviteCode} />
     </Stack.Navigator>
