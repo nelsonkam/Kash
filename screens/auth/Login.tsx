@@ -6,18 +6,23 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import {toUsername} from '../../utils';
 import {useAsync} from '../../utils/hooks';
-import api from '../../utils/api';
+import api, {BASE_URL} from '../../utils/api';
 import toast from '../../utils/toast';
 import authSlice from '../../slices/auth';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {AuthHeaderBar} from '../../components/HeaderBar';
+import axios from 'axios';
 
 function Login() {
   const navigation = useNavigation();
   const [kashtag, setKashtag] = useState('');
   const [password, setPassword] = useState('');
-  const login = useAsync(data => api.post(`/kash/auth/login/`, data));
+  const login = useAsync(data =>
+    axios.post(`/kash/auth/login/`, data, {
+      baseURL: BASE_URL,
+    }),
+  );
   const dispatch = useDispatch();
   const getProfile = useAsync(() => api.get(`/kash/profiles/current/`));
 
@@ -35,12 +40,12 @@ function Login() {
       })
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
-        if (!(res.data.profile.payout_methods?.length > 0)) {
+        if (!(res.data.payout_methods?.length > 0)) {
           navigation.navigate('SetupPaymentMethod');
         }
       })
       .catch(err => {
-        toast.error('', 'Vérifie tes identifiants puis réessaie.');
+        toast.error('Vérifie tes identifiants puis réessaie.', err.toString());
       });
   };
   return (

@@ -6,13 +6,14 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import {toUsername} from '../../utils';
 import {useAsync} from '../../utils/hooks';
-import api from '../../utils/api';
+import api, {BASE_URL} from '../../utils/api';
 import {useDispatch} from 'react-redux';
 import authSlice from '../../slices/auth';
 import toast from '../../utils/toast';
 import {identify} from '../../utils/track';
 import {useNavigation} from '@react-navigation/native';
 import {AuthHeaderBar} from '../../components/HeaderBar';
+import axios from 'axios';
 
 function Signup() {
   const [form, setForm] = useState({
@@ -23,7 +24,9 @@ function Signup() {
   const [kashtag, setKashTag] = useState<string>('');
   const [showKashtagSection, setShowKashtagSection] = useState(false);
   const createProfile = useAsync(data =>
-    api.post(`/kash/auth/register/`, data),
+    axios.post(`/kash/auth/register/`, data, {
+      baseURL: BASE_URL,
+    }),
   );
   const dispatch = useDispatch();
   const navigation = useNavigation();

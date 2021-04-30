@@ -26,17 +26,6 @@
 	<string>qG9ILKO29W4EYh1DfWjLZyIzSjBnqE_ngscmI</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Nous utilisons ta camera lors de la vérification de ton identité</string>
 	<key>NSContactsUsageDescription</key>
