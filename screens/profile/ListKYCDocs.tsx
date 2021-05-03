@@ -25,8 +25,7 @@ function ListKYCDocs() {
       <FlatList
         data={kycDocsQuery.data}
         renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => navigation.navigate('VerifyKYCDoc')}
+          <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -57,7 +56,7 @@ function ListKYCDocs() {
               }}>
               {item.formatted?.status_text}
             </Text>
-          </TouchableOpacity>
+          </View>
         )}
         ListFooterComponent={() => (
           <TouchableOpacity

@@ -159,17 +159,7 @@ export const PaymentForm = ({
         backgroundColor: 'white',
         padding: 16,
       }}>
-      <Text
-        style={{
-          fontFamily: 'Inter-Bold',
-          textAlign: 'center',
-          fontSize: 18,
-          marginTop: 12,
-          color: Colors.dark,
-        }}>
-        Saisis les infos pour le paiement
-      </Text>
-      <View style={{marginTop: 32}}>
+      <View style={{marginTop: 16}}>
         <Text
           style={{
             fontFamily: 'Inter-Bold',
@@ -314,7 +304,7 @@ export function ChoosePaymentMethod({
                   fontSize: 16,
                   marginLeft: 12,
                 }}>
-                Ajouter un moyen de paiement
+                Utiliser un autre numéro momo
               </Text>
             </TouchableOpacity>
             {momoAccountQuery.data?.map((item: any) => (

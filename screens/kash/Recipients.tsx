@@ -21,8 +21,11 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {P2PTxnType} from '../../utils';
 import {BackButton} from '../../components/Button';
 
+const SearchSheet = () => {};
+
 function Recipients() {
   const [search, setSearch] = useState('');
+  const [note, setNote] = useState('');
   const {params} = useRoute();
   // @ts-ignore
   const {type} = params;
@@ -46,7 +49,7 @@ function Recipients() {
           setResults(res.data);
         })
         .finally(() => setSearching(false));
-    }, 400);
+    }, 200);
   }, [search]);
   const syncContacts = async () => {
     const contacts = await (Platform.OS === 'android'
@@ -59,7 +62,7 @@ function Recipients() {
             buttonPositive: 'Accepter',
             buttonNegative: 'Annuler',
           },
-        ).then(Contacts.getAllWithoutPhotos)
+        ).then(() => Contacts.getAllWithoutPhotos())
       : Contacts.getAllWithoutPhotos());
 
     const phoneNumbers = contacts
@@ -88,31 +91,21 @@ function Recipients() {
   };
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{padding: 16, flexDirection: 'row', alignItems: 'center'}}>
-        <BackButton style={{flex: 2}} />
-        <View style={{flex: 8}}>
-          <Text
-            style={{
-              color: Colors.dark,
-              fontFamily: 'Inter-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {type === P2PTxnType.request ? 'Demander' : 'Envoyer'}
-          </Text>
-        </View>
-        <View style={{flex: 2}} />
-      </View>
-      <View style={{padding: 16}}>
+      <View
+        style={{
+          padding: 16,
+          paddingVertical: 12,
+          borderBottomColor: Colors.border,
+          borderBottomWidth: 1,
+        }}>
         <View
           style={{
             backgroundColor: Colors.grey,
             flexDirection: 'row',
+            alignItems: 'center',
             borderRadius: 8,
           }}>
-          <View style={{padding: 10}}>
-            <Ionicons name={'search'} size={24} color={Colors.dark} />
-          </View>
+          <BackButton style={{padding: 8}} />
           <TextInput
             style={{
               fontSize: 16,
@@ -127,20 +120,53 @@ function Recipients() {
             placeholderTextColor={Colors.medium}
             placeholder={'Rechercher par nom ou $kashtag'}
           />
+          <View style={{padding: 8}}>
+            <TouchableOpacity
+              onPress={() => setSearch('')}
+              style={{
+                height: 20,
+                width: 20,
+                borderRadius: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: Colors.medium,
+              }}>
+              <Ionicons size={18} name={'close'} color={'white'} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
+      <View
+        style={{
+          borderBottomColor: Colors.border,
+          borderBottomWidth: 1,
+          paddingHorizontal: 16,
+          flexDirection: 'row',
+        }}>
+        <View style={{paddingVertical: 16, paddingRight: 12}}>
+          <Text
+            style={{
+              fontFamily: 'Inter-Bold',
+              fontSize: 16,
+            }}>
+            Pour?
+          </Text>
+        </View>
+        <TextInput
+          style={{
+            fontSize: 16,
+            paddingVertical: 12,
+            flex: 1,
+            color: 'black',
+          }}
+          value={note}
+          onChangeText={text => setNote(text)}
+          placeholderTextColor={Colors.medium}
+          placeholder={'Ajoute un petit mot 😉'}
+        />
+      </View>
       {selected.length > 0 && (
-        <View style={{padding: 16}}>
-          <View>
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                color: Colors.medium,
-                fontSize: 17,
-              }}>
-              Sélectionnés
-            </Text>
-          </View>
+        <View style={{paddingHorizontal: 16}}>
           <FlatList
             data={selected}
             horizontal={true}
@@ -154,21 +180,21 @@ function Recipients() {
                   maxWidth: 96,
                   position: 'relative',
                 }}>
-                <Avatar size={56} profile={item} />
+                <Avatar size={48} profile={item} />
                 <TouchableOpacity
                   onPress={() => handleRemove(item)}
                   style={{
-                    height: 26,
-                    width: 26,
+                    height: 24,
+                    width: 24,
                     borderRadius: 50,
                     justifyContent: 'center',
                     alignItems: 'center',
                     backgroundColor: Colors.danger,
                     position: 'absolute',
-                    right: 12,
+                    right: 16,
                     top: 8,
                   }}>
-                  <Ionicons size={20} name={'close'} color={'white'} />
+                  <Ionicons size={18} name={'close'} color={'white'} />
                 </TouchableOpacity>
 
                 <Text
@@ -216,6 +242,7 @@ function Recipients() {
                   fontFamily: 'Inter-SemiBold',
                   color: Colors.medium,
                   fontSize: 17,
+                  paddingTop: 12,
                 }}>
                 Résultats
               </Text>
@@ -225,6 +252,7 @@ function Recipients() {
             refreshing={searching}
             data={results}
             keyExtractor={item => item.kashtag}
+            contentContainerStyle={{paddingBottom: 148}}
             ItemSeparatorComponent={() => (
               <View
                 style={{
@@ -289,6 +317,7 @@ function Recipients() {
             onRefresh={syncContacts}
             data={syncProfileContacts.value?.data}
             keyExtractor={item => item.kashtag}
+            contentContainerStyle={{paddingBottom: 148}}
             ItemSeparatorComponent={() => (
               <View
                 style={{
@@ -369,13 +398,13 @@ function Recipients() {
           right: 0,
         }}>
         <TouchableOpacity
-          disabled={selected.length === 0}
+          disabled={selected.length === 0 || !note}
           onPress={() =>
-            navigation.navigate('SendKash', {type, recipients: selected})
+            navigation.navigate('SendKash', {type, note, recipients: selected})
           }
           style={{
             backgroundColor:
-              selected.length === 0 ? Colors.disabled : Colors.brand,
+              selected.length === 0 || !note ? Colors.disabled : Colors.brand,
             paddingVertical: 8,
             paddingHorizontal: 18,
             borderRadius: 100,
@@ -389,7 +418,7 @@ function Recipients() {
               fontSize: 16,
               marginRight: 8,
             }}>
-            Suivant
+            {type === P2PTxnType.send ? 'Envoyer' : 'Demander'}
           </Text>
           <AntDesign name={'arrowright'} color={'white'} size={24} />
         </TouchableOpacity>

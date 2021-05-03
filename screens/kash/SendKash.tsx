@@ -2,12 +2,13 @@ import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import KashPad from '../../components/KashPad';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {fetcher} from '../../utils/api';
+import api, {fetcher} from '../../utils/api';
 import Colors from '../../utils/colors';
 import useSWRNative from '@nandorojo/swr-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Button from '../../components/Button';
 import {P2PTxnType} from '../../utils';
+import {useAsync} from '../../utils/hooks';
 
 type ChooseGroupMode = {
   amount: number;
@@ -190,12 +191,11 @@ const ChooseGroupMode = ({
 function SendKash() {
   const {params} = useRoute();
   // @ts-ignore
-  const {recipients, type} = params;
+  const {recipients, type, note} = params;
   const navigation = useNavigation();
   const profileQuery = useSWRNative(`/kash/profiles/current/`, fetcher);
-  const [isGroupModeVisible, showGroupMode] = useState(false);
-  const [amount, setAmount] = useState(0);
   const title = type === P2PTxnType.send ? 'Envoyer' : 'Demander';
+  const sendKash = useAsync(data => api.post(`/kash/send/`, data), true);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -204,30 +204,26 @@ function SendKash() {
   }, [navigation]);
 
   const handleNext = (amount: number) => {
-    setAmount(amount);
-    if (type === P2PTxnType.request || recipients.length === 1) {
-      navigation.navigate('KashRecap', {type, recipients, amount});
+    if (type === P2PTxnType.send) {
+      sendKash
+        .execute({
+          note,
+          is_incognito: false,
+          recipient_tags: recipients.map((r: any) => r.kashtag),
+          amount: amount,
+          group_mode: recipients.length > 1 ? 'pacha' : null,
+        })
+        .then(res => {
+          navigation.navigate('PayKash', res.data);
+        });
     } else {
-      showGroupMode(true);
+      navigation.navigate('RequestKash', {recipients, amount, note});
     }
   };
 
-  const handleGroupNext = (groupMode: string) => {
-    navigation.navigate('KashRecap', {type, recipients, amount, groupMode});
-  };
   const limits = profileQuery.data?.limits
     ? profileQuery.data?.limits.sendkash
     : {min: 25};
-
-  if (isGroupModeVisible) {
-    return (
-      <ChooseGroupMode
-        amount={amount}
-        recipients={recipients}
-        onGroupModeSelected={handleGroupNext}
-      />
-    );
-  }
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -236,6 +232,8 @@ function SendKash() {
         currency={'CFA '}
         limits={limits}
         onNext={handleNext}
+        miniText={recipients.length > 1 ? 'Par personne' : null}
+        loading={sendKash.loading}
       />
     </View>
   );

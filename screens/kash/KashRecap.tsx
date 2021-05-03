@@ -48,7 +48,7 @@ function KashRecap() {
           note,
           is_incognito: isIncognito,
           recipient_tags: recipients.map((r: any) => r.kashtag),
-          amount: total,
+          amount: amount,
           group_mode: groupMode,
         })
         .then(res => {

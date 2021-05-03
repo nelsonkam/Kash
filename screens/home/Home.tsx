@@ -19,6 +19,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import RequestItem from '../../components/RequestItem';
 import TransactionItem from '../../components/TransactionItem';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {P2PTxnType} from '../../utils';
 
 const VERSION = '1.0.0';
 
@@ -186,6 +188,126 @@ const Home = () => {
             </Text>
           </View>
         </View>
+        <View
+          style={{
+            marginVertical: 16,
+            paddingVertical: 8,
+            borderRadius: 6,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+          }}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Recipients', {type: P2PTxnType.send})
+            }
+            style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
+            <View
+              style={{
+                height: 60,
+                width: 60,
+                backgroundColor: Colors.brand,
+                borderRadius: 100,
+                marginBottom: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                shadowOpacity: 0.2,
+                shadowRadius: 1.41,
+
+                elevation: 2,
+              }}>
+              <MaterialCommunityIcons
+                size={28}
+                name={'arrow-top-right'}
+                color={'white'}
+              />
+            </View>
+            <Text
+              style={{
+                fontFamily: 'Inter-Medium',
+                fontSize: 15,
+                color: Colors.dark,
+              }}>
+              Envoyer
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Recipients', {type: P2PTxnType.request})
+            }
+            style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
+            <View
+              style={{
+                height: 60,
+                width: 60,
+                backgroundColor: Colors.brand,
+                borderRadius: 100,
+                marginBottom: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                shadowOpacity: 0.2,
+                shadowRadius: 1.41,
+
+                elevation: 2,
+              }}>
+              <MaterialCommunityIcons
+                size={28}
+                name={'arrow-bottom-left'}
+                color={'white'}
+              />
+            </View>
+            <Text
+              style={{
+                fontFamily: 'Inter-Medium',
+                fontSize: 15,
+                color: Colors.dark,
+              }}>
+              Demander
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Cards')}
+            style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
+            <View
+              style={{
+                height: 60,
+                width: 60,
+                backgroundColor: Colors.brand,
+                borderRadius: 100,
+                marginBottom: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                shadowOpacity: 0.2,
+                shadowRadius: 1.41,
+
+                elevation: 2,
+              }}>
+              <Ionicons name="card" size={28} color={'white'} />
+            </View>
+            <Text
+              style={{
+                fontFamily: 'Inter-Medium',
+                fontSize: 15,
+                color: Colors.dark,
+              }}>
+              Cartes VISA
+            </Text>
+          </TouchableOpacity>
+        </View>
         {requestsQuery.data?.results?.length > 0 && (
           <View
             style={{
@@ -253,7 +375,7 @@ const Home = () => {
         <View
           style={{
             flexDirection: 'row',
-            marginTop: 24,
+            marginTop: 18,
             marginBottom: 16,
             justifyContent: 'space-between',
           }}>
@@ -351,7 +473,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: 'white',
     shadowColor: '#000',
-    marginBottom: 16,
   },
   cardTitle: {
     fontFamily: 'Inter-Bold',

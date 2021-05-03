@@ -56,7 +56,7 @@ function Cards() {
               onPress={() => navigation.navigate('NewCard')}
               color={Colors.brand}
               style={{marginTop: 32}}>
-              Créer une carte prépayé
+              Créer une carte prépayée
             </Button>
           </View>
         )}

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -364,7 +364,7 @@ function TakeSelfie({onNext}: {onNext: (photo: any) => void}) {
           }}>
           <Image
             source={{uri: photo?.uri}}
-            resizeMode={'center'}
+            resizeMode={'contain'}
             style={{
               width: 198,
               height: 198,
@@ -435,20 +435,19 @@ function VerifyKYCDoc() {
       },
     }),
   );
-  const uploadSelfie = useAsync((id, data) =>
-    api.post(`/kash/kyc/${id}/selfie/`, data, {
-      headers: {
-        'content-type': 'multipart/form-data',
-      },
-    }),
-  );
+  useEffect(() => {
+    if (verificationDoc.selfie && verificationDoc.document) {
+      uploadDocs.execute().finally(() => {
+        setTimeout(() => navigation.goBack(), 2500);
+      });
+    }
+  }, [verificationDoc]);
   const uploadDocsFn = () => {
     return api
       .post('/kash/kyc/', {document_type: verificationDoc.type})
       .then(res => {
         const doc = res.data;
         const documentData = new FormData();
-        const selfieData = new FormData();
 
         documentData.append('document', {
           name: Math.random().toString().split('.').join('-') + '.jpg',
@@ -456,21 +455,18 @@ function VerifyKYCDoc() {
           uri:
             Platform.OS === 'ios'
               ? verificationDoc.document?.uri?.replace('file://', '')
-              : verificationDoc.document.uri,
+              : verificationDoc.document?.uri,
         });
-        selfieData.append('selfie', {
+        documentData.append('selfie', {
           name: Math.random().toString().split('.').join('-') + '.jpg',
           type: 'image/jpeg',
           uri:
             Platform.OS === 'ios'
-              ? verificationDoc.document?.uri?.replace('file://', '')
-              : verificationDoc.document.uri,
+              ? verificationDoc.selfie?.uri?.replace('file://', '')
+              : verificationDoc.selfie?.uri,
         });
 
-        return Promise.all([
-          uploadDocument.execute(doc.id, documentData),
-          uploadSelfie.execute(doc.id, selfieData),
-        ]);
+        return uploadDocument.execute(doc.id, documentData);
       });
   };
 
@@ -498,9 +494,6 @@ function VerifyKYCDoc() {
       <TakeSelfie
         onNext={(photo: any) => {
           setVerificationDoc({...verificationDoc, selfie: photo});
-          uploadDocs.execute().finally(() => {
-            setTimeout(() => navigation.goBack(), 2500);
-          });
         }}
       />
     );

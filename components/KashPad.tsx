@@ -18,6 +18,7 @@ type Props = {
     next: string;
   };
   loading?: boolean;
+  miniText?: string | null;
 };
 
 function KashPad({
@@ -26,6 +27,7 @@ function KashPad({
   onNext,
   buttonText = {cancel: 'Annuler', next: ''},
   loading = false,
+  miniText = null,
 }: Props) {
   const [amount, setAmount] = useState(0);
   const navigation = useNavigation();
@@ -79,11 +81,23 @@ function KashPad({
       <View
         style={{flex: 0.65, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={styles.amount}>
-          {currency}{' '}
+          {currency}
+          {''}
           <Text style={{color: amount === 0 ? Colors.disabled : Colors.dark}}>
             {amount.toLocaleString()}
           </Text>
         </Text>
+        {miniText && (
+          <Text
+            style={{
+              paddingTop: 12,
+              fontFamily: 'Inter-Medium',
+              color: Colors.medium,
+              fontSize: 16,
+            }}>
+            {miniText}
+          </Text>
+        )}
       </View>
       <View style={{flex: 1}}>
         <View
@@ -121,7 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   minMaxPill: {
-    marginTop: 28,
+    marginTop: 16,
     backgroundColor: Colors.border,
     paddingVertical: 8,
     paddingHorizontal: 16,

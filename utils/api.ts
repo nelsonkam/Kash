@@ -61,12 +61,15 @@ export function fetcherInfinite(url: string) {
 }
 
 export function mutator({method = 'post', data = {}, url}) {
-  return api
-    .request({url, method, data})
-    .then(res => Promise.resolve(res.data));
+  return (
+    api
+      // @ts-ignore
+      .request({url, method, data})
+      .then(res => Promise.resolve(res.data))
+  );
 }
 
-export function uploadFile(data) {
+export function uploadFile(data: any) {
   return api.post('/upload', data, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -74,7 +77,7 @@ export function uploadFile(data) {
   });
 }
 
-export async function saveImage(path) {
+export async function saveImage(path: any) {
   const data = new FormData();
   const arr = path.split('/');
   const extension = path.split('.')[path.split('.').length - 1];
