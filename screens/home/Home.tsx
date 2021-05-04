@@ -81,14 +81,14 @@ const Home = () => {
   return (
     <View
       style={{
-        backgroundColor: 'white',
+        backgroundColor: Colors.lightGrey,
         flex: 1,
-        padding: 16,
         paddingTop: top + 16,
       }}>
       <View
         style={{
-          marginBottom: 24,
+          marginBottom: 16,
+          marginHorizontal: 16,
           marginTop: 6,
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -98,103 +98,108 @@ const Home = () => {
           style={{
             fontFamily: 'Inter-Bold',
             color: Colors.dark,
-            fontSize: 20,
+            fontSize: 22,
           }}>
           Tableau de bord
         </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Ionicons name={'person-circle-outline'} size={28} />
-        </TouchableOpacity>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
+        style={{backgroundColor: Colors.lightGrey}}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{...styles.card, marginHorizontal: 16}}>
           <View
             style={{
-              borderRadius: 8,
-              padding: 18,
-              backgroundColor: Colors.lightGrey,
-              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingVertical: 18,
+              paddingHorizontal: 18,
             }}>
-            <Text
+            <View
               style={{
-                fontSize: 16,
-                fontFamily: 'Inter-SemiBold',
-                marginBottom: 8,
+                flex: 1,
               }}>
-              Reçu
-            </Text>
-            <Text
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontFamily: 'Inter-SemiBold',
+                  marginBottom: 8,
+                  color: Colors.medium,
+                }}>
+                Reçu
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Bold',
+                  fontSize: 20,
+                  color: Colors.brand,
+                }}>
+                CFA{' '}
+                {profile.txn_summary
+                  ? parseFloat(
+                      profile.txn_summary['30-days']?.received || 0,
+                    ).toLocaleString()
+                  : null}
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Regular',
+                  color: Colors.medium,
+                  marginTop: 8,
+                }}>
+                30 derniers jours
+              </Text>
+            </View>
+            <View style={{width: 8, height: 1}} />
+            <View
               style={{
-                fontFamily: 'Inter-Bold',
-                fontSize: 20,
-                color: Colors.brand,
+                flex: 1,
               }}>
-              CFA{' '}
-              {profile.txn_summary
-                ? parseFloat(
-                    profile.txn_summary['30-days']?.received || 0,
-                  ).toLocaleString()
-                : null}
-            </Text>
-            <Text
-              style={{
-                fontFamily: 'Inter-Regular',
-                color: Colors.medium,
-                marginTop: 8,
-              }}>
-              30 derniers jours
-            </Text>
-          </View>
-          <View style={{width: 16, height: 1}} />
-          <View
-            style={{
-              borderRadius: 8,
-              padding: 18,
-              backgroundColor: Colors.lightGrey,
-              flex: 1,
-            }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'Inter-SemiBold',
-                marginBottom: 8,
-              }}>
-              Envoyé
-            </Text>
-            <Text
-              style={{
-                fontFamily: 'Inter-Bold',
-                fontSize: 20,
-                color: Colors.danger,
-              }}>
-              CFA{' '}
-              {profile.txn_summary
-                ? parseFloat(
-                    profile.txn_summary['30-days']?.sent || 0,
-                  ).toLocaleString()
-                : null}
-            </Text>
-            <Text
-              style={{
-                fontFamily: 'Inter-Regular',
-                color: Colors.medium,
-                marginTop: 8,
-              }}>
-              30 derniers jours
-            </Text>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontFamily: 'Inter-SemiBold',
+                  marginBottom: 8,
+                  color: Colors.medium,
+                }}>
+                Envoyé
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Bold',
+                  fontSize: 20,
+                  color: Colors.danger,
+                }}>
+                CFA{' '}
+                {profile.txn_summary
+                  ? parseFloat(
+                      profile.txn_summary['30-days']?.sent || 0,
+                    ).toLocaleString()
+                  : null}
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Regular',
+                  color: Colors.medium,
+                  marginTop: 8,
+                }}>
+                30 derniers jours
+              </Text>
+            </View>
           </View>
         </View>
+
         <View
           style={{
-            marginVertical: 16,
-            paddingVertical: 8,
-            borderRadius: 6,
+            margin: 16,
+            marginBottom: 0,
+            paddingVertical: 12,
+            paddingHorizontal: 8,
             flexDirection: 'row',
             justifyContent: 'space-around',
+            ...styles.card,
           }}>
           <TouchableOpacity
             onPress={() =>
@@ -203,22 +208,13 @@ const Home = () => {
             style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
             <View
               style={{
-                height: 60,
-                width: 60,
+                height: 54,
+                width: 54,
                 backgroundColor: Colors.brand,
                 borderRadius: 100,
                 marginBottom: 8,
                 alignItems: 'center',
                 justifyContent: 'center',
-                shadowColor: '#000',
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.2,
-                shadowRadius: 1.41,
-
-                elevation: 2,
               }}>
               <MaterialCommunityIcons
                 size={28}
@@ -242,22 +238,13 @@ const Home = () => {
             style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
             <View
               style={{
-                height: 60,
-                width: 60,
+                height: 54,
+                width: 54,
                 backgroundColor: Colors.brand,
                 borderRadius: 100,
                 marginBottom: 8,
                 alignItems: 'center',
                 justifyContent: 'center',
-                shadowColor: '#000',
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.2,
-                shadowRadius: 1.41,
-
-                elevation: 2,
               }}>
               <MaterialCommunityIcons
                 size={28}
@@ -279,22 +266,13 @@ const Home = () => {
             style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
             <View
               style={{
-                height: 60,
-                width: 60,
+                height: 54,
+                width: 54,
                 backgroundColor: Colors.brand,
                 borderRadius: 100,
                 marginBottom: 8,
                 alignItems: 'center',
                 justifyContent: 'center',
-                shadowColor: '#000',
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.2,
-                shadowRadius: 1.41,
-
-                elevation: 2,
               }}>
               <Ionicons name="card" size={28} color={'white'} />
             </View>
@@ -308,13 +286,20 @@ const Home = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        {requestsQuery.data?.results?.length > 0 && (
+
+        <View
+          style={{
+            ...styles.card,
+            paddingVertical: 18,
+            paddingHorizontal: 16,
+            margin: 16,
+          }}>
           <View
             style={{
               flexDirection: 'row',
-              marginTop: 24,
-              marginBottom: 4,
+              paddingBottom: 16,
               justifyContent: 'space-between',
+              flexWrap: 'wrap',
             }}>
             <Text
               style={{
@@ -322,10 +307,10 @@ const Home = () => {
                 color: Colors.medium,
                 fontSize: 17,
               }}>
-              Requêtes reçues
+              Transactions récentes
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('Requests')}
+              onPress={() => navigation.navigate('TransactionHistory')}
               style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text
                 style={{
@@ -343,90 +328,32 @@ const Home = () => {
               />
             </TouchableOpacity>
           </View>
-        )}
-        <View style={styles.card}>
-          {requestsQuery.data?.results?.map((item: any, i: number) => (
-            <>
-              <RequestItem request={item} />
-              {i !== requestsQuery.data?.results.length - 1 && (
-                <View
-                  style={{
-                    width: '100%',
-                    height: 1,
-                    backgroundColor: Colors.grey,
-                  }}
-                />
-              )}
-            </>
-          ))}
-          {requestsQuery.data?.length === 0 && (
-            <EmptyState
-              icon={
-                <AntDesign
-                  name={'arrowdown'}
-                  size={48}
-                  color={Colors.disabled}
-                />
-              }
-              text={"Tes requêtes reçues s'afficheront ici."}
-            />
-          )}
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            marginTop: 18,
-            marginBottom: 16,
-            justifyContent: 'space-between',
-          }}>
-          <Text
-            style={{
-              fontFamily: 'Inter-SemiBold',
-              color: Colors.medium,
-              fontSize: 17,
-            }}>
-            Transactions récentes
-          </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('TransactionHistory')}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text
-              style={{
-                fontFamily: 'Inter-SemiBold',
-                color: Colors.primary,
-                fontSize: 17,
-                marginRight: 2,
-              }}>
-              Voir tout
-            </Text>
-            <Ionicons name={'arrow-forward'} size={24} color={Colors.primary} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card}>
-          {transactionsQuery.data?.results?.map((item: any, i: number) => (
-            <>
-              <TransactionItem transaction={item} />
-              {i !== 4 && (
-                <View
-                  style={{
-                    marginVertical: 8,
-                    width: '100%',
-                    height: 1,
-                    backgroundColor: Colors.grey,
-                  }}
-                />
-              )}
-            </>
-          ))}
+          <View>
+            {transactionsQuery.data?.results?.map((item: any, i: number) => (
+              <>
+                <TransactionItem transaction={item} />
+                {i !== 4 && (
+                  <View
+                    style={{
+                      marginVertical: 8,
+                      width: '100%',
+                      height: 1,
+                      backgroundColor: Colors.grey,
+                    }}
+                  />
+                )}
+              </>
+            ))}
 
-          {transactionsQuery.data?.results?.length === 0 && (
-            <EmptyState
-              icon={
-                <AntDesign name={'swap'} size={48} color={Colors.disabled} />
-              }
-              text={"Tes transactions s'afficheront ici."}
-            />
-          )}
+            {transactionsQuery.data?.results?.length === 0 && (
+              <EmptyState
+                icon={
+                  <AntDesign name={'swap'} size={48} color={Colors.disabled} />
+                }
+                text={"Tes transactions s'afficheront ici."}
+              />
+            )}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -470,9 +397,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   card: {
-    borderRadius: 12,
+    borderRadius: 10,
     backgroundColor: 'white',
     shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    elevation: 2,
   },
   cardTitle: {
     fontFamily: 'Inter-Bold',

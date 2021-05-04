@@ -37,11 +37,16 @@ class KBottomSheet extends Component<Props> {
 
     return (
       <Animated.View
-        pointerEvents="none"
+        onTouchStart={() => this.close()}
         style={[
           {
             ...StyleSheet.absoluteFillObject,
             backgroundColor: '#000',
+            height: Animated.cond(
+              Animated.lessThan(this.fall, 1),
+              new Animated.Value('100%'),
+              new Animated.Value(0),
+            ),
           },
           {
             opacity: animatedShadowOpacity,

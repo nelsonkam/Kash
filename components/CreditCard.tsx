@@ -8,7 +8,11 @@ import {
 import Colors from '../utils/colors';
 import React from 'react';
 
-const CreditCard = ({card, onPress}) => {
+type Props = {
+  card: any;
+  onPress?: (card: any) => void;
+};
+const CreditCard = ({card, onPress}: Props) => {
   return (
     <TouchableOpacity
       onPress={() => onPress && onPress(card)}

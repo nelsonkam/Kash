@@ -10,30 +10,41 @@ import KBottomSheet from '../../components/KBottomSheet';
 import {useAsync, usePayment} from '../../utils/hooks';
 import api from '../../utils/api';
 import AsyncActionSheet from '../../components/AsyncActionSheet';
+import KashPad from '../../components/KashPad';
+import ConfirmSheet from '../../components/ConfirmSheet';
 
 const Withdrawal = ({}) => {
   const {params} = useRoute();
   const [amount, setAmount] = useState(0);
+  const [xofAmount, setXOFamount] = useState(0);
   const navigation = useNavigation();
+  // @ts-ignore
+  const card = params.card;
   const limits = {
     min: 1,
-    max: Math.floor(parseFloat(params.card.card_details.amount) - 1),
+    max: Math.floor(parseFloat(card.card_details.amount) - 1),
   };
   const actionRef = useRef<KBottomSheet>(null);
+  const confirmRef = useRef<KBottomSheet>(null);
   const withdrawCard = useAsync(data =>
-    api.post(`/kash/virtual-cards/${params.card.id}/withdraw/`, data),
+    api.post(`/kash/virtual-cards/${card.id}/withdraw/`, data),
+  );
+  const convertAmount = useAsync(data =>
+    api.post(`/kash/virtual-cards/${card.id}/convert/`, data),
   );
 
-  const handleNumChange = num => {
-    if (num === 'backspace') {
-      setAmount(
-        parse(amount.toString().substring(0, amount.toString().length - 1)),
-      );
-    } else {
-      setAmount(parse(`${amount}${num}`));
-    }
+  const handleWithdraw = (amount: number) => {
+    setAmount(amount);
+    convertAmount
+      .execute({amount, currency: 'USD', is_withdrawal: true})
+      .then(res => {
+        setXOFamount(res.data.amount);
+        confirmRef.current?.open();
+      });
   };
-  const handleWithdraw = () => {
+
+  const handleConfirm = () => {
+    confirmRef.current?.close();
     actionRef.current?.open();
     withdrawCard.execute({amount}).then(() => {
       setTimeout(() => {
@@ -45,65 +56,22 @@ const Withdrawal = ({}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white', position: 'relative'}}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          position: 'absolute',
-          width: '100%',
-        }}>
-        {amount < limits.min ? (
-          <View style={styles.minMaxPill}>
-            <Text
-              style={{
-                color: Colors.dark,
-                fontFamily: 'Inter-Bold',
-              }}>
-              {'Minimum: $' + limits.min}
-            </Text>
-          </View>
-        ) : null}
-        {amount > limits.max ? (
-          <View style={styles.minMaxPill}>
-            <Text
-              style={{
-                color: Colors.dark,
-                fontFamily: 'Inter-Bold',
-              }}>
-              {'Maximum: $' + limits.max}
-            </Text>
-          </View>
-        ) : null}
-      </View>
-      <View
-        style={{flex: 0.65, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.amount}>
-          ${' '}
-          <Text style={{color: amount === 0 ? Colors.disabled : Colors.dark}}>
-            {amount}
-          </Text>
-        </Text>
-      </View>
-      <View style={{flex: 1}}>
-        <View
-          style={{flexDirection: 'row', marginHorizontal: 8, marginBottom: 24}}>
-          <Button
-            onPress={() => navigation.goBack()}
-            color={Colors.border}
-            textColor={Colors.dark}
-            style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
-            Annuler
-          </Button>
-          <Button
-            color={Colors.brand}
-            disabled={amount < limits.min || amount > limits.max}
-            onPress={handleWithdraw}
-            style={{flex: 1, marginVertical: 8, marginHorizontal: 8}}>
-            Retirer
-          </Button>
-        </View>
-        <NumPad onChange={handleNumChange} height={320}></NumPad>
-      </View>
+      <KashPad
+        limits={limits}
+        currency={'$'}
+        onNext={handleWithdraw}
+        buttonText={{
+          next: 'Retirer',
+          cancel: 'Annuler',
+        }}
+        loading={convertAmount.loading}
+      />
+      <ConfirmSheet
+        ref={confirmRef}
+        confirmText={`Tu t'apprêtes à retirer $${amount} (soit CFA ${xofAmount}) de ta carte.`}
+        onConfirm={handleConfirm}
+        onCancel={() => confirmRef.current?.close()}
+      />
       <AsyncActionSheet
         ref={actionRef}
         statusTexts={{

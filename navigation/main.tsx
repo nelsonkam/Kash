@@ -8,6 +8,7 @@ import KashStack from './kash';
 import NotificationStack from './notifications';
 import Search from '../screens/Search';
 import HomeStack from './home';
+import ProfileStack from './profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +20,7 @@ export default function MainTabs() {
         tabBarLabel: () => null,
         tabBarIcon: ({focused, color, size}) => {
           const icons = {
-            Home: 'home',
+            Profile: 'person-circle',
             Cards: 'card',
             Découverte: 'search',
             Notifs: 'notifications-circle',
@@ -52,7 +53,7 @@ export default function MainTabs() {
         activeTintColor: Colors.brand,
         inactiveTintColor: Colors.disabled,
       }}>
-      <Tab.Screen name="Home" component={HomeStack} />
+      <Tab.Screen name="Profile" component={ProfileStack} />
       <Tab.Screen name="Cards" component={CardStack} />
       <Tab.Screen name="Kash" component={KashStack} />
       <Tab.Screen name="Découverte" component={Search} />

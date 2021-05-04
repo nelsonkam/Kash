@@ -22,7 +22,7 @@ import {useAsync} from '../../utils/hooks';
 import useSWRNative from '@nandorojo/swr-react-native';
 import ConfirmSheet from '../../components/ConfirmSheet';
 
-const TransactionItem = ({transaction}) => {
+const TransactionItem = ({transaction}: {transaction: any}) => {
   const isDebit = transaction.indicator === 'D';
   let iconName = isDebit ? 'arrow-top-right' : 'arrow-bottom-left';
   iconName = transaction.status.toLowerCase() === 'failed' ? 'close' : iconName;
@@ -81,7 +81,13 @@ const TransactionItem = ({transaction}) => {
   );
 };
 
-const CardDetailsHeader = ({card, onDetailClick}) => {
+const CardDetailsHeader = ({
+  card,
+  onDetailClick,
+}: {
+  card: any;
+  onDetailClick: () => void;
+}) => {
   return (
     <React.Fragment>
       {!card.is_active && (
@@ -145,22 +151,21 @@ const CardDetailsHeader = ({card, onDetailClick}) => {
 function CardDetail() {
   const {params} = useRoute();
   const navigation = useNavigation();
-  const cardQuery = useSWRNative(
-    `/kash/virtual-cards/${params.card.id}/`,
-    fetcher,
-  );
+  // @ts-ignore
+  const cardId = params.card.id;
+  const cardQuery = useSWRNative(`/kash/virtual-cards/${cardId}/`, fetcher);
   const transactionsQuery = useSWRNative(
-    `/kash/virtual-cards/${params.card.id}/transactions/`,
+    `/kash/virtual-cards/${cardId}/transactions/`,
     fetcher,
   );
   const freezeCard = useAsync(() =>
-    api.post(`/kash/virtual-cards/${params.card.id}/freeze/`),
+    api.post(`/kash/virtual-cards/${cardId}/freeze/`),
   );
   const unfreezeCard = useAsync(() =>
-    api.post(`/kash/virtual-cards/${params.card.id}/unfreeze/`),
+    api.post(`/kash/virtual-cards/${cardId}/unfreeze/`),
   );
   const terminateCard = useAsync(() =>
-    api.post(`/kash/virtual-cards/${params.card.id}/terminate/`),
+    api.post(`/kash/virtual-cards/${cardId}/terminate/`),
   );
   const menuRef = useRef<KBottomSheet>(null);
   const detailsRef = useRef<KBottomSheet>(null);
@@ -168,6 +173,7 @@ function CardDetail() {
   const unfreezeActionRef = useRef<KBottomSheet>(null);
   const terminateActionRef = useRef<KBottomSheet>(null);
   const terminateConfirmRef = useRef<KBottomSheet>(null);
+  // @ts-ignore
   const card = cardQuery.data || params.card;
 
   React.useLayoutEffect(() => {
@@ -213,8 +219,10 @@ function CardDetail() {
   };
 
   if (transactionsQuery.data) {
-    const data = transactionsQuery.data.filter(item => item.currency === 'USD');
-    const groups = data.reduce((groups, txn) => {
+    const data = transactionsQuery.data.filter(
+      (item: any) => item.currency === 'USD',
+    );
+    const groups = data.reduce((groups: any[], txn: any) => {
       const date = txn.created_at.split('T')[0];
       if (!groups[date]) {
         groups[date] = [];
@@ -228,7 +236,7 @@ function CardDetail() {
         title: isToday(new Date(date))
           ? "Aujourd'hui"
           : new Date(date).toLocaleDateString(),
-        data: groups[date].sort((a, b) => {
+        data: groups[date].sort((a: any, b: any) => {
           if (a.date > b.date) {
             return -1;
           } else if (a.date < b.date) {
@@ -426,7 +434,7 @@ function CardDetail() {
             }}>
             <TouchableOpacity
               onPress={() => {
-                menuRef.current.close();
+                menuRef.current?.close();
                 navigation.navigate('EditNickname', {card});
               }}
               style={{
@@ -447,7 +455,7 @@ function CardDetail() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                menuRef.current.close();
+                menuRef.current?.close();
                 navigation.navigate('RechargeCard', {card});
               }}
               style={{
@@ -472,7 +480,7 @@ function CardDetail() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                menuRef.current.close();
+                menuRef.current?.close();
                 navigation.navigate('Withdrawal', {card});
               }}
               style={{

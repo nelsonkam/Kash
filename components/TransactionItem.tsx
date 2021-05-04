@@ -35,7 +35,12 @@ const TransactionItem = ({transaction}: {transaction: any}) => {
           flex: 1,
         }}>
         <View>
-          <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+          <View
+            style={{
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+            }}>
             <Text
               style={{
                 fontFamily: 'Inter-Semibold',

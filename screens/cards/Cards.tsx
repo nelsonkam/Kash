@@ -13,7 +13,6 @@ import {
 import Colors from '../../utils/colors';
 import Button from '../../components/Button';
 import {useNavigation} from '@react-navigation/native';
-import useSWR from 'swr';
 import {fetcher} from '../../utils/api';
 import CreditCard from '../../components/CreditCard';
 import useSWRNative from '@nandorojo/swr-react-native';

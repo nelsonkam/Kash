@@ -11,8 +11,9 @@ enum Colors {
   border = '#e2e8f0',
   grey = '#ececf3',
   lightGrey = '#f9fafb',
-  lightDanger = 'rgba(244, 84, 29, 0.05)',
-  lightSuccess = 'rgba(26, 206, 76, 0.05)',
+  lightDanger = 'rgba(244, 84, 29, 0.1)',
+  lightSuccess = 'rgba(26, 206, 76, 0.1)',
+  lightPrimary = 'rgba(43, 89, 255, 0.1)',
 }
 
 export default Colors;

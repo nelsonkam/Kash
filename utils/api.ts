@@ -60,15 +60,6 @@ export function fetcherInfinite(url: string) {
   });
 }
 
-export function mutator({method = 'post', data = {}, url}) {
-  return (
-    api
-      // @ts-ignore
-      .request({url, method, data})
-      .then(res => Promise.resolve(res.data))
-  );
-}
-
 export function uploadFile(data: any) {
   return api.post('/upload', data, {
     headers: {

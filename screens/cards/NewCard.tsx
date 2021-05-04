@@ -207,7 +207,7 @@ function NewCard() {
   const [fees, setFees] = useState<number | null>(null);
   const recapRef = useRef<KBottomSheet>(null);
   const convertAmount = useAsync((id, amount) =>
-    api.post(`/kash/virtual-cards/${id}/convert/`, {amount}),
+    api.post(`/kash/virtual-cards/${id}/convert/`, {amount, currency: 'USD'}),
   );
   const limits = profileQuery.data?.limits || {};
 

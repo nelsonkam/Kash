@@ -7,6 +7,7 @@ import ListKYCDocs from '../screens/profile/ListKYCDocs';
 import VerifyKYCDoc from '../screens/profile/VerifyKYCDoc';
 import AddPhone from '../screens/auth/AddPhone';
 import Verification from '../screens/auth/Verification';
+import EditProfile from '../screens/profile/EditProfile';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,11 @@ function ProfileStack() {
         options={{title: 'Vérification'}}
         name="VerifyKYCDoc"
         component={VerifyKYCDoc}
+      />
+      <Stack.Screen
+        options={{title: 'Modifier mon profil'}}
+        name="EditProfile"
+        component={EditProfile}
       />
       <Stack.Screen
         options={{headerShown: false}}

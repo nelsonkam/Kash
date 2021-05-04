@@ -36,7 +36,6 @@ export default function KashStack() {
         name="Recipients"
         component={Recipients}
       />
-
       <Stack.Screen name="PayKash" component={PayKash} />
       <Stack.Screen
         options={{title: 'Demander'}}

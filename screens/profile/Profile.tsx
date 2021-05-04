@@ -171,12 +171,38 @@ function Profile() {
             <AntDesign name={'adduser'} color={Colors.brand} size={24} />
             <Text
               style={{
-                fontFamily: 'Inter-Semibold',
+                fontFamily: 'Inter-SemiBold',
                 color: Colors.brand,
                 fontSize: 16,
                 marginLeft: 12,
               }}>
               Inviter mes potes
+            </Text>
+          </View>
+          <AntDesign name={'right'} color={Colors.medium} size={20} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('EditProfile')}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 16,
+            paddingRight: 16,
+            marginLeft: 16,
+            borderBottomColor: Colors.border,
+            borderBottomWidth: 1,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <AntDesign name={'user'} color={'black'} size={24} />
+            <Text
+              style={{
+                fontFamily: 'Inter-SemiBold',
+                color: Colors.dark,
+                fontSize: 16,
+                marginLeft: 12,
+              }}>
+              Modifier mon profil
             </Text>
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
