@@ -207,6 +207,7 @@ function ScanDocument({onNext, onBack}: ScanDocumentType) {
         }}>
         <Image
           source={{uri: photo?.uri}}
+          resizeMode={'contain'}
           style={{
             width: width - 96,
             height: (width - 96) * 0.6,

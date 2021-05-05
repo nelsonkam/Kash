@@ -18,6 +18,7 @@ import Colors from './utils/colors';
 import * as Sentry from '@sentry/react-native';
 
 import codePush from 'react-native-code-push';
+import {requestTrackingPermission} from 'react-native-tracking-transparency';
 
 if (!__DEV__) {
   Sentry.init({
@@ -45,7 +46,9 @@ function App() {
     OneSignal.setAppId('514da48c-3c9c-4430-a4b7-de7f539dc552');
     OneSignal.setLogLevel(6, 0);
     OneSignal.setRequiresUserPrivacyConsent(false);
-    OneSignal.promptForPushNotificationsWithUserResponse(() => null);
+    requestTrackingPermission().then(res => {
+      OneSignal.promptForPushNotificationsWithUserResponse(() => null);
+    });
 
     setReady(true);
   }, []);

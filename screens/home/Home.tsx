@@ -299,6 +299,7 @@ const Home = () => {
               flexDirection: 'row',
               paddingBottom: 16,
               justifyContent: 'space-between',
+              alignItems: 'center',
               flexWrap: 'wrap',
             }}>
             <Text
