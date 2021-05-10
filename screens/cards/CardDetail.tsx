@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -23,7 +23,9 @@ import useSWRNative from '@nandorojo/swr-react-native';
 import ConfirmSheet from '../../components/ConfirmSheet';
 
 const TransactionItem = ({transaction}: {transaction: any}) => {
-  const isDebit = transaction.indicator === 'D';
+  const isDebit =
+    transaction.indicator === 'D' ||
+    transaction.type?.toLowerCase() === 'debit';
   let iconName = isDebit ? 'arrow-top-right' : 'arrow-bottom-left';
   iconName = transaction.status.toLowerCase() === 'failed' ? 'close' : iconName;
   return (
@@ -61,20 +63,25 @@ const TransactionItem = ({transaction}: {transaction: any}) => {
               fontSize: 16,
               color: Colors.dark,
             }}>
-            {transaction.gateway_reference_details}
+            {transaction.gateway_reference_details || transaction.merchant}
           </Text>
-          <Text
-            style={{
-              marginTop: 8,
-              color: Colors.medium,
-              fontFamily: 'Inter-Regular',
-            }}>
-            {transaction.narration || transaction.product}
-          </Text>
+          {!!transaction.narration && (
+            <Text
+              style={{
+                marginTop: 8,
+                color: Colors.medium,
+                fontFamily: 'Inter-Regular',
+              }}>
+              {transaction.narration || transaction.product}
+            </Text>
+          )}
         </View>
         <Text
           style={{fontSize: 16, color: Colors.dark, fontFamily: 'Inter-Bold'}}>
-          ${transaction.amount + transaction.fee}
+          $
+          {(
+            parseFloat(transaction.amount) + (transaction.fee || 0)
+          ).toLocaleString()}
         </Text>
       </View>
     </View>
@@ -84,9 +91,13 @@ const TransactionItem = ({transaction}: {transaction: any}) => {
 const CardDetailsHeader = ({
   card,
   onDetailClick,
+  currentTab,
+  onSwitchTab,
 }: {
   card: any;
+  currentTab: 'statement' | 'transactions';
   onDetailClick: () => void;
+  onSwitchTab: (tab: 'statement' | 'transactions') => void;
 }) => {
   return (
     <React.Fragment>
@@ -140,9 +151,54 @@ const CardDetailsHeader = ({
             marginTop: 8,
           }}
         />
-        <Text style={{marginTop: 24, fontFamily: 'Inter-Bold', fontSize: 18}}>
-          Transactions
-        </Text>
+        <View
+          style={{
+            backgroundColor: Colors.lightGrey,
+            borderRadius: 100,
+            flexDirection: 'row',
+            marginTop: 24,
+          }}>
+          <TouchableOpacity
+            onPress={() => onSwitchTab('statement')}
+            style={{
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: 100,
+              flex: 1,
+              alignItems: 'center',
+              backgroundColor:
+                currentTab === 'statement' ? Colors.brand : Colors.lightGrey,
+            }}>
+            <Text
+              style={{
+                fontFamily: 'Inter-Bold',
+                fontSize: 16,
+                color: currentTab === 'statement' ? 'white' : 'black',
+              }}>
+              Relevé
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => onSwitchTab('transactions')}
+            style={{
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: 100,
+              flex: 1,
+              alignItems: 'center',
+              backgroundColor:
+                currentTab === 'transactions' ? Colors.brand : Colors.lightGrey,
+            }}>
+            <Text
+              style={{
+                fontFamily: 'Inter-Bold',
+                fontSize: 16,
+                color: currentTab === 'transactions' ? 'white' : 'black',
+              }}>
+              Transactions
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </React.Fragment>
   );
@@ -153,9 +209,16 @@ function CardDetail() {
   const navigation = useNavigation();
   // @ts-ignore
   const cardId = params.card.id;
+  const [currentTab, setTab] = useState<'statement' | 'transactions'>(
+    'statement',
+  );
   const cardQuery = useSWRNative(`/kash/virtual-cards/${cardId}/`, fetcher);
   const transactionsQuery = useSWRNative(
     `/kash/virtual-cards/${cardId}/transactions/`,
+    fetcher,
+  );
+  const statementQuery = useSWRNative(
+    `/kash/virtual-cards/${cardId}/statement/`,
     fetcher,
   );
   const freezeCard = useAsync(() =>
@@ -218,12 +281,14 @@ function CardDetail() {
     }
   };
 
-  if (transactionsQuery.data) {
-    const data = transactionsQuery.data.filter(
-      (item: any) => item.currency === 'USD',
-    );
+  if (transactionsQuery.data && statementQuery.data) {
+    const data =
+      currentTab === 'transactions'
+        ? transactionsQuery.data.filter((item: any) => item.currency === 'USD')
+        : statementQuery.data;
+
     const groups = data.reduce((groups: any[], txn: any) => {
-      const date = txn.created_at.split('T')[0];
+      const date = txn.created_at?.split('T')[0];
       if (!groups[date]) {
         groups[date] = [];
       }
@@ -237,9 +302,9 @@ function CardDetail() {
           ? "Aujourd'hui"
           : new Date(date).toLocaleDateString(),
         data: groups[date].sort((a: any, b: any) => {
-          if (a.date > b.date) {
+          if (a.created_at > b.created_at) {
             return -1;
-          } else if (a.date < b.date) {
+          } else if (a.created_at < b.created_at) {
             return 1;
           } else {
             return 0;
@@ -258,7 +323,9 @@ function CardDetail() {
           ListHeaderComponent={
             <CardDetailsHeader
               card={card}
+              currentTab={currentTab}
               onDetailClick={() => detailsRef.current?.open()}
+              onSwitchTab={tab => setTab(tab)}
             />
           }
           ItemSeparatorComponent={() => (

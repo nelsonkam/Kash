@@ -211,7 +211,7 @@ function SendKash() {
           is_incognito: false,
           recipient_tags: recipients.map((r: any) => r.kashtag),
           amount: amount,
-          group_mode: recipients.length > 1 ? 'pacha' : null,
+          group_mode: recipients.length > 1 ? 'pacha' : undefined,
         })
         .then(res => {
           navigation.navigate('PayKash', res.data);

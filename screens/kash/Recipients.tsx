@@ -62,7 +62,12 @@ function Recipients() {
             buttonPositive: 'Accepter',
             buttonNegative: 'Annuler',
           },
-        ).then(() => Contacts.getAllWithoutPhotos())
+        ).then(status => {
+          if (status === 'granted') {
+            return Contacts.getAllWithoutPhotos();
+          }
+          return Promise.resolve([]);
+        })
       : Contacts.getAllWithoutPhotos());
 
     const phoneNumbers = contacts

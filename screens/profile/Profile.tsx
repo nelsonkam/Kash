@@ -233,7 +233,7 @@ function Profile() {
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
         </TouchableOpacity>
-        {!profileQuery.data.phone_number && (
+        {!profileQuery.data?.phone_number && (
           <TouchableOpacity
             onPress={() => navigation.navigate('AddPhone')}
             style={{
@@ -310,7 +310,7 @@ function Profile() {
                 fontSize: 16,
                 marginLeft: 12,
               }}>
-              Questions & service client
+              Questions & Service Client
             </Text>
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
