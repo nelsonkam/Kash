@@ -9,6 +9,7 @@ import NotificationStack from './notifications';
 import Search from '../screens/Search';
 import HomeStack from './home';
 import ProfileStack from './profile';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,6 +39,14 @@ export default function MainTabs() {
                 source={require(`../assets/icon-inactive.png`)}
               />
             );
+          } else if (route.name === 'Invest') {
+            return (
+              <MaterialCommunityIcons
+                name={'bitcoin'}
+                size={size}
+                color={color}
+              />
+            );
           } else {
             return (
               <Ionicons
@@ -56,7 +65,7 @@ export default function MainTabs() {
       <Tab.Screen name="Profile" component={ProfileStack} />
       <Tab.Screen name="Cards" component={CardStack} />
       <Tab.Screen name="Kash" component={KashStack} />
-      <Tab.Screen name="Découverte" component={Search} />
+      <Tab.Screen name="Invest" component={Search} />
       <Tab.Screen name="Notifs" component={NotificationStack} />
     </Tab.Navigator>
   );

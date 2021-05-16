@@ -1,12 +1,12 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import ProfileStack from './profile';
-import Home from '../screens/home/Home';
+import Home from '../screens/wallet/Home';
 import Requests from '../screens/home/Requests';
 import ConfirmRequest from '../screens/home/ConfirmRequest';
 import SendKash from '../screens/home/SendKash';
 import PayRequest from '../screens/home/PayRequest';
-import TransactionHistory from '../screens/home/TransactionHistory';
+import TransactionHistory from '../screens/wallet/TransactionHistory';
 
 const Stack = createStackNavigator();
 

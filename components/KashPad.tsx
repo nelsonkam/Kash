@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Colors from '../utils/colors';
 import Button from './Button';
@@ -19,6 +19,7 @@ type Props = {
   };
   loading?: boolean;
   miniText?: string | null;
+  onChange?: (amount: number) => void;
 };
 
 function KashPad({
@@ -28,9 +29,16 @@ function KashPad({
   buttonText = {cancel: 'Annuler', next: ''},
   loading = false,
   miniText = null,
+  onChange,
 }: Props) {
   const [amount, setAmount] = useState(0);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (onChange) {
+      onChange(amount);
+    }
+  }, [amount]);
 
   const handleNumChange = (num: string) => {
     if (num === 'backspace') {
@@ -130,7 +138,7 @@ function KashPad({
 const styles = StyleSheet.create({
   amount: {
     fontFamily: 'Inter-Medium',
-    fontSize: 44,
+    fontSize: 40,
     color: Colors.dark,
     paddingHorizontal: 4,
   },

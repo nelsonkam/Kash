@@ -40,19 +40,14 @@ const Home = () => {
   const {top} = useSafeAreaInsets();
   const profileQuery = useSWRNative(`/kash/profiles/current/`, fetcher);
   const versionQuery = useSWRNative(`/kash/version/`, fetcher);
-  const requestsQuery = useSWRNative(
-    `/kash/requests/received/?paginate=1&limit=3`,
-    fetcher,
-  );
+
   const transactionsQuery = useSWRNative(
-    `/kash/txn_history/?paginate=1&limit=5`,
+    `/kash/wallets/current/transactions/?paginate=1&limit=5`,
     fetcher,
   );
   const profile = profileQuery.data || {};
   const isRefreshing =
-    transactionsQuery.isValidating ||
-    requestsQuery.isValidating ||
-    profileQuery.isValidating;
+    transactionsQuery.isValidating || profileQuery.isValidating;
   const handleDownload = () => {
     const url =
       Platform.OS === 'ios'
@@ -74,14 +69,15 @@ const Home = () => {
 
   const handleRefresh = () => {
     transactionsQuery.revalidate();
-    requestsQuery.revalidate();
     profileQuery.revalidate();
   };
+
+  const wallet = profile.wallet || {};
 
   return (
     <View
       style={{
-        backgroundColor: Colors.lightGrey,
+        backgroundColor: 'white',
         flex: 1,
         paddingTop: top + 16,
       }}>
@@ -91,133 +87,64 @@ const Home = () => {
           marginHorizontal: 16,
           marginTop: 6,
           flexDirection: 'row',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           alignItems: 'center',
         }}>
         <Text
           style={{
             fontFamily: 'Inter-Bold',
             color: Colors.dark,
-            fontSize: 22,
+            fontSize: 18,
           }}>
-          Tableau de bord
+          Portefeuille
         </Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{backgroundColor: Colors.lightGrey}}
+        style={{backgroundColor: 'white'}}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }>
-        <View style={{...styles.card, marginHorizontal: 16}}>
-          <View
+        <View
+          style={{height: 150, justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={styles.amount}>
+            $
+            <Text style={{color: Colors.dark}}>
+              {(parseFloat(wallet?.balance) || 0).toLocaleString()}
+            </Text>
+          </Text>
+          <Text
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingVertical: 18,
-              paddingHorizontal: 18,
+              paddingTop: 12,
+              fontFamily: 'Inter-Medium',
+              color: Colors.medium,
+              fontSize: 16,
             }}>
-            <View
-              style={{
-                flex: 1,
-              }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  fontFamily: 'Inter-SemiBold',
-                  marginBottom: 8,
-                  color: Colors.medium,
-                }}>
-                Reçu
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Bold',
-                  fontSize: 20,
-                  color: Colors.brand,
-                }}>
-                CFA{' '}
-                {profile.txn_summary
-                  ? parseFloat(
-                      profile.txn_summary['30-days']?.received || 0,
-                    ).toLocaleString()
-                  : null}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Regular',
-                  color: Colors.medium,
-                  marginTop: 8,
-                }}>
-                30 derniers jours
-              </Text>
-            </View>
-            <View style={{width: 8, height: 1}} />
-            <View
-              style={{
-                flex: 1,
-              }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  fontFamily: 'Inter-SemiBold',
-                  marginBottom: 8,
-                  color: Colors.medium,
-                }}>
-                Envoyé
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Bold',
-                  fontSize: 20,
-                  color: Colors.danger,
-                }}>
-                CFA{' '}
-                {profile.txn_summary
-                  ? parseFloat(
-                      profile.txn_summary['30-days']?.sent || 0,
-                    ).toLocaleString()
-                  : null}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Regular',
-                  color: Colors.medium,
-                  marginTop: 8,
-                }}>
-                30 derniers jours
-              </Text>
-            </View>
-          </View>
+            ~ CFA{' '}
+            {Math.round(
+              parseFloat(wallet?.xof_amount?.amount) || 0,
+            ).toLocaleString()}
+          </Text>
         </View>
-
         <View
           style={{
-            margin: 16,
-            marginBottom: 0,
-            paddingVertical: 12,
+            marginTop: 16,
+            paddingVertical: 16,
             paddingHorizontal: 8,
             flexDirection: 'row',
-            justifyContent: 'space-around',
-            ...styles.card,
+            justifyContent: 'center',
+            borderColor: Colors.border,
+            borderBottomWidth: 1,
+            borderTopWidth: 1,
           }}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Recipients', {type: P2PTxnType.send})
             }
-            style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
-            <View
-              style={{
-                height: 54,
-                width: 54,
-                backgroundColor: Colors.brand,
-                borderRadius: 100,
-                marginBottom: 8,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+            style={styles.homeActionContainer}>
+            <View style={styles.homeAction}>
               <MaterialCommunityIcons
-                size={28}
+                size={26}
                 name={'arrow-top-right'}
                 color={'white'}
               />
@@ -225,29 +152,22 @@ const Home = () => {
             <Text
               style={{
                 fontFamily: 'Inter-Medium',
-                fontSize: 15,
+                fontSize: 16,
                 color: Colors.dark,
+                textAlign: 'center',
               }}>
               Envoyer
             </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Recipients', {type: P2PTxnType.request})
             }
-            style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
-            <View
-              style={{
-                height: 54,
-                width: 54,
-                backgroundColor: Colors.brand,
-                borderRadius: 100,
-                marginBottom: 8,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+            style={styles.homeActionContainer}>
+            <View style={styles.homeAction}>
               <MaterialCommunityIcons
-                size={28}
+                size={26}
                 name={'arrow-bottom-left'}
                 color={'white'}
               />
@@ -255,44 +175,59 @@ const Home = () => {
             <Text
               style={{
                 fontFamily: 'Inter-Medium',
-                fontSize: 15,
+                fontSize: 16,
                 color: Colors.dark,
+                textAlign: 'center',
               }}>
               Demander
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Cards')}
-            style={{alignItems: 'center', maxWidth: 100, width: '100%'}}>
-            <View
-              style={{
-                height: 54,
-                width: 54,
-                backgroundColor: Colors.brand,
-                borderRadius: 100,
-                marginBottom: 8,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Ionicons name="card" size={28} color={'white'} />
+            onPress={() => navigation.navigate('Deposit')}
+            style={styles.homeActionContainer}>
+            <View style={styles.homeAction}>
+              <MaterialCommunityIcons
+                name="arrow-collapse-down"
+                size={26}
+                color={'white'}
+              />
             </View>
             <Text
               style={{
                 fontFamily: 'Inter-Medium',
-                fontSize: 15,
+                fontSize: 16,
                 color: Colors.dark,
+                textAlign: 'center',
               }}>
-              Cartes VISA
+              Recharger
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Withdraw')}
+            style={styles.homeActionContainer}>
+            <View style={styles.homeAction}>
+              <MaterialCommunityIcons
+                name="arrow-collapse-up"
+                size={26}
+                color={'white'}
+              />
+            </View>
+            <Text
+              style={{
+                fontFamily: 'Inter-Medium',
+                fontSize: 16,
+                color: Colors.dark,
+                textAlign: 'center',
+              }}>
+              Retirer
             </Text>
           </TouchableOpacity>
         </View>
 
         <View
           style={{
-            ...styles.card,
-            paddingVertical: 18,
-            paddingHorizontal: 16,
             margin: 16,
+            marginTop: 24,
           }}>
           <View
             style={{
@@ -306,7 +241,7 @@ const Home = () => {
               style={{
                 fontFamily: 'Inter-SemiBold',
                 color: Colors.medium,
-                fontSize: 17,
+                fontSize: 18,
               }}>
               Transactions récentes
             </Text>
@@ -330,7 +265,7 @@ const Home = () => {
             </TouchableOpacity>
           </View>
           <View>
-            {transactionsQuery.data?.results?.map((item: any, i: number) => (
+            {transactionsQuery.data?.map((item: any, i: number) => (
               <>
                 <TransactionItem transaction={item} />
                 {i !== 4 && (
@@ -345,7 +280,6 @@ const Home = () => {
                 )}
               </>
             ))}
-
             {transactionsQuery.data?.results?.length === 0 && (
               <EmptyState
                 icon={
@@ -368,12 +302,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 28,
     justifyContent: 'center',
-  },
-  amount: {
-    fontFamily: 'Inter-Semibold',
-    fontSize: 44,
-    color: Colors.dark,
-    paddingHorizontal: 4,
   },
   topButton: {
     backgroundColor: 'white',
@@ -417,6 +345,36 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginVertical: 4,
     marginBottom: 20,
+  },
+  amount: {
+    fontFamily: 'Inter-Medium',
+    fontSize: 38,
+    color: Colors.dark,
+    paddingHorizontal: 4,
+  },
+  homeAction: {
+    height: 52,
+    width: 52,
+    backgroundColor: Colors.brand,
+    borderRadius: 100,
+    marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    elevation: 2,
+  },
+  homeActionContainer: {
+    alignItems: 'center',
+    maxWidth: 80,
+    marginHorizontal: 6,
+    width: '100%',
   },
 });
 

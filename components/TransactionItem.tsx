@@ -4,9 +4,9 @@ import Colors from '../utils/colors';
 import React from 'react';
 
 const TransactionItem = ({transaction}: {transaction: any}) => {
-  const isDebit = transaction.txn_type === 'debit';
+  const isDebit = transaction.type === 'debit';
   let iconName = isDebit ? 'arrow-top-right' : 'arrow-bottom-left';
-  iconName = transaction.status.toLowerCase() === 'failed' ? 'close' : iconName;
+  iconName = !transaction.successful ? 'close' : iconName;
   iconName = transaction.status === 'refunded' ? 'cash-refund' : iconName;
   return (
     <View
@@ -47,7 +47,7 @@ const TransactionItem = ({transaction}: {transaction: any}) => {
                 fontSize: 16,
                 color: Colors.dark,
               }}>
-              {transaction.formatted?.title}
+              {transaction.source}
             </Text>
             <Text
               style={{
@@ -55,17 +55,19 @@ const TransactionItem = ({transaction}: {transaction: any}) => {
                 fontSize: 14,
                 color: isDebit ? Colors.danger : Colors.brand,
               }}>
-              CFA {parseFloat(transaction.amount).toLocaleString()}
+              ${parseFloat(transaction.amount).toLocaleString()}
             </Text>
           </View>
-          <Text
-            style={{
-              marginTop: 8,
-              color: Colors.medium,
-              fontFamily: 'Inter-Regular',
-            }}>
-            {transaction.formatted?.description}
-          </Text>
+          {transaction.memo && (
+            <Text
+              style={{
+                marginTop: 8,
+                color: Colors.medium,
+                fontFamily: 'Inter-Regular',
+              }}>
+              {transaction.memo}
+            </Text>
+          )}
         </View>
       </View>
     </View>

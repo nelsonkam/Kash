@@ -52,23 +52,26 @@ function Recipients() {
     }, 200);
   }, [search]);
   const syncContacts = async () => {
-    const contacts = await (Platform.OS === 'android'
-      ? PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-          {
-            title: 'Accès à tes contacts',
-            message:
-              'Nous avons besoin de ta permission pour lire ta liste de contacts afin de retrouver tes potes sur Kash.',
-            buttonPositive: 'Accepter',
-            buttonNegative: 'Annuler',
-          },
-        ).then(status => {
-          if (status === 'granted') {
-            return Contacts.getAllWithoutPhotos();
-          }
-          return Promise.resolve([]);
-        })
-      : Contacts.getAllWithoutPhotos());
+    let contacts: any[] = [];
+    try {
+      contacts = await (Platform.OS === 'android'
+        ? PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+            {
+              title: 'Accès à tes contacts',
+              message:
+                'Nous avons besoin de ta permission pour lire ta liste de contacts afin de retrouver tes potes sur Kash.',
+              buttonPositive: 'Accepter',
+              buttonNegative: 'Annuler',
+            },
+          ).then(status => {
+            if (status === 'granted') {
+              return Contacts.getAllWithoutPhotos();
+            }
+            return Promise.resolve([]);
+          })
+        : Contacts.getAllWithoutPhotos());
+    } catch (e) {}
 
     const phoneNumbers = contacts
       .map(i => {

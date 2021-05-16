@@ -1,21 +1,15 @@
-import {ActivityIndicator, SectionList, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import Colors from '../../utils/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import RequestItem from '../../components/RequestItem';
 import React from 'react';
-import useSWRNative, {
-  useSWRNativeRevalidate,
-} from '@nandorojo/swr-react-native';
-import {fetcher, fetcherInfinite} from '../../utils/api';
 import {isToday} from '../../utils';
 import TransactionItem from '../../components/TransactionItem';
-import {useSWRInfinite} from 'swr/esm';
 import {useInfinite} from '../../utils/hooks';
 import InfiniteSectionList from '../../components/InfiniteSectionList';
 import SectionHeader from '../../components/SectionHeader';
 
 function TransactionHistory() {
-  const transactionsQuery = useInfinite(`/kash/txn_history/`, 10);
+  const transactionsQuery = useInfinite(`/kash/wallets/USD/transactions/`, 10);
 
   const groups = transactionsQuery.data?.reduce(
     (groups: any, transaction: any) => {

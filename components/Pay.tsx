@@ -356,14 +356,14 @@ export function ChoosePaymentMethod({
                   fontSize: 16,
                   color: Colors.dark,
                 }}>
-                {fees.currency} {fees.amount}
+                {fees.currency} {fees.amount?.toLocaleString()}
               </Text>
             </View>
             <Button
               loading={nextLoading}
               onPress={handlePay}
               disabled={!momoAccountId}>
-              Payer {total.currency} {total.amount}
+              Payer {total.currency} {total.amount?.toLocaleString()}
             </Button>
           </View>
         </>
@@ -393,7 +393,7 @@ export default function Pay(props: PayProps) {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: `Payer ${total.currency} ${total.amount}`,
+      title: `Payer ${total.currency} ${total.amount?.toLocaleString()}`,
       headerBackTitle: '',
     });
   }, [navigation]);

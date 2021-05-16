@@ -19,6 +19,7 @@ import * as Sentry from '@sentry/react-native';
 
 import codePush from 'react-native-code-push';
 import {requestTrackingPermission} from 'react-native-tracking-transparency';
+import SetupWallet from './screens/auth/SetupWallet';
 
 if (!__DEV__) {
   Sentry.init({
@@ -69,23 +70,18 @@ function App() {
     return <Splash />;
   }
 
-  return auth.refresh &&
-    auth.profile &&
-    auth.profile.payout_methods?.length > 0 ? (
-    <MainStack />
-  ) : (
-    <AuthStack />
-  );
-}
+  if (
+    !(auth.refresh && auth.profile && auth.profile.payout_methods?.length > 0)
+  ) {
+    return <MainStack />;
+  }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  if (auth.profile && !auth.profile.wallet) {
+    return <SetupWallet />;
+  }
+
+  return <MainStack />;
+}
 
 export default codePush(() => (
   <Provider store={store}>
