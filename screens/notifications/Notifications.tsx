@@ -21,17 +21,14 @@ import {useNavigation} from '@react-navigation/native';
 
 const NotificationItem = ({notification, onPress}) => {
   const {profile} = useSelector((s: RootState) => s.auth);
-  if (!notification.content_object) {
-      return <View />;
-  }
-  const isRequest = notification.content_object.type === 'request';
+  const isRequest = notification.content_object?.type === 'request';
   const responded =
     isRequest &&
-    notification.content_object.responses.filter(
+    notification.content_object?.responses.filter(
       r => r.sender === profile.kashtag,
     ).length > 0;
   const response = responded
-    ? notification.content_object.responses.filter(
+    ? notification.content_object?.responses.filter(
         r => r.sender === profile.kashtag,
       )[0]
     : null;

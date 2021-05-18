@@ -189,13 +189,19 @@ const ChooseGroupMode = ({
 };
 
 function SendKash() {
+  const [amount, setAmount] = useState(0);
   const {params} = useRoute();
   // @ts-ignore
   const {recipients, type, note} = params;
   const navigation = useNavigation();
   const profileQuery = useSWRNative(`/kash/profiles/current/`, fetcher);
   const title = type === P2PTxnType.send ? 'Envoyer' : 'Demander';
-  const sendKash = useAsync(data => api.post(`/kash/send/`, data), true);
+  const sendKash = useAsync(
+    data => api.post(`/kash/wallets/current/transfer/`, data),
+    true,
+  );
+  const ratesQuery = useSWRNative(`/kash/rates/`, fetcher);
+  const rate = ratesQuery.data?.transfer?.XOF || 545;
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -204,35 +210,27 @@ function SendKash() {
   }, [navigation]);
 
   const handleNext = (amount: number) => {
-    if (type === P2PTxnType.send) {
-      sendKash
-        .execute({
-          note,
-          is_incognito: false,
-          recipient_tags: recipients.map((r: any) => r.kashtag),
-          amount: amount,
-          group_mode: recipients.length > 1 ? 'pacha' : undefined,
-        })
-        .then(res => {
-          navigation.navigate('PayKash', res.data);
-        });
-    } else {
-      navigation.navigate('RequestKash', {recipients, amount, note});
-    }
+    navigation.navigate('Recipients', {
+      type,
+      amount: (amount / rate).toFixed(2),
+    });
   };
 
-  const limits = profileQuery.data?.limits
+  let limits = profileQuery.data?.limits
     ? profileQuery.data?.limits.sendkash
     : {min: 25};
+  limits = type === P2PTxnType.send ? limits : {min: 25};
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <KashPad
         buttonText={{cancel: 'Annuler', next: title}}
+        onChange={setAmount}
         currency={'CFA '}
+        miniText={`~ $${(amount / rate).toFixed(2)} à CFA ${rate}`}
         limits={limits}
         onNext={handleNext}
-        miniText={recipients.length > 1 ? 'Par personne' : null}
+        // miniText={recipients.length > 1 ? 'Par personne' : null}
         loading={sendKash.loading}
       />
     </View>

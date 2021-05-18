@@ -1,4 +1,4 @@
-import {Text, View} from 'react-native';
+import {SectionList, Text, View} from 'react-native';
 import Colors from '../../utils/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import React from 'react';
@@ -7,13 +7,18 @@ import TransactionItem from '../../components/TransactionItem';
 import {useInfinite} from '../../utils/hooks';
 import InfiniteSectionList from '../../components/InfiniteSectionList';
 import SectionHeader from '../../components/SectionHeader';
+import useSWRNative from '@nandorojo/swr-react-native';
+import {fetcher} from '../../utils/api';
 
 function TransactionHistory() {
-  const transactionsQuery = useInfinite(`/kash/wallets/USD/transactions/`, 10);
+  const transactionsQuery = useSWRNative(
+    `/kash/wallets/current/transactions/`,
+    fetcher,
+  );
 
   const groups = transactionsQuery.data?.reduce(
     (groups: any, transaction: any) => {
-      const date = transaction.timestamp.split('T')[0];
+      const date = transaction.created_at.split('T')[0];
       if (!groups[date]) {
         groups[date] = [];
       }
@@ -41,8 +46,9 @@ function TransactionHistory() {
   });
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
-      <InfiniteSectionList
-        query={transactionsQuery}
+      <SectionList
+        onRefresh={() => transactionsQuery.revalidate()}
+        refreshing={transactionsQuery.isValidating}
         ItemSeparatorComponent={() => (
           <View
             style={{

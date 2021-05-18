@@ -11,6 +11,7 @@ type State = {
   user: UserResponse | null;
   setupComplete: boolean;
   deviceId: string | null;
+  pincode: string | null;
 };
 
 const initialState: State = {
@@ -23,6 +24,7 @@ const initialState: State = {
   affiliateCode: null,
   setupComplete: false,
   deviceId: null,
+  pincode: null,
 };
 
 const authSlice = createSlice<State, SliceCaseReducers<State>>({
@@ -51,6 +53,9 @@ const authSlice = createSlice<State, SliceCaseReducers<State>>({
     },
     setDeviceId(state, action) {
       state.deviceId = action.payload;
+    },
+    setPincode(state, action) {
+      state.pincode = action.payload;
     },
     logout(state) {
       return initialState;

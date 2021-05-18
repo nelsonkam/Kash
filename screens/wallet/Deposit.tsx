@@ -30,7 +30,7 @@ function Deposit() {
         onChange={setAmount}
         currency={'CFA '}
         onNext={handleRecharge}
-        miniText={`~ $${(amount / rate).toFixed(2)} à CFA ${rate.toFixed(2)}`}
+        miniText={`~ $${(amount / rate).toFixed(2)} à CFA ${rate}`}
         buttonText={{
           next: 'Recharger',
           cancel: 'Annuler',

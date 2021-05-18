@@ -18,7 +18,7 @@ function Withdraw() {
     ? profileQuery.data?.limits['withdraw']
     : null;
   limits = limits || {min: 1, max: 100};
-  const rate = ratesQuery.data?.withdraw?.XOF || 535;
+  const rate = ratesQuery.data?.withdraw?.XOF || 545;
 
   const handleNext = (amount: number) => {
     withdraw.execute({amount, currency: 'USD'}).then(() => {
@@ -34,7 +34,7 @@ function Withdraw() {
         onChange={setAmount}
         currency={'$'}
         onNext={handleNext}
-        miniText={`~ CFA ${Math.round(amount * rate)} à CFA ${rate.toFixed(2)}`}
+        miniText={`~ CFA ${Math.round(amount * rate)} à CFA ${rate}`}
         buttonText={{
           next: 'Retirer',
           cancel: 'Annuler',

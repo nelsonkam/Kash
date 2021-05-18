@@ -4,8 +4,8 @@ import Kash from '../screens/kash/Kash';
 import {useNavigation} from '@react-navigation/native';
 import OneSignal from 'react-native-onesignal';
 import Home from '../screens/wallet/Home';
-import Recipients from '../screens/kash/Recipients';
-import SendKash from '../screens/kash/SendKash';
+import Recipients from '../screens/wallet/Recipients';
+import SendKash from '../screens/wallet/SendKash';
 import KashRecap from '../screens/kash/KashRecap';
 import PayKash from '../screens/kash/PayKash';
 import RequestKash from '../screens/kash/RequestKash';
@@ -17,6 +17,8 @@ import ProfileStack from './profile';
 import Deposit from '../screens/wallet/Deposit';
 import Payment from '../screens/wallet/Payment';
 import Withdraw from '../screens/wallet/Withdraw';
+import ConfirmPin from '../screens/shared/ConfirmPin';
+import AsyncActionScreen from '../screens/shared/AsyncActionScreen';
 
 const Stack = createStackNavigator();
 
@@ -28,7 +30,7 @@ export default function KashStack() {
     });
   }, []);
   return (
-    <Stack.Navigator initialRouteName="Cards">
+    <Stack.Navigator initialRouteName="Kash">
       <Stack.Screen
         options={{headerShown: false}}
         name="Kash"
@@ -85,6 +87,16 @@ export default function KashStack() {
         options={{title: 'Payer', headerBackTitle: ''}}
         name="Pay"
         component={PayRequest}
+      />
+      <Stack.Screen
+        options={{headerShown: false, headerBackTitle: ''}}
+        name="ConfirmPin"
+        component={ConfirmPin}
+      />
+      <Stack.Screen
+        options={{title: 'Opération en cours', headerBackTitle: ''}}
+        name="AsyncAction"
+        component={AsyncActionScreen}
       />
     </Stack.Navigator>
   );

@@ -21,14 +21,12 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {P2PTxnType} from '../../utils';
 import {BackButton} from '../../components/Button';
 
-const SearchSheet = () => {};
-
 function Recipients() {
   const [search, setSearch] = useState('');
   const [note, setNote] = useState('');
   const {params} = useRoute();
   // @ts-ignore
-  const {type} = params;
+  const {type, amount} = params;
   const [areContactsVisible, showContacts] = useState(true);
   const navigation = useNavigation();
   const [searching, setSearching] = useState(false);
@@ -40,6 +38,11 @@ function Recipients() {
   const searchContacts = useAsync(search =>
     api.post(`/kash/profiles/current/search/contacts/`, {search}),
   );
+  const sendKash = useAsync(
+    data => api.post(`/kash/wallets/current/transfer/`, data),
+    true,
+  );
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearching(true);
@@ -50,7 +53,9 @@ function Recipients() {
         })
         .finally(() => setSearching(false));
     }, 200);
+    return () => clearTimeout(timer);
   }, [search]);
+
   const syncContacts = async () => {
     let contacts: any[] = [];
     try {
@@ -76,18 +81,25 @@ function Recipients() {
     const phoneNumbers = contacts
       .map(i => {
         return i.phoneNumbers.reduce(
-          (a: string[], b) => a.concat([b.number]),
+          (a: string[], b: any) => a.concat([b.number]),
           [],
         );
       })
       .reduce((a, b) => a.concat(b), [])
-      .map(number => number.replace(/[^\d\+]/g, ''));
+      .map((number: string) => number.replace(/[^\d\+]/g, ''));
 
     syncProfileContacts.execute({contacts: phoneNumbers});
   };
+
   useEffect(() => {
     syncContacts();
   }, []);
+
+  const disabled =
+    type === P2PTxnType.send
+      ? selected.length === 0
+      : selected.length === 0 || !note;
+
   const handleProfileClick = (profile: any) => {
     if (!selected.map(i => i.kashtag).includes(profile.kashtag)) {
       setSelected([profile, ...selected]);
@@ -97,6 +109,23 @@ function Recipients() {
   const handleRemove = (profile: any) => {
     setSelected(selected.filter(item => item.kashtag !== profile.kashtag));
   };
+
+  const handleNext = () => {
+    if (type === P2PTxnType.send) {
+      navigation.navigate('ConfirmPin', {
+        url: '/kash/wallets/current/transfer/',
+        data: {
+          note,
+          recipient_tags: selected.map((r: any) => r.kashtag),
+          amount: amount,
+        },
+        backScreen: 'Kash',
+      });
+    } else {
+      navigation.navigate('RequestKash', {recipients: selected, amount, note});
+    }
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <View
@@ -406,13 +435,10 @@ function Recipients() {
           right: 0,
         }}>
         <TouchableOpacity
-          disabled={selected.length === 0 || !note}
-          onPress={() =>
-            navigation.navigate('SendKash', {type, note, recipients: selected})
-          }
+          disabled={disabled}
+          onPress={handleNext}
           style={{
-            backgroundColor:
-              selected.length === 0 || !note ? Colors.disabled : Colors.brand,
+            backgroundColor: disabled ? Colors.disabled : Colors.brand,
             paddingVertical: 8,
             paddingHorizontal: 18,
             borderRadius: 100,

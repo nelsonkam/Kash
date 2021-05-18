@@ -47,7 +47,7 @@ function Profile() {
   const profileQuery = useSWRNative(`/kash/profiles/current/`, fetcher);
   const generateInviteCode = useAsync(() => api.post(`/kash/invites/`));
   const inviteRef = useRef<KBottomSheet>(null);
-  const profile = profileQuery.data || stateProfile;
+  const profile = profileQuery.data || stateProfile || {};
   const dispatch = useDispatch();
   const uploadAvatar = useAsync(data =>
     api.post(`/kash/profiles/current/avatar/`, data, {
@@ -93,7 +93,7 @@ function Profile() {
               borderRadius: 100,
               padding: 4,
             }}>
-            {profile.avatar_url ? (
+            {profile?.avatar_url ? (
               uploadAvatar.loading ? (
                 <View
                   style={{
@@ -128,7 +128,7 @@ function Profile() {
             )}
           </TouchableOpacity>
           <Text style={{fontFamily: 'Inter-Bold', fontSize: 20}}>
-            {profile.name}
+            {profile?.name}
           </Text>
           <View
             style={{
@@ -261,6 +261,32 @@ function Profile() {
             <AntDesign name={'right'} color={Colors.medium} size={20} />
           </TouchableOpacity>
         )}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('AddPhone')}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 16,
+            paddingRight: 16,
+            marginLeft: 16,
+            borderBottomColor: Colors.border,
+            borderBottomWidth: 1,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Ionicons name={'lock-closed-outline'} color={'black'} size={24} />
+            <Text
+              style={{
+                fontFamily: 'Inter-Semibold',
+                color: 'black',
+                fontSize: 16,
+                marginLeft: 12,
+              }}>
+              Sécurité
+            </Text>
+          </View>
+          <AntDesign name={'right'} color={Colors.medium} size={20} />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate('VerifyKYC')}
           style={{

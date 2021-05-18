@@ -139,7 +139,7 @@ const Home = () => {
           }}>
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('Recipients', {type: P2PTxnType.send})
+              navigation.navigate('SendKash', {type: P2PTxnType.send})
             }
             style={styles.homeActionContainer}>
             <View style={styles.homeAction}>
@@ -162,7 +162,7 @@ const Home = () => {
 
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('Recipients', {type: P2PTxnType.request})
+              navigation.navigate('SendKash', {type: P2PTxnType.request})
             }
             style={styles.homeActionContainer}>
             <View style={styles.homeAction}>
@@ -265,8 +265,8 @@ const Home = () => {
             </TouchableOpacity>
           </View>
           <View>
-            {transactionsQuery.data?.map((item: any, i: number) => (
-              <>
+            {transactionsQuery.data?.slice(0, 5).map((item: any, i: number) => (
+              <React.Fragment key={item.id}>
                 <TransactionItem transaction={item} />
                 {i !== 4 && (
                   <View
@@ -278,7 +278,7 @@ const Home = () => {
                     }}
                   />
                 )}
-              </>
+              </React.Fragment>
             ))}
             {transactionsQuery.data?.results?.length === 0 && (
               <EmptyState

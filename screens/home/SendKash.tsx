@@ -10,13 +10,16 @@ function SendKash() {
   // @ts-ignore
   const request = params.request;
   const navigation = useNavigation();
-  const sendKash = useAsync(data => api.post(`/kash/send/`, data), true);
+  const sendKash = useAsync(
+    data => api.post(`/kash/wallets/current/transfer/`, data),
+    true,
+  );
   const handleNext = (amount: number) => {
     sendKash
       .execute({
         note: 'Demande de kash 💰',
         is_incognito: false,
-        recipient_tags: [request.initiator.kashtag],
+        kashtag: [request.initiator.kashtag],
         amount,
       })
       .then(res => {

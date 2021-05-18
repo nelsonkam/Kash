@@ -20,6 +20,8 @@ import * as Sentry from '@sentry/react-native';
 import codePush from 'react-native-code-push';
 import {requestTrackingPermission} from 'react-native-tracking-transparency';
 import SetupWallet from './screens/auth/SetupWallet';
+import {useAsyncStorage} from '@react-native-community/async-storage';
+import SetupPin from './screens/auth/SetupPin';
 
 if (!__DEV__) {
   Sentry.init({
@@ -42,6 +44,7 @@ function App() {
     api.post(`/kash/profiles/current/device_ids/`, data),
   );
   const dispatch = useDispatch();
+  const pincode = useAsyncStorage('pincode');
 
   useEffect(() => {
     OneSignal.setAppId('514da48c-3c9c-4430-a4b7-de7f539dc552');
@@ -69,15 +72,20 @@ function App() {
   if (!ready) {
     return <Splash />;
   }
-
   if (
-    !(auth.refresh && auth.profile && auth.profile.payout_methods?.length > 0)
+    !auth.refresh ||
+    !auth.profile ||
+    auth.profile?.payout_methods?.length === 0
   ) {
-    return <MainStack />;
+    return <AuthStack />;
   }
 
   if (auth.profile && !auth.profile.wallet) {
     return <SetupWallet />;
+  }
+
+  if (!auth.pincode) {
+    return <SetupPin />;
   }
 
   return <MainStack />;

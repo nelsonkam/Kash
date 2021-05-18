@@ -2,6 +2,7 @@ import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import store from './store';
 import authSlice from '../slices/auth';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const BASE_URL = !__DEV__
   ? 'https://prod.kweek.africa/'
@@ -21,8 +22,12 @@ const refreshAuthLogic = async (failedRequest: any) => {
       {headers: {Authorization: 'Bearer ' + refresh}},
     )
     .catch(async err => {
-      if (err.response && err.response.status === 401) {
-        store.dispatch(authSlice.actions.setTokens({}));
+      if (
+        err.response &&
+        (err.response.status === 401 || err.response.status === 400)
+      ) {
+        console.log('testt');
+        store.dispatch(authSlice.actions.logout(null));
       }
     });
   if (resp) {
