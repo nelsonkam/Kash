@@ -46,6 +46,29 @@ const Input = ({label, description, error, ...rest}: Props) => {
   );
 };
 
+export const PinInput = ({
+  filled,
+  error,
+}: {
+  filled: string;
+  error?: boolean;
+}) => {
+  const color = filled ? (error ? 'red' : 'black') : 'white';
+  return (
+    <View
+      style={{
+        height: 16,
+        width: 16,
+        backgroundColor: color,
+        borderRadius: 24,
+        borderColor: error ? 'red' : 'black',
+        borderWidth: 1,
+        marginHorizontal: 12,
+      }}
+    />
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,

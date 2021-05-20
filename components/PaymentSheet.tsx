@@ -95,7 +95,7 @@ export const PaymentForm = ({amount, fees, onNext, loading}) => {
 };
 
 const TransactionStatus = ({reference, onStatusChanged}) => {
-  const transactionQuery = useSWR(`/kash/transactions/${reference}/`, fetcher, {
+  const transactionQuery = useSWR(`/kash/qosic-txn/${reference}/`, fetcher, {
     refreshInterval: 10,
   });
   const status = transactionQuery.data?.status;

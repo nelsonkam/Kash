@@ -7,7 +7,6 @@ import CardStack from './cards';
 import KashStack from './kash';
 import NotificationStack from './notifications';
 import Search from '../screens/Search';
-import HomeStack from './home';
 import ProfileStack from './profile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -23,7 +22,7 @@ export default function MainTabs() {
           const icons = {
             Profile: 'person-circle',
             Cards: 'card',
-            Découverte: 'search',
+            Discovery: 'search',
             Notifs: 'notifications-circle',
           };
 
@@ -65,7 +64,7 @@ export default function MainTabs() {
       <Tab.Screen name="Profile" component={ProfileStack} />
       <Tab.Screen name="Cards" component={CardStack} />
       <Tab.Screen name="Kash" component={KashStack} />
-      <Tab.Screen name="Invest" component={Search} />
+      <Tab.Screen name="Discovery" component={Search} />
       <Tab.Screen name="Notifs" component={NotificationStack} />
     </Tab.Navigator>
   );

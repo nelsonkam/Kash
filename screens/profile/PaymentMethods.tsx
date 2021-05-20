@@ -11,10 +11,10 @@ import {useNavigation} from '@react-navigation/native';
 
 function PaymentMethods(props) {
   const navigation = useNavigation();
-  const payoutMethods = useSWRNative(`/kash/payout-methods/`, fetcher);
+  const payoutMethods = useSWRNative(`/kash/momo-accounts/`, fetcher);
   const actionRef = useRef(null);
   const deletePayoutMethod = useAsync(id =>
-    api.delete(`/kash/payout-methods/${id}/`),
+    api.delete(`/kash/momo-accounts/${id}/`),
   );
   React.useLayoutEffect(() => {
     navigation.setOptions({

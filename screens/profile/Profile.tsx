@@ -262,7 +262,7 @@ function Profile() {
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          onPress={() => navigation.navigate('AddPhone')}
+          onPress={() => navigation.navigate('Security')}
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -278,7 +278,7 @@ function Profile() {
             <Text
               style={{
                 fontFamily: 'Inter-Semibold',
-                color: 'black',
+                color: Colors.dark,
                 fontSize: 16,
                 marginLeft: 12,
               }}>

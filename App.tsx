@@ -72,15 +72,11 @@ function App() {
   if (!ready) {
     return <Splash />;
   }
-  if (
-    !auth.refresh ||
-    !auth.profile ||
-    auth.profile?.payout_methods?.length === 0
-  ) {
+  if (!auth.refresh || !auth.profile || !auth.profile?.payout_methods) {
     return <AuthStack />;
   }
 
-  if (auth.profile && !auth.profile.wallet) {
+  if (auth.profile && !auth.profile?.wallet) {
     return <SetupWallet />;
   }
 

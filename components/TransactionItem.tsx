@@ -1,15 +1,20 @@
-import {Text, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Colors from '../utils/colors';
 import React from 'react';
+import {useNavigation} from '@react-navigation/native';
 
 const TransactionItem = ({transaction}: {transaction: any}) => {
+  const navigation = useNavigation();
   const isDebit = transaction.type === 'debit';
   let iconName = isDebit ? 'arrow-top-right' : 'arrow-bottom-left';
   iconName = !transaction.successful ? 'close' : iconName;
   iconName = transaction.status === 'refunded' ? 'cash-refund' : iconName;
   return (
-    <View
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('TransactionDetail', {id: transaction.id})
+      }
       style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 4}}>
       <View
         style={{
@@ -53,9 +58,9 @@ const TransactionItem = ({transaction}: {transaction: any}) => {
               style={{
                 fontFamily: 'Inter-Regular',
                 fontSize: 14,
-                color: isDebit ? Colors.danger : Colors.brand,
+                color: Colors.dark,
               }}>
-              ${parseFloat(transaction.amount).toLocaleString()}
+              CFA {Math.round(parseFloat(transaction.amount)).toLocaleString()}
             </Text>
           </View>
           {transaction.memo && (
@@ -70,7 +75,7 @@ const TransactionItem = ({transaction}: {transaction: any}) => {
           )}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

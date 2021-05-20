@@ -69,7 +69,7 @@ function KashPad({
                   color: Colors.dark,
                   fontFamily: 'Inter-Bold',
                 }}>
-                {`Minimum: ${currency}` + limits.min}
+                {`Minimum: ${currency}` + Math.floor(limits.min)}
               </Text>
             </View>
           ) : null}
@@ -80,7 +80,7 @@ function KashPad({
                   color: Colors.dark,
                   fontFamily: 'Inter-Bold',
                 }}>
-                {`Maximum: ${currency}` + limits.max}
+                {`Maximum: ${currency}` + Math.floor(limits.max)}
               </Text>
             </View>
           ) : null}

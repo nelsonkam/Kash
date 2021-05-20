@@ -30,7 +30,7 @@ export const TransactionStatus = ({
   onStatusChanged,
 }: TransactionStatusProps) => {
   const transactionQuery = useSWRNative(
-    `/kash/transactions/${reference}/`,
+    `/kash/qosic-txn/${reference}/`,
     fetcher,
     {
       refreshWhenHidden: false,

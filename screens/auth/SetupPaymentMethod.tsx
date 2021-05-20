@@ -18,7 +18,7 @@ export function CreatePaymentMethod(props: any) {
   const [gateway, setGateway] = useState<string | null>(null);
   const [phone, setPhone] = useState<string>('');
   const createPayoutMethod = useAsync(data =>
-    api.post(`/kash/payout-methods/`, data),
+    api.post(`/kash/momo-accounts/`, data),
   );
   const getProfile = useAsync(() => api.get(`/kash/profiles/current/`));
   const dispatch = useDispatch();

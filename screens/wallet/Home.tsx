@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {
   Alert,
+  Dimensions,
   Linking,
   Platform,
   RefreshControl,
@@ -77,7 +78,7 @@ const Home = () => {
   return (
     <View
       style={{
-        backgroundColor: 'white',
+        backgroundColor: Colors.brand,
         flex: 1,
         paddingTop: top + 16,
       }}>
@@ -93,7 +94,7 @@ const Home = () => {
         <Text
           style={{
             fontFamily: 'Inter-Bold',
-            color: Colors.dark,
+            color: 'white',
             fontSize: 18,
           }}>
           Portefeuille
@@ -101,34 +102,38 @@ const Home = () => {
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{backgroundColor: 'white'}}
+        contentContainerStyle={{
+          backgroundColor: 'white',
+          flex: 1,
+        }}
+        style={{backgroundColor: Colors.brand}}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+          <RefreshControl
+            tintColor={'white'}
+            colors={['white']}
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+          />
         }>
         <View
-          style={{height: 150, justifyContent: 'center', alignItems: 'center'}}>
+          style={{
+            height: 150,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: Colors.brand,
+            paddingBottom: 16,
+          }}>
           <Text style={styles.amount}>
-            $
-            <Text style={{color: Colors.dark}}>
-              {(parseFloat(wallet?.balance) || 0).toLocaleString()}
+            <Text style={{color: 'white'}}>
+              CFA{' '}
+              {Math.round(
+                parseFloat(wallet?.xof_amount?.amount) || 0,
+              ).toLocaleString()}
             </Text>
-          </Text>
-          <Text
-            style={{
-              paddingTop: 12,
-              fontFamily: 'Inter-Medium',
-              color: Colors.medium,
-              fontSize: 16,
-            }}>
-            ~ CFA{' '}
-            {Math.round(
-              parseFloat(wallet?.xof_amount?.amount) || 0,
-            ).toLocaleString()}
           </Text>
         </View>
         <View
           style={{
-            marginTop: 16,
             paddingVertical: 16,
             paddingHorizontal: 8,
             flexDirection: 'row',
@@ -136,6 +141,7 @@ const Home = () => {
             borderColor: Colors.border,
             borderBottomWidth: 1,
             borderTopWidth: 1,
+            backgroundColor: 'white',
           }}>
           <TouchableOpacity
             onPress={() =>
@@ -226,8 +232,9 @@ const Home = () => {
 
         <View
           style={{
-            margin: 16,
-            marginTop: 24,
+            padding: 16,
+            paddingTop: 24,
+            backgroundColor: 'white',
           }}>
           <View
             style={{
@@ -264,7 +271,7 @@ const Home = () => {
               />
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={{backgroundColor: 'white'}}>
             {transactionsQuery.data?.slice(0, 5).map((item: any, i: number) => (
               <React.Fragment key={item.id}>
                 <TransactionItem transaction={item} />
@@ -280,7 +287,7 @@ const Home = () => {
                 )}
               </React.Fragment>
             ))}
-            {transactionsQuery.data?.results?.length === 0 && (
+            {transactionsQuery.data?.length === 0 && (
               <EmptyState
                 icon={
                   <AntDesign name={'swap'} size={48} color={Colors.disabled} />
@@ -349,7 +356,7 @@ const styles = StyleSheet.create({
   amount: {
     fontFamily: 'Inter-Medium',
     fontSize: 38,
-    color: Colors.dark,
+    color: 'white',
     paddingHorizontal: 4,
   },
   homeAction: {

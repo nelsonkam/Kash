@@ -1,6 +1,6 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Image, Text} from 'react-native';
+import {Image, ScrollView, Text} from 'react-native';
 import Colors from '../../utils/colors';
 import Button from '../../components/Button';
 import {useAsync} from '../../utils/hooks';
@@ -31,8 +31,8 @@ function SetupWallet() {
       });
   };
   return (
-    <SafeAreaView
-      style={{
+    <ScrollView
+      contentContainerStyle={{
         flex: 1,
         backgroundColor: 'white',
         padding: 18,
@@ -80,7 +80,7 @@ function SetupWallet() {
         style={{marginVertical: 32}}>
         Créer mon portefeuille
       </Button>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 

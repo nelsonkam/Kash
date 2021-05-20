@@ -7,55 +7,51 @@ import Colors from '../../utils/colors';
 import useSWRNative from '@nandorojo/swr-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Button from '../../components/Button';
-import {P2PTxnType} from '../../utils';
+import {Constants, P2PTxnType} from '../../utils';
 import {useAsync} from '../../utils/hooks';
 
-function SendKash() {
+function PayKashRequest() {
   const [amount, setAmount] = useState(0);
   const {params} = useRoute();
   // @ts-ignore
-  const {recipients, type, note} = params;
+  const request = params.request;
   const navigation = useNavigation();
   const profileQuery = useSWRNative(`/kash/profiles/current/`, fetcher);
-  const title = type === P2PTxnType.send ? 'Envoyer' : 'Demander';
-  const sendKash = useAsync(
-    data => api.post(`/kash/wallets/current/transfer/`, data),
-    true,
-  );
+
   const ratesQuery = useSWRNative(`/kash/rates/`, fetcher);
-  const rate = ratesQuery.data?.transfer?.XOF || 650;
+  const rate = ratesQuery.data?.transfer?.XOF || Constants.defaultUSDRate;
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title,
+      title: 'Envoyer',
     });
   }, [navigation]);
 
   const handleNext = (amount: number) => {
-    navigation.navigate('Recipients', {
-      type,
-      amount: type === P2PTxnType.send ? (amount / rate).toFixed(7) : amount,
+    navigation.navigate('ConfirmPin', {
+      url: `/kash/requests/${request.id}/accept/`,
+      data: {
+        amount: (amount / rate).toFixed(7),
+      },
+      backScreen: 'Activity',
     });
   };
 
   let limits = profileQuery.data?.limits
     ? profileQuery.data?.limits.sendkash
     : {min: 25};
-  limits = type === P2PTxnType.send ? limits : {min: 25};
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <KashPad
-        buttonText={{cancel: 'Annuler', next: title}}
+        buttonText={{cancel: 'Annuler', next: 'Envoyer'}}
         onChange={setAmount}
         currency={'CFA '}
         limits={limits}
         onNext={handleNext}
-        miniText={'Par personne'}
-        loading={sendKash.loading}
       />
     </View>
   );
 }
 
-export default SendKash;
+export default PayKashRequest;

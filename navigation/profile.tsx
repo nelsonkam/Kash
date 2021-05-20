@@ -8,6 +8,10 @@ import VerifyKYCDoc from '../screens/profile/VerifyKYCDoc';
 import AddPhone from '../screens/auth/AddPhone';
 import Verification from '../screens/auth/Verification';
 import EditProfile from '../screens/profile/EditProfile';
+import Security from '../screens/profile/Security';
+import ConfirmPassword from '../screens/shared/ConfirmPassword';
+import SetupPin from '../screens/auth/SetupPin';
+import ChangePIN from '../screens/profile/ChangePIN';
 
 const Stack = createStackNavigator();
 
@@ -55,6 +59,21 @@ function ProfileStack() {
         options={{headerShown: false}}
         name="Verification"
         component={Verification}
+      />
+      <Stack.Screen
+        options={{title: 'Sécurité'}}
+        name="Security"
+        component={Security}
+      />
+      <Stack.Screen
+        options={{title: 'Modification de code PIN'}}
+        name="ChangePIN"
+        component={ChangePIN}
+      />
+      <Stack.Screen
+        options={{title: 'Mot de passe'}}
+        name="ConfirmPassword"
+        component={ConfirmPassword}
       />
     </Stack.Navigator>
   );

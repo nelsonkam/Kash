@@ -1,14 +1,18 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Text, View} from 'react-native';
+import {ScrollView, Text, View} from 'react-native';
 import Colors from '../../utils/colors';
 import Button from '../../components/Button';
 import NumPad from '../../components/NumPad';
+// @ts-ignore
+import {parse} from '../../utils';
+import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import authSlice from '../../slices/auth';
 import {PinInput} from '../../components/Input';
 
 const ConfirmPin = ({pin}: {pin: string}) => {
+  const navigation = useNavigation();
   const [error, setError] = useState(false);
   const [confirmPin, setConfirmPin] = useState('');
   const dispatch = useDispatch();
@@ -26,6 +30,7 @@ const ConfirmPin = ({pin}: {pin: string}) => {
   const handleNext = () => {
     if (pin === confirmPin) {
       dispatch(authSlice.actions.setPincode(pin));
+      navigation.navigate('Profile');
     } else {
       setError(true);
       setTimeout(() => {
@@ -36,7 +41,7 @@ const ConfirmPin = ({pin}: {pin: string}) => {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: 'white',
@@ -73,11 +78,11 @@ const ConfirmPin = ({pin}: {pin: string}) => {
           </Button>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
-function SetupPin() {
+function ChangePIN() {
   const [pin, setPin] = useState('');
   const [confirm, setConfirm] = useState(false);
 
@@ -98,7 +103,7 @@ function SetupPin() {
   }
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: 'white',
@@ -135,8 +140,8 @@ function SetupPin() {
           </Button>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
-export default SetupPin;
+export default ChangePIN;

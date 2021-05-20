@@ -4,17 +4,25 @@ import Colors from '../utils/colors';
 import React from 'react';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import {RootState} from '../utils/store';
 
-const RequestItem = ({request}) => {
+const RequestItem = ({
+  request,
+  onPress,
+}: {
+  request: any;
+  onPress: (request: any) => void;
+}) => {
   const navigation = useNavigation();
-  const profile = useSelector(state => state.auth.profile);
+  const profile = useSelector((state: RootState) => state.auth.profile);
   const responded = request.accepted_at || request.rejected_at;
   const response = responded
-    ? request.responses.filter(r => r.sender === profile.kashtag)[0]
+    ? request.responses.filter((r: any) => r.sender === profile.kashtag)[0]
     : null;
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('ConfirmRequest', {request})}
+      onPress={() => !responded && onPress(request)}
+      activeOpacity={responded ? 1 : 0.4}
       style={{
         flexDirection: 'row',
         alignItems: 'center',

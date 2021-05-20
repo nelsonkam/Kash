@@ -76,3 +76,9 @@ export enum P2PTxnType {
   send,
   request,
 }
+
+export enum Constants {
+  transferFees = 25,
+  withdrawFees = 100,
+  defaultUSDRate = 650,
+}

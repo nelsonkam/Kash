@@ -1,24 +1,22 @@
 import React, {useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import Kash from '../screens/kash/Kash';
 import {useNavigation} from '@react-navigation/native';
 import OneSignal from 'react-native-onesignal';
 import Home from '../screens/wallet/Home';
 import Recipients from '../screens/wallet/Recipients';
 import SendKash from '../screens/wallet/SendKash';
-import KashRecap from '../screens/kash/KashRecap';
 import PayKash from '../screens/kash/PayKash';
 import RequestKash from '../screens/kash/RequestKash';
-import Requests from '../screens/home/Requests';
+import Requests from '../screens/notifications/Requests';
 import TransactionHistory from '../screens/wallet/TransactionHistory';
 import ConfirmRequest from '../screens/home/ConfirmRequest';
 import PayRequest from '../screens/home/PayRequest';
-import ProfileStack from './profile';
 import Deposit from '../screens/wallet/Deposit';
 import Payment from '../screens/wallet/Payment';
 import Withdraw from '../screens/wallet/Withdraw';
 import ConfirmPin from '../screens/shared/ConfirmPin';
 import AsyncActionScreen from '../screens/shared/AsyncActionScreen';
+import TransactionDetail from '../screens/wallet/TransactionDetail';
 
 const Stack = createStackNavigator();
 
@@ -82,6 +80,11 @@ export default function KashStack() {
         options={{title: 'Envoyer', headerBackTitle: ''}}
         name="SendKash"
         component={SendKash}
+      />
+      <Stack.Screen
+        options={{title: 'Transaction', headerBackTitle: ''}}
+        name="TransactionDetail"
+        component={TransactionDetail}
       />
       <Stack.Screen
         options={{title: 'Payer', headerBackTitle: ''}}

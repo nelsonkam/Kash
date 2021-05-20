@@ -5,6 +5,7 @@ import useSWRNative from '@nandorojo/swr-react-native';
 import api, {fetcher} from '../../utils/api';
 import {useNavigation} from '@react-navigation/native';
 import {useAsync} from '../../utils/hooks';
+import {Constants} from '../../utils';
 
 function Withdraw() {
   const [amount, setAmount] = useState(0);
@@ -17,28 +18,32 @@ function Withdraw() {
   let limits = profileQuery.data?.limits
     ? profileQuery.data?.limits['withdraw']
     : null;
-  limits = limits || {min: 1, max: 100};
-  const rate = ratesQuery.data?.withdraw?.XOF || 545;
+  limits = limits || {min: 25, max: 50000};
+  const rate = ratesQuery.data?.withdraw?.XOF || 650;
+  const fee = Constants.withdrawFees;
 
   const handleNext = (amount: number) => {
-    withdraw.execute({amount, currency: 'USD'}).then(() => {
-      setTimeout(() => {
-        navigation.goBack();
-      }, 1500);
-    });
+    console.log(amount + fee);
+    withdraw
+      .execute({amount: ((amount + fee) / rate).toFixed(7), currency: 'USD'})
+      .then(() => {
+        setTimeout(() => {
+          navigation.goBack();
+        }, 1500);
+      });
   };
   return (
     <View style={{flex: 1, backgroundColor: 'white', position: 'relative'}}>
       <KashPad
-        limits={limits}
         onChange={setAmount}
-        currency={'$'}
+        limits={limits}
+        currency={'CFA '}
         onNext={handleNext}
-        miniText={`~ CFA ${Math.round(amount * rate)} à CFA ${rate}`}
         buttonText={{
           next: 'Retirer',
           cancel: 'Annuler',
         }}
+        miniText={`Frais: CFA ${fee}`}
         loading={withdraw.loading}
       />
     </View>
