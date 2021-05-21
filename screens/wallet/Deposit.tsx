@@ -14,7 +14,6 @@ function Deposit() {
     ? profileQuery.data?.limits['deposit']
     : null;
   limits = limits || {min: 25, max: 500000};
-  const rate = ratesQuery.data?.deposit?.XOF || 595;
 
   const handleRecharge = (amount: number) => {
     navigation.navigate('Payment', {

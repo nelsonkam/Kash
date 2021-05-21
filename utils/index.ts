@@ -80,5 +80,5 @@ export enum P2PTxnType {
 export enum Constants {
   transferFees = 25,
   withdrawFees = 100,
-  defaultUSDRate = 650,
+  defaultUSDRate = 610,
 }

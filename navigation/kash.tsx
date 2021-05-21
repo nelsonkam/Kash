@@ -5,12 +5,8 @@ import OneSignal from 'react-native-onesignal';
 import Home from '../screens/wallet/Home';
 import Recipients from '../screens/wallet/Recipients';
 import SendKash from '../screens/wallet/SendKash';
-import PayKash from '../screens/kash/PayKash';
-import RequestKash from '../screens/kash/RequestKash';
 import Requests from '../screens/notifications/Requests';
 import TransactionHistory from '../screens/wallet/TransactionHistory';
-import ConfirmRequest from '../screens/home/ConfirmRequest';
-import PayRequest from '../screens/home/PayRequest';
 import Deposit from '../screens/wallet/Deposit';
 import Payment from '../screens/wallet/Payment';
 import Withdraw from '../screens/wallet/Withdraw';
@@ -59,23 +55,12 @@ export default function KashStack() {
         name="Recipients"
         component={Recipients}
       />
-      <Stack.Screen name="PayKash" component={PayKash} />
-      <Stack.Screen
-        options={{title: 'Demander'}}
-        name="RequestKash"
-        component={RequestKash}
-      />
       <Stack.Screen
         options={{title: 'Requêtes reçues', headerBackTitle: ''}}
         name="Requests"
         component={Requests}
       />
 
-      <Stack.Screen
-        options={{headerShown: false, headerBackTitle: ''}}
-        name="ConfirmRequest"
-        component={ConfirmRequest}
-      />
       <Stack.Screen
         options={{title: 'Envoyer', headerBackTitle: ''}}
         name="SendKash"
@@ -86,11 +71,7 @@ export default function KashStack() {
         name="TransactionDetail"
         component={TransactionDetail}
       />
-      <Stack.Screen
-        options={{title: 'Payer', headerBackTitle: ''}}
-        name="Pay"
-        component={PayRequest}
-      />
+
       <Stack.Screen
         options={{headerShown: false, headerBackTitle: ''}}
         name="ConfirmPin"

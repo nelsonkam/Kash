@@ -5,7 +5,7 @@ import authSlice from '../slices/auth';
 import AsyncStorage from '@react-native-community/async-storage';
 
 export const BASE_URL = !__DEV__
-  ? 'https://prod.kweek.africa/'
+  ? 'https://prod.mykash.africa/'
   : 'https://kweek-api.ngrok.io/';
 
 const api = axios.create({

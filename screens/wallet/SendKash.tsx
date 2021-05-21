@@ -7,7 +7,7 @@ import Colors from '../../utils/colors';
 import useSWRNative from '@nandorojo/swr-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Button from '../../components/Button';
-import {P2PTxnType} from '../../utils';
+import {Constants, P2PTxnType} from '../../utils';
 import {useAsync} from '../../utils/hooks';
 
 function SendKash() {
@@ -23,7 +23,7 @@ function SendKash() {
     true,
   );
   const ratesQuery = useSWRNative(`/kash/rates/`, fetcher);
-  const rate = ratesQuery.data?.transfer?.XOF || 650;
+  const rate = ratesQuery.data?.transfer?.XOF || Constants.defaultUSDRate;
 
   React.useLayoutEffect(() => {
     navigation.setOptions({

@@ -40,7 +40,7 @@ function SetupWallet() {
         justifyContent: 'center',
       }}>
       <Image
-        style={{width: 320, height: 320 * 0.6, marginVertical: 24}}
+        style={{width: 300, height: 300 * 0.7, marginVertical: 24}}
         source={require('../../assets/wallet-concept.png')}
       />
       <Text
@@ -58,10 +58,10 @@ function SetupWallet() {
           fontSize: 18,
           color: Colors.dark,
           marginBottom: 12,
+          width: '100%',
         }}>
-        Désormais, ton compte Kash est équipé d'un portefeuille dont le solde
-        est en dollar USD. Tu pourras toujours effectuer tes transactions en
-        francs CFA (la conversion est automatique).
+        Désormais, ton compte Kash est équipé d'un portefeuille avec lequel tu
+        pourras envoyer et recevoir du kash.
       </Text>
       <Text
         style={{
@@ -69,10 +69,11 @@ function SetupWallet() {
           fontSize: 18,
           color: Colors.dark,
           marginBottom: 12,
+          width: '100%',
         }}>
-        Avec ton portefeuille, toutes tes transactions en dessous de 5000 FCFA
-        sont gratuites et toutes celles au dessus de 5000 FCFA te coûteront{' '}
-        <Text style={{fontFamily: 'Inter-Bold'}}>25 FCFA seulement</Text>.{' '}
+        Avec ton portefeuille, tes transactions te coûteront juste{' '}
+        <Text style={{fontFamily: 'Inter-Bold'}}> 25 FCFA seulement</Text>{' '}
+        quelque soit le montant.{' '}
       </Text>
       <Button
         loading={createWallet.loading || getProfile.loading}

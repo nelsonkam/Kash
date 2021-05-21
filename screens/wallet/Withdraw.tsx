@@ -19,7 +19,7 @@ function Withdraw() {
     ? profileQuery.data?.limits['withdraw']
     : null;
   limits = limits || {min: 25, max: 50000};
-  const rate = ratesQuery.data?.withdraw?.XOF || 650;
+  const rate = ratesQuery.data?.withdraw?.XOF || Constants.defaultUSDRate;
   const fee = Constants.withdrawFees;
 
   const handleNext = (amount: number) => {
