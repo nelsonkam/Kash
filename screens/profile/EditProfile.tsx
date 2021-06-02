@@ -15,7 +15,7 @@ function EditProfile() {
     api.patch(`/kash/profiles/current/`, data),
   );
   const navigation = useNavigation();
-  const [name, setName] = useState(profileQuery.data.name);
+  const [name, setName] = useState(profileQuery.data?.name);
   const [kashtag, setKashtag] = useState(profileQuery.data.kashtag);
   const [errors, setErrors] = useState<any>({});
   const getErrors = () => {

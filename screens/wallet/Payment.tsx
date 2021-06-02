@@ -8,7 +8,7 @@ function Payment() {
   const {params} = useRoute();
   const navigation = useNavigation();
   // @ts-ignore
-  const {url, total, fees} = params;
+  const {url, total, fees, verb} = params;
   const payKash = useAsync(data => api.post(url, data));
 
   const handlePay = (data: any) => {
@@ -34,6 +34,7 @@ function Payment() {
       onPay={handlePay}
       loading={payKash.loading}
       onStatusChanged={handleStatusChanged}
+      verb={verb}
     />
   );
 }

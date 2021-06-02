@@ -23,7 +23,7 @@ import TransactionItem from '../../components/TransactionItem';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {P2PTxnType} from '../../utils';
 
-const VERSION = '1.0.0';
+const VERSION = '1.2.0';
 
 const EmptyState = ({icon, text}: {icon: React.ReactElement; text: string}) => {
   return (
@@ -104,7 +104,11 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           backgroundColor: 'white',
-          flex: 1,
+          minHeight:
+            transactionsQuery.data?.length === 0
+              ? undefined
+              : Dimensions.get('screen').height - top + 16,
+          flex: transactionsQuery.data?.length === 0 ? 1 : undefined,
         }}
         style={{backgroundColor: Colors.brand}}
         refreshControl={

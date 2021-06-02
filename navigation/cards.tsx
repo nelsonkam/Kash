@@ -12,6 +12,8 @@ import Withdrawal from '../screens/cards/Withdrawal';
 import PayCard from '../screens/cards/PayCard';
 import ListKYCDocs from '../screens/profile/ListKYCDocs';
 import VerifyKYCDoc from '../screens/profile/VerifyKYCDoc';
+import ConfirmPin from '../screens/shared/ConfirmPin';
+import AsyncActionScreen from '../screens/shared/AsyncActionScreen';
 
 const Stack = createStackNavigator();
 
@@ -57,6 +59,16 @@ export default function CardStack() {
         options={{title: 'Vérification'}}
         name="VerifyKYCDoc"
         component={VerifyKYCDoc}
+      />
+      <Stack.Screen
+        options={{headerShown: false, headerBackTitle: ''}}
+        name="ConfirmPin"
+        component={ConfirmPin}
+      />
+      <Stack.Screen
+        options={{title: 'Opération en cours', headerBackTitle: ''}}
+        name="AsyncAction"
+        component={AsyncActionScreen}
       />
       <Stack.Screen options={{title: ''}} name="PayCard" component={PayCard} />
     </Stack.Navigator>

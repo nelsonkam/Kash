@@ -33,6 +33,7 @@ function KashPad({
 }: Props) {
   const [amount, setAmount] = useState(0);
   const navigation = useNavigation();
+  const insufficientFunds = (limits.max || 1) <= 0;
 
   useEffect(() => {
     if (onChange) {
@@ -62,7 +63,7 @@ function KashPad({
             position: 'absolute',
             width: '100%',
           }}>
-          {limits.min && amount < limits.min ? (
+          {limits.min && amount < limits.min && !insufficientFunds ? (
             <View style={styles.minMaxPill}>
               <Text
                 style={{
@@ -73,7 +74,7 @@ function KashPad({
               </Text>
             </View>
           ) : null}
-          {limits.max && amount > limits.max ? (
+          {limits.max && amount > limits.max && !insufficientFunds ? (
             <View style={styles.minMaxPill}>
               <Text
                 style={{
@@ -81,6 +82,17 @@ function KashPad({
                   fontFamily: 'Inter-Bold',
                 }}>
                 {`Maximum: ${currency}` + Math.floor(limits.max)}
+              </Text>
+            </View>
+          ) : null}
+          {insufficientFunds ? (
+            <View style={styles.minMaxPill}>
+              <Text
+                style={{
+                  color: Colors.dark,
+                  fontFamily: 'Inter-Bold',
+                }}>
+                {`Fonds insuffisants`}
               </Text>
             </View>
           ) : null}
@@ -92,7 +104,7 @@ function KashPad({
           {currency}
           {''}
           <Text style={{color: amount === 0 ? Colors.disabled : Colors.dark}}>
-            {amount.toLocaleString()}
+            {amount?.toLocaleString()}
           </Text>
         </Text>
         {miniText && (

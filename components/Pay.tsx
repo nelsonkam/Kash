@@ -136,6 +136,7 @@ type PaymentFormProps = {
     amount: number;
     currency: string;
   };
+  verb?: string;
 };
 
 export const PaymentForm = ({
@@ -144,6 +145,7 @@ export const PaymentForm = ({
   onNext,
   loading,
   fees,
+  verb,
 }: PaymentFormProps) => {
   const [gateway, setGateway] = useState<string | null>(null);
   const [phone, setPhone] = useState<string | null>(null);
@@ -218,7 +220,7 @@ export const PaymentForm = ({
           loading={loading}
           onPress={handleClick}
           disabled={!(gateway && phone)}>
-          Payer {currency} {amount}
+          {verb || 'Payer'} {currency} {amount}
         </Button>
       </View>
     </ScrollView>
@@ -236,6 +238,7 @@ type ChoosePaymentMethodProps = {
   };
   nextLoading: boolean;
   onPaymentMethodSelected: OnPaymentMethodSelected;
+  verb?: string;
 };
 
 export function ChoosePaymentMethod({
@@ -243,6 +246,7 @@ export function ChoosePaymentMethod({
   fees,
   nextLoading,
   onPaymentMethodSelected,
+  verb,
 }: ChoosePaymentMethodProps) {
   const momoAccountQuery = useSWRNative(`/kash/momo-accounts/`, fetcher);
   const [momoAccountId, setMomoAccountId] = useState(null);
@@ -363,7 +367,8 @@ export function ChoosePaymentMethod({
               loading={nextLoading}
               onPress={handlePay}
               disabled={!momoAccountId}>
-              Payer {total.currency} {total.amount?.toLocaleString()}
+              {verb || 'Payer'} {total.currency}{' '}
+              {total.amount?.toLocaleString()}
             </Button>
           </View>
         </>
@@ -384,6 +389,7 @@ type PayProps = {
     currency: string;
   };
   loading: boolean;
+  verb?: boolean;
 };
 
 export default function Pay(props: PayProps) {
@@ -393,7 +399,9 @@ export default function Pay(props: PayProps) {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: `Payer ${total.currency} ${total.amount?.toLocaleString()}`,
+      title: `${props.verb || 'Payer'} ${
+        total.currency
+      } ${total.amount?.toLocaleString()}`,
       headerBackTitle: '',
     });
   }, [navigation]);

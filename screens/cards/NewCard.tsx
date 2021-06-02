@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Colors from '../../utils/colors';
@@ -10,7 +10,6 @@ import toast from '../../utils/toast';
 import {useNavigation} from '@react-navigation/native';
 import KashPad from '../../components/KashPad';
 import useSWRNative from '@nandorojo/swr-react-native';
-import {CardPaymentOperationType} from '../../utils';
 import VerificationOnboarding from '../../components/VerificationOnboarding';
 
 const CardForm = ({onVirtualCard}: {onVirtualCard: (card: any) => void}) => {
@@ -104,7 +103,7 @@ const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
               color: Colors.medium,
             }}>
             {' '}
-            CFA {virtualCard?.issuance_cost?.amount}
+            CFA {virtualCard?.issuance_cost?.amount?.toLocaleString()}
           </Text>
         </View>
         <View
@@ -129,7 +128,7 @@ const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
               color: Colors.medium,
             }}>
             {' '}
-            CFA {amount}
+            CFA {amount?.toLocaleString()}
           </Text>
         </View>
 
@@ -155,7 +154,7 @@ const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
               color: Colors.medium,
             }}>
             {' '}
-            CFA {fees}
+            CFA {fees?.toLocaleString()}
           </Text>
         </View>
 
@@ -189,7 +188,12 @@ const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
               color: Colors.medium,
             }}>
             {' '}
-            CFA {amount + virtualCard?.issuance_cost?.amount + fees}
+            CFA{' '}
+            {(
+              amount +
+              virtualCard?.issuance_cost?.amount +
+              fees
+            ).toLocaleString()}
           </Text>
         </View>
       </View>
@@ -210,6 +214,8 @@ function NewCard() {
     api.post(`/kash/virtual-cards/${id}/convert/`, {amount, currency: 'USD'}),
   );
   const limits = profileQuery.data?.limits || {};
+  const wallet = profileQuery.data?.wallet || {};
+  const balance = Math.round(parseFloat(wallet?.xof_amount?.amount) || 0);
 
   if (profileQuery.data && profileQuery.data.kyc_level < 2) {
     return (
@@ -231,15 +237,31 @@ function NewCard() {
   const handleNext = () => {
     recapRef.current?.close();
     const totalAmount = amount + virtualCard?.issuance_cost.amount;
-    navigation.navigate('PayCard', {
-      id: virtualCard.id,
-      total: {
+    if (totalAmount > balance) {
+      Alert.alert(
+        '',
+        'Ton solde est insuffisant pour effectuer cette opération. Recharge ton portefeuille puis réessaie.',
+        [
+          {
+            text: 'Recharger',
+            onPress: () => {
+              navigation.navigate('Kash', {
+                screen: 'Deposit',
+              });
+            },
+          },
+        ],
+      );
+      return;
+    }
+
+    navigation.navigate('ConfirmPin', {
+      url: `/kash/virtual-cards/${virtualCard.id}/purchase/`,
+      data: {
         amount: totalAmount,
-        currency: 'XOF',
+        usd_amount: usdAmount,
       },
-      fees: {amount: fees, currency: 'XOF'},
-      usdAmount,
-      type: CardPaymentOperationType.fund,
+      backScreen: 'Cards',
     });
   };
 

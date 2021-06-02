@@ -18,19 +18,15 @@ function Withdraw() {
   let limits = profileQuery.data?.limits
     ? profileQuery.data?.limits['withdraw']
     : null;
-  limits = limits || {min: 25, max: 50000};
-  const rate = ratesQuery.data?.withdraw?.XOF || Constants.defaultUSDRate;
-  const fee = Constants.withdrawFees;
+  limits = limits || {min: 110, max: 50000};
+  const fee = Math.max(Constants.withdrawFees, Math.round(amount * 0.02));
 
   const handleNext = (amount: number) => {
-    console.log(amount + fee);
-    withdraw
-      .execute({amount: ((amount + fee) / rate).toFixed(7), currency: 'USD'})
-      .then(() => {
-        setTimeout(() => {
-          navigation.goBack();
-        }, 1500);
-      });
+    navigation.navigate('Payout', {
+      amount,
+      currency: 'XOF',
+      fee,
+    });
   };
   return (
     <View style={{flex: 1, backgroundColor: 'white', position: 'relative'}}>

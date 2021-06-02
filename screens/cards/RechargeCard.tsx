@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {CardPaymentOperationType} from '../../utils';
-import {StyleSheet, View} from 'react-native';
+import {CardPaymentOperationType, Constants} from '../../utils';
+import {Alert, StyleSheet, View} from 'react-native';
 import Colors from '../../utils/colors';
 import {useAsync} from '../../utils/hooks';
 import api, {fetcher} from '../../utils/api';
@@ -12,8 +12,21 @@ const RechargeCard = ({}) => {
   const {params} = useRoute();
   // @ts-ignore
   const {card} = params;
+  const [amount, setAmount] = useState(0);
   const profileQuery = useSWRNative('/kash/profiles/current/', fetcher);
+  const getRate = useAsync(() =>
+    api.post(`/kash/virtual-cards/${card.id}/convert/`, {
+      currency: 'USD',
+      amount: 1,
+    }),
+  );
   const navigation = useNavigation();
+  const wallet = profileQuery.data?.wallet || {};
+  const balance = Math.round(parseFloat(wallet?.xof_amount?.amount) || 0);
+
+  useEffect(() => {
+    getRate.execute();
+  }, []);
   const limits = profileQuery.data?.limits
     ? profileQuery.data?.limits['fund-card']
     : {
@@ -23,18 +36,35 @@ const RechargeCard = ({}) => {
   const fundingDetails = useAsync(data =>
     api.post(`/kash/virtual-cards/${card.id}/funding_details/`, data),
   );
+  const rate = getRate.value?.data.amount || Constants.defaultCardRate;
 
   const handleRecharge = (amount: number) => {
     fundingDetails.execute({amount}).then(res => {
-      navigation.navigate('PayCard', {
-        id: card.id,
-        total: {
-          amount: parseInt(res.data.amount, 10),
-          currency: 'XOF',
+      const total = parseInt(res.data.fees, 10) + parseInt(res.data.amount, 10);
+      if (total > balance) {
+        Alert.alert(
+          '',
+          'Ton solde est insuffisant pour effectuer cette opération. Recharge ton portefeuille puis réessaie.',
+          [
+            {
+              text: 'Recharger',
+              onPress: () => {
+                navigation.navigate('Kash', {
+                  screen: 'Deposit',
+                });
+              },
+            },
+          ],
+        );
+        return;
+      }
+      navigation.navigate('ConfirmPin', {
+        url: `/kash/virtual-cards/${card.id}/fund/`,
+        data: {
+          amount: total,
+          usd_amount: amount,
         },
-        fees: {amount: parseInt(res.data.fees, 10), currency: 'XOF'},
-        usdAmount: amount,
-        type: CardPaymentOperationType.fund,
+        backScreen: 'Cards',
       });
     });
   };
@@ -42,9 +72,11 @@ const RechargeCard = ({}) => {
   return (
     <View style={{flex: 1, backgroundColor: 'white', position: 'relative'}}>
       <KashPad
+        onChange={setAmount}
         limits={limits}
         currency={'$'}
         onNext={handleRecharge}
+        miniText={`~ CFA ${Math.round(amount * rate).toLocaleString()}`}
         buttonText={{
           next: 'Recharger',
           cancel: 'Annuler',

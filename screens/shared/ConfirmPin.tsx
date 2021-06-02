@@ -52,6 +52,7 @@ function ConfirmPin() {
         setPin('');
       }, 500);
     } else {
+      setPin('');
       navigation.navigate('AsyncAction', params);
     }
   };

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {ActivityIndicator, Text, View} from 'react-native';
 import useSWRNative from '@nandorojo/swr-react-native';
 import {useRoute} from '@react-navigation/native';
 import {fetcher} from '../../utils/api';
@@ -15,6 +15,13 @@ function TransactionDetail() {
     `/kash/wallets/current/transactions/${id}/`,
     fetcher,
   );
+  if (!transactionQuery.data) {
+    return (
+      <View style={{flex: 1, backgroundColor: 'white', paddingVertical: 32}}>
+        <ActivityIndicator color={Colors.brand} />
+      </View>
+    );
+  }
   const transaction = transactionQuery.data || {};
   const amount: number = parseFloat(transaction.amount || 0);
   return (
@@ -33,7 +40,7 @@ function TransactionDetail() {
           marginTop: 24,
           marginBottom: 12,
         }}>
-        CFA {Math.floor(amount).toLocaleString()}
+        CFA {Math.round(amount).toLocaleString()}
       </Text>
 
       <View
@@ -113,7 +120,7 @@ function TransactionDetail() {
               fontSize: 16,
               fontFamily: 'Inter-Medium',
             }}>
-            Date & Heure
+            Date
           </Text>
           <Text
             style={{
@@ -121,7 +128,33 @@ function TransactionDetail() {
               fontSize: 16,
               fontFamily: 'Inter-Medium',
             }}>
-            {new Date(transaction.created_at).toLocaleString()}
+            {new Date(transaction.created_at).toLocaleDateString()}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 16,
+            borderBottomWidth: 1,
+            borderBottomColor: Colors.border,
+          }}>
+          <Text
+            style={{
+              color: Colors.medium,
+              fontSize: 16,
+              fontFamily: 'Inter-Medium',
+            }}>
+            Heure
+          </Text>
+          <Text
+            style={{
+              color: Colors.dark,
+              fontSize: 16,
+              fontFamily: 'Inter-Medium',
+            }}>
+            {new Date(transaction.created_at).toLocaleTimeString()}
           </Text>
         </View>
         <View

@@ -81,4 +81,5 @@ export enum Constants {
   transferFees = 25,
   withdrawFees = 100,
   defaultUSDRate = 610,
+  defaultCardRate = 675,
 }
