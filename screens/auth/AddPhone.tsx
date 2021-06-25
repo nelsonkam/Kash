@@ -25,17 +25,6 @@ const AddPhone = () => {
   const {params} = useRoute();
   const navigation = useNavigation();
   const [phone, setPhone] = useState('');
-  const [isSkipVisible, setSkipVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // @ts-ignore
-      if (params.stack === 'auth') {
-        setSkipVisible(true);
-      }
-    }, 60 * 1000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const sendCode = useAsync(
     data =>
@@ -78,6 +67,7 @@ const AddPhone = () => {
           style: 'destructive',
           text: "Je comprends et j'accepte",
           onPress() {
+            dispatch(authSlice.actions.setSkipPhone(true));
             navigation.navigate('InviteCode');
           },
         },
@@ -145,7 +135,7 @@ const AddPhone = () => {
               loading={sendCode.loading}>
               Vérifier mon numéro
             </Button>
-            {isSkipVisible && (
+            {params.stack === 'auth' && (
               <Button
                 onPress={handleSkip}
                 style={{marginTop: 16}}

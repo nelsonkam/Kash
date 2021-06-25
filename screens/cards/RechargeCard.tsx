@@ -21,8 +21,6 @@ const RechargeCard = ({}) => {
     }),
   );
   const navigation = useNavigation();
-  const wallet = profileQuery.data?.wallet || {};
-  const balance = Math.round(parseFloat(wallet?.xof_amount?.amount) || 0);
 
   useEffect(() => {
     getRate.execute();
@@ -40,31 +38,15 @@ const RechargeCard = ({}) => {
 
   const handleRecharge = (amount: number) => {
     fundingDetails.execute({amount}).then(res => {
-      const total = parseInt(res.data.fees, 10) + parseInt(res.data.amount, 10);
-      if (total > balance) {
-        Alert.alert(
-          '',
-          'Ton solde est insuffisant pour effectuer cette opération. Recharge ton portefeuille puis réessaie.',
-          [
-            {
-              text: 'Recharger',
-              onPress: () => {
-                navigation.navigate('Kash', {
-                  screen: 'Deposit',
-                });
-              },
-            },
-          ],
-        );
-        return;
-      }
-      navigation.navigate('ConfirmPin', {
-        url: `/kash/virtual-cards/${card.id}/fund/`,
-        data: {
-          amount: total,
-          usd_amount: amount,
+      navigation.navigate('PayCard', {
+        id: card.id,
+        total: {
+          amount: parseInt(res.data.amount, 10),
+          currency: 'XOF',
         },
-        backScreen: 'Cards',
+        fees: {amount: parseInt(res.data.fees, 10), currency: 'XOF'},
+        usdAmount: amount,
+        type: CardPaymentOperationType.fund,
       });
     });
   };

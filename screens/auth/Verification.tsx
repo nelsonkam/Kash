@@ -12,6 +12,7 @@ import {RootState} from '../../utils/store';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AuthHeaderBar} from '../../components/HeaderBar';
+import authSlice from '../../slices/auth';
 
 const Verification = () => {
   const {sessionToken, phone} = useSelector((s: RootState) => s.auth);
@@ -20,6 +21,7 @@ const Verification = () => {
   const navigation = useNavigation();
   const [verificationCode, setVerificationCode] = useState('');
   const pinInput = useRef(null);
+  const getProfile = useAsync(() => api.get(`/kash/profiles/current/`));
 
   const verifyCode = useAsync(data =>
     api
@@ -38,9 +40,11 @@ const Verification = () => {
         // @ts-ignore
         if (params.stack && params.stack === 'profile') {
           navigation.navigate('Profile');
-        } else {
-          navigation.navigate('InviteCode');
         }
+        return getProfile.execute();
+      })
+      .then(res => {
+        dispatch(authSlice.actions.setProfile(res.data));
       })
       .catch(err => {
         toast.error(

@@ -399,7 +399,7 @@ function Profile() {
           © {new Date().getFullYear()} - Tous droits réservés. Futurix LLC.
         </Text>
       </View>
-      <KBottomSheet ref={inviteRef} snapPoints={[360, 0]}>
+      <KBottomSheet ref={inviteRef} snapPoints={[420, 0]}>
         {generateInviteCode.loading && (
           <View
             style={{

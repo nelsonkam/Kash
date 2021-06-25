@@ -19,6 +19,9 @@ import Button from './Button';
 import Input from './Input';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useAsync} from '../utils/hooks';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../utils/store';
+import prefsSlice from '../slices/prefs';
 
 type TransactionStatusProps = {
   reference: string;
@@ -34,16 +37,10 @@ export const TransactionStatus = ({
     fetcher,
     {
       refreshWhenHidden: false,
+      refreshInterval: 1000,
     },
   );
   const status = transactionQuery.data?.status;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      transactionQuery.revalidate();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     if (status === 'failed' || status === 'success') {
@@ -149,9 +146,11 @@ export const PaymentForm = ({
 }: PaymentFormProps) => {
   const [gateway, setGateway] = useState<string | null>(null);
   const [phone, setPhone] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
   const handleClick = () => {
     if (gateway && phone) {
+      dispatch(prefsSlice.actions.addPaymentMethod({phone, gateway}));
       onNext({gateway, phone});
     }
   };
@@ -212,7 +211,7 @@ export const PaymentForm = ({
               borderRadius: 100,
             }}>
             <Text style={{color: Colors.dark, fontFamily: 'Inter-Bold'}}>
-              Frais appliqués: {fees.currency} {fees.amount}
+              Frais appliqués: {fees.currency} {fees.amount?.toLocaleString()}
             </Text>
           </View>
         </View>
@@ -220,7 +219,7 @@ export const PaymentForm = ({
           loading={loading}
           onPress={handleClick}
           disabled={!(gateway && phone)}>
-          {verb || 'Payer'} {currency} {amount}
+          {verb || 'Payer'} {currency} {amount?.toLocaleString()}
         </Button>
       </View>
     </ScrollView>
@@ -248,18 +247,15 @@ export function ChoosePaymentMethod({
   onPaymentMethodSelected,
   verb,
 }: ChoosePaymentMethodProps) {
-  const momoAccountQuery = useSWRNative(`/kash/momo-accounts/`, fetcher);
-  const [momoAccountId, setMomoAccountId] = useState(null);
+  const paymentMethods = useSelector((s: RootState) => s.prefs.paymentMethods);
+  const [paymentMethod, setPaymentMethod] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
 
   const handlePay = () => {
-    if (momoAccountId) {
-      const momoAccount = momoAccountQuery.data?.filter(
-        (item: any) => item.id === momoAccountId,
-      )[0];
+    if (paymentMethod) {
       onPaymentMethodSelected({
-        phone: momoAccount.phone,
-        gateway: momoAccount.gateway,
+        phone: paymentMethod.phone,
+        gateway: paymentMethod.gateway,
       });
     }
   };
@@ -311,11 +307,11 @@ export function ChoosePaymentMethod({
                 Utiliser un autre numéro momo
               </Text>
             </TouchableOpacity>
-            {momoAccountQuery.data?.map((item: any) => (
+            {paymentMethods.map((item: any) => (
               <ButtonPicker
-                onPress={() => setMomoAccountId(item.id)}
+                onPress={() => setPaymentMethod(item)}
                 imageSize={42}
-                active={item.id === momoAccountId}
+                active={paymentMethod === item}
                 style={{marginBottom: 16}}
                 source={
                   item.gateway === 'mtn-bj'
@@ -366,7 +362,7 @@ export function ChoosePaymentMethod({
             <Button
               loading={nextLoading}
               onPress={handlePay}
-              disabled={!momoAccountId}>
+              disabled={!paymentMethod}>
               {verb || 'Payer'} {total.currency}{' '}
               {total.amount?.toLocaleString()}
             </Button>

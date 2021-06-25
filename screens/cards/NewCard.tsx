@@ -1,5 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Colors from '../../utils/colors';
@@ -11,16 +18,18 @@ import {useNavigation} from '@react-navigation/native';
 import KashPad from '../../components/KashPad';
 import useSWRNative from '@nandorojo/swr-react-native';
 import VerificationOnboarding from '../../components/VerificationOnboarding';
+import {CardPaymentOperationType} from '../../utils';
 
 const CardForm = ({onVirtualCard}: {onVirtualCard: (card: any) => void}) => {
   const [name, setName] = useState<string>('');
+  const [cardType, setCardType] = useState<string>('');
   const createVirtualCard = useAsync(data =>
     api.post(`/kash/virtual-cards/`, data),
   );
 
   const handlePress = () => {
     createVirtualCard
-      .execute({nickname: name})
+      .execute({nickname: name, category: cardType})
       .then(res => {
         onVirtualCard(res.data);
       })
@@ -29,29 +38,100 @@ const CardForm = ({onVirtualCard}: {onVirtualCard: (card: any) => void}) => {
       });
   };
   return (
-    <View style={{padding: 16}}>
-      <Text style={styles.title}>Donnes un nom à ta carte</Text>
-      <Text style={styles.subtitle}>
-        Ce nom te permettra de distinguer tes cartes à l'avenir. Tu peux changer
-        ce nom à tout moment.
-      </Text>
-      <View style={{marginTop: 16}}>
+    <ScrollView style={{padding: 16}}>
+      <View>
+        <Text
+          style={{
+            fontFamily: 'Inter-Bold',
+            color: Colors.dark,
+            fontSize: 16,
+          }}>
+          Nom de la carte
+        </Text>
         <Input
           value={name}
           onChangeText={text => setName(text)}
-          label={'Nom de la carte'}
+          description={
+            "Ce nom te permettra de distinguer tes cartes à l'avenir. Tu peux changer ce nom à tout moment."
+          }
           placeholder={'Ex. Netflix, Shopping...'}
         />
+      </View>
+      <View style={{marginTop: 18}}>
+        <Text
+          style={{
+            fontFamily: 'Inter-Bold',
+            color: Colors.dark,
+            marginBottom: 12,
+            fontSize: 16,
+          }}>
+          Type de carte
+        </Text>
+        <TouchableOpacity
+          onPress={() => setCardType('general')}
+          style={{
+            borderColor: cardType === 'general' ? Colors.brand : Colors.border,
+            borderWidth: 2,
+            borderRadius: 6,
+            padding: 10,
+            marginBottom: 16,
+          }}>
+          <Text
+            style={{
+              marginBottom: 6,
+              color: Colors.dark,
+              fontFamily: 'Inter-Bold',
+              fontSize: 16,
+            }}>
+            Général
+          </Text>
+          <Text
+            style={{
+              color: Colors.medium,
+              fontFamily: 'Inter-Regular',
+              fontSize: 14,
+            }}>
+            Ces cartes peuvent être utilisées sur la plupart des sites.
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setCardType('ads')}
+          style={{
+            borderColor: cardType === 'ads' ? Colors.brand : Colors.border,
+            borderWidth: 2,
+            borderRadius: 6,
+            padding: 10,
+            marginBottom: 16,
+          }}>
+          <Text
+            style={{
+              marginBottom: 6,
+              color: Colors.dark,
+              fontFamily: 'Inter-Bold',
+              fontSize: 16,
+            }}>
+            Sponsoring
+          </Text>
+          <Text
+            style={{
+              color: Colors.medium,
+              fontFamily: 'Inter-Regular',
+              fontSize: 14,
+            }}>
+            Ces cartes sont optimisées pour les campagnes publicitaires sur
+            Facebook et Instagram.
+          </Text>
+        </TouchableOpacity>
       </View>
       <Button
         style={{marginTop: 8}}
         color={Colors.brand}
-        disabled={!name}
+        disabled={!name || !cardType}
         loading={createVirtualCard.loading}
         onPress={handlePress}>
         Suivant
       </Button>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -214,8 +294,6 @@ function NewCard() {
     api.post(`/kash/virtual-cards/${id}/convert/`, {amount, currency: 'USD'}),
   );
   const limits = profileQuery.data?.limits || {};
-  const wallet = profileQuery.data?.wallet || {};
-  const balance = Math.round(parseFloat(wallet?.xof_amount?.amount) || 0);
 
   if (profileQuery.data && profileQuery.data.kyc_level < 2) {
     return (
@@ -237,31 +315,15 @@ function NewCard() {
   const handleNext = () => {
     recapRef.current?.close();
     const totalAmount = amount + virtualCard?.issuance_cost.amount;
-    if (totalAmount > balance) {
-      Alert.alert(
-        '',
-        'Ton solde est insuffisant pour effectuer cette opération. Recharge ton portefeuille puis réessaie.',
-        [
-          {
-            text: 'Recharger',
-            onPress: () => {
-              navigation.navigate('Kash', {
-                screen: 'Deposit',
-              });
-            },
-          },
-        ],
-      );
-      return;
-    }
-
-    navigation.navigate('ConfirmPin', {
-      url: `/kash/virtual-cards/${virtualCard.id}/purchase/`,
-      data: {
+    navigation.navigate('PayCard', {
+      id: virtualCard.id,
+      total: {
         amount: totalAmount,
-        usd_amount: usdAmount,
+        currency: 'XOF',
       },
-      backScreen: 'Cards',
+      fees: {amount: fees, currency: 'XOF'},
+      usdAmount,
+      type: CardPaymentOperationType.purchase,
     });
   };
 
@@ -271,6 +333,7 @@ function NewCard() {
         <CardForm onVirtualCard={setVirtualCard} />
       ) : (
         <KashPad
+          onChange={setAmount}
           limits={limits['purchase-card'] || {}}
           currency={'$'}
           onNext={handleRecharge}

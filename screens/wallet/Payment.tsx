@@ -8,7 +8,7 @@ function Payment() {
   const {params} = useRoute();
   const navigation = useNavigation();
   // @ts-ignore
-  const {url, total, fees, verb} = params;
+  const {url, total, fees, verb, returnScreen} = params;
   const payKash = useAsync(data => api.post(url, data));
 
   const handlePay = (data: any) => {
@@ -20,9 +20,9 @@ function Payment() {
   const handleStatusChanged = (txn: any) => {
     setTimeout(() => {
       if (txn.status === 'failed') {
-        navigation.navigate('Kash');
+        navigation.navigate(returnScreen || 'Kash');
       } else {
-        navigation.navigate('Kash');
+        navigation.navigate(returnScreen || 'Kash');
       }
     }, 1500);
   };

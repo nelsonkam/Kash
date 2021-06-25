@@ -9,13 +9,17 @@ import NotificationStack from './notifications';
 import Search from '../screens/Search';
 import ProfileStack from './profile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useSelector} from 'react-redux';
+import {RootState} from '../utils/store';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainTabs() {
+  const auth = useSelector((s: RootState) => s.auth);
+
   return (
     <Tab.Navigator
-      initialRouteName={'Kash'}
+      initialRouteName={auth.profile.wallet ? 'Kash' : 'Cards'}
       screenOptions={({route}) => ({
         tabBarLabel: () => null,
         tabBarIcon: ({focused, color, size}) => {
@@ -63,8 +67,10 @@ export default function MainTabs() {
       }}>
       <Tab.Screen name="Profile" component={ProfileStack} />
       <Tab.Screen name="Cards" component={CardStack} />
-      <Tab.Screen name="Kash" component={KashStack} />
-      <Tab.Screen name="Discovery" component={Search} />
+      {auth.profile.wallet && <Tab.Screen name="Kash" component={KashStack} />}
+      {auth.profile.wallet && (
+        <Tab.Screen name="Discovery" component={Search} />
+      )}
       <Tab.Screen name="Notifs" component={NotificationStack} />
     </Tab.Navigator>
   );

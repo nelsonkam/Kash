@@ -21,6 +21,7 @@ import AsyncActionSheet from '../../components/AsyncActionSheet';
 import {useAsync} from '../../utils/hooks';
 import useSWRNative from '@nandorojo/swr-react-native';
 import ConfirmSheet from '../../components/ConfirmSheet';
+import toast from '../../utils/toast';
 
 const TransactionItem = ({transaction}: {transaction: any}) => {
   const isDebit =
@@ -312,6 +313,11 @@ function CardDetail() {
         }),
       };
     });
+
+    const handleCopy = str => {
+      Clipboard.setString(str);
+      toast.success('', 'Copié');
+    };
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
         <SectionList
@@ -393,13 +399,14 @@ function CardDetail() {
             </View>
           )}
         />
-        <KBottomSheet ref={detailsRef} snapPoints={[280, 0]}>
-          <View style={{backgroundColor: 'white', padding: 16, height: 320}}>
+        <KBottomSheet ref={detailsRef} snapPoints={[360, 0]}>
+          <View style={{backgroundColor: 'white', padding: 16, height: 360}}>
             <Text
               style={{
                 fontFamily: 'Inter-Semibold',
                 fontSize: 18,
                 marginTop: 16,
+                color: Colors.dark,
               }}>
               {card.card_details.name_on_card}
             </Text>
@@ -418,7 +425,7 @@ function CardDetail() {
                 {spaceFour(card.card_details.card_pan)}
               </Text>
               <TouchableOpacity
-                onPress={() => Clipboard.setString(card.card_details.card_pan)}>
+                onPress={() => handleCopy(card.card_details.card_pan)}>
                 <Ionicons
                   name={'copy-outline'}
                   size={28}
@@ -484,8 +491,67 @@ function CardDetail() {
                     color: Colors.dark,
                     marginTop: 8,
                   }}>
-                  {card.card_details.address_1}, {card.card_details.city},{' '}
-                  {card.card_details.state}, {card.card_details.zip_code}
+                  {card.card_details.address_1}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{flexDirection: 'row', marginTop: 20, flexWrap: 'wrap'}}>
+              <View style={{marginRight: 48}}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: 'Inter-Semibold',
+                    color: Colors.medium,
+                  }}>
+                  Ville
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: 'Inter-Semibold',
+                    color: Colors.dark,
+                    marginTop: 4,
+                  }}>
+                  {card.card_details.city}
+                </Text>
+              </View>
+              <View style={{marginRight: 48}}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: 'Inter-Semibold',
+                    color: Colors.medium,
+                  }}>
+                  État/Province
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: 'Inter-Semibold',
+                    color: Colors.dark,
+                    marginTop: 4,
+                  }}>
+                  {card.card_details.state}
+                </Text>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: 'Inter-Semibold',
+                    color: Colors.medium,
+                  }}>
+                  Code Postale
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: 'Inter-Semibold',
+                    color: Colors.dark,
+                    marginTop: 4,
+                  }}>
+                  {card.card_details.zip_code}
                 </Text>
               </View>
             </View>

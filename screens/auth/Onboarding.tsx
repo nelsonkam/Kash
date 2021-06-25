@@ -28,25 +28,13 @@ function OnboardingScreen() {
           backgroundColor: Colors.brand,
           image: (
             <Image
-              style={{height: 250, width: 250}}
-              source={require('../../assets/send-receive-kash.png')}
-            />
-          ),
-          title: 'Envoie et reçois du Kash instantanément.',
-          subtitle:
-            "Kash est le moyen le plus simple d'envoyer et de recevoir de l'argent à partir de compte momo (MTN/Moov).",
-        },
-        {
-          backgroundColor: Colors.brand,
-          image: (
-            <Image
               style={{height: 250, width: 208}}
               source={require('../../assets/kash-card.png')}
             />
           ),
           title: 'Crée des cartes virtuelles illimités',
           subtitle:
-            'Avec ton Momo, crée des cartes Visa virtuelles que tu peux utiliser pour des services tels que Netflix, Facebook, Paypal, etc.',
+            'Avec ton Momo (MTN/Moov), crée des cartes Visa prépayées que tu peux utiliser pour des services tels que Netflix, Facebook, Paypal, etc.',
         },
       ]}
     />

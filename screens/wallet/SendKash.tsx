@@ -34,7 +34,7 @@ function SendKash() {
   const handleNext = (amount: number) => {
     navigation.navigate('Recipients', {
       type,
-      amount: type === P2PTxnType.send ? (amount / rate).toFixed(7) : amount,
+      amount: (amount / rate).toFixed(7),
     });
   };
 

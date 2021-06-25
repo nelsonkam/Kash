@@ -111,19 +111,15 @@ function Recipients() {
   };
 
   const handleNext = () => {
-    if (type === P2PTxnType.send) {
-      navigation.navigate('ConfirmPin', {
-        url: '/kash/wallets/current/transfer/',
-        data: {
-          note,
-          recipient_tags: selected.map((r: any) => r.kashtag),
-          amount: amount,
-        },
-        backScreen: 'Kash',
-      });
-    } else {
-      navigation.navigate('RequestKash', {recipients: selected, amount, note});
-    }
+    navigation.navigate('ConfirmPin', {
+      url: '/kash/wallets/current/transfer/',
+      data: {
+        note,
+        recipient_tags: selected.map((r: any) => r.kashtag),
+        amount: amount,
+      },
+      backScreen: 'Kash',
+    });
   };
 
   return (

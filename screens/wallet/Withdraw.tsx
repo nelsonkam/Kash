@@ -18,8 +18,8 @@ function Withdraw() {
   let limits = profileQuery.data?.limits
     ? profileQuery.data?.limits['withdraw']
     : null;
-  limits = limits || {min: 110, max: 50000};
-  const fee = Math.max(Constants.withdrawFees, Math.round(amount * 0.02));
+  limits = limits || {min: 0, max: 50000};
+  const fee = 0;
 
   const handleNext = (amount: number) => {
     navigation.navigate('Payout', {

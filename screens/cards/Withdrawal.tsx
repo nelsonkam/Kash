@@ -38,8 +38,13 @@ const Withdrawal = ({}) => {
     convertAmount
       .execute({amount, currency: 'USD', is_withdrawal: true})
       .then(res => {
-        setXOFamount(res.data.amount);
-        confirmRef.current?.open();
+        navigation.navigate('Payout', {
+          xofAmount: res.data.amount,
+          usdAmount: amount,
+          card,
+          currency: 'XOF',
+          fee: 0,
+        });
       });
   };
 

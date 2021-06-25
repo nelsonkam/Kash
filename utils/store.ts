@@ -12,9 +12,11 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import {combineReducers} from 'redux';
 import authSlice from '../slices/auth';
+import prefsSlice from '../slices/prefs';
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
+  prefs: prefsSlice.reducer,
 });
 
 const persistedReducer = persistReducer(

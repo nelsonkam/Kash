@@ -120,7 +120,13 @@ function ScanDocument({onNext, onBack}: ScanDocumentType) {
   const [photo, setPhoto] = useState<any>();
   const handleSnap = async () => {
     if (cameraRef.current) {
-      const options = {quality: 0.5, base64: true};
+      const options = {
+        quality: 0.7,
+        base64: true,
+        fixOrientation: true,
+        forceUpOrientation: true,
+        width: 500,
+      };
       const data = await cameraRef.current?.takePictureAsync(options);
       setPhoto(data);
       showCamera(false);
@@ -277,7 +283,13 @@ function TakeSelfie({onNext}: {onNext: (photo: any) => void}) {
   const [photo, setPhoto] = useState<any>();
   const handleSnap = async () => {
     if (cameraRef.current) {
-      const options = {quality: 0.8, base64: true};
+      const options = {
+        quality: 0.7,
+        base64: true,
+        fixOrientation: true,
+        forceUpOrientation: true,
+        width: 500,
+      };
       const data = await cameraRef.current?.takePictureAsync(options);
       setPhoto(data);
       showCamera(false);

@@ -10,7 +10,7 @@ import {
 import Colors from '../utils/colors';
 
 type Props = {
-  label: string;
+  label?: string;
   description?: string;
   error?: string;
 } & TextInputProps;
@@ -25,7 +25,7 @@ const Input = ({label, description, error, ...rest}: Props) => {
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-        <Text style={styles.label}>{label}</Text>
+        {label && <Text style={styles.label}>{label}</Text>}
         {rest.secureTextEntry && (
           <TouchableOpacity onPress={() => setSecure(!isSecure)}>
             <Text style={{color: Colors.primary, fontFamily: 'Inter-Medium'}}>

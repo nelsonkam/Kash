@@ -13,7 +13,6 @@ import Withdraw from '../screens/wallet/Withdraw';
 import ConfirmPin from '../screens/shared/ConfirmPin';
 import AsyncActionScreen from '../screens/shared/AsyncActionScreen';
 import TransactionDetail from '../screens/wallet/TransactionDetail';
-import RequestKash from '../screens/wallet/RequestKash';
 import Payout from '../screens/wallet/Payout';
 
 const Stack = createStackNavigator();
@@ -77,12 +76,6 @@ export default function KashStack() {
         options={{title: 'Transaction', headerBackTitle: ''}}
         name="TransactionDetail"
         component={TransactionDetail}
-      />
-
-      <Stack.Screen
-        options={{title: 'Demander'}}
-        name="RequestKash"
-        component={RequestKash}
       />
       <Stack.Screen
         options={{headerShown: false, headerBackTitle: ''}}

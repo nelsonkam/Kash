@@ -40,8 +40,8 @@ function Login() {
       })
       .then(res => {
         dispatch(authSlice.actions.setProfile(res.data));
-        if (!(res.data.payout_methods?.length > 0)) {
-          navigation.navigate('SetupPaymentMethod');
+        if (!res.data.phone_number) {
+          navigation.navigate('AddPhone');
         }
       })
       .catch(err => {

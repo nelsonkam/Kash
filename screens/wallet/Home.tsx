@@ -141,7 +141,7 @@ const Home = () => {
             paddingVertical: 16,
             paddingHorizontal: 8,
             flexDirection: 'row',
-            justifyContent: 'center',
+            justifyContent: 'space-around',
             borderColor: Colors.border,
             borderBottomWidth: 1,
             borderTopWidth: 1,
@@ -170,28 +170,6 @@ const Home = () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('SendKash', {type: P2PTxnType.request})
-            }
-            style={styles.homeActionContainer}>
-            <View style={styles.homeAction}>
-              <MaterialCommunityIcons
-                size={26}
-                name={'arrow-bottom-left'}
-                color={'white'}
-              />
-            </View>
-            <Text
-              style={{
-                fontFamily: 'Inter-Medium',
-                fontSize: 16,
-                color: Colors.dark,
-                textAlign: 'center',
-              }}>
-              Demander
-            </Text>
-          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Deposit')}
             style={styles.homeActionContainer}>
@@ -384,7 +362,7 @@ const styles = StyleSheet.create({
   homeActionContainer: {
     alignItems: 'center',
     maxWidth: 80,
-    marginHorizontal: 6,
+    marginHorizontal: 16,
     width: '100%',
   },
 });
