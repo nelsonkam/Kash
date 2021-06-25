@@ -37,6 +37,7 @@ function Cards() {
   return (
     <View style={{flex: 1, backgroundColor: 'white', padding: 16}}>
       <FlatList
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
           <View
             style={{
