@@ -15,6 +15,8 @@ import VerifyKYCDoc from '../screens/profile/VerifyKYCDoc';
 import ConfirmPin from '../screens/shared/ConfirmPin';
 import AsyncActionScreen from '../screens/shared/AsyncActionScreen';
 import Payout from '../screens/cards/Payout';
+import CardHistory from '../screens/cards/CardHistory';
+import CardInfo from '../screens/cards/CardInfo';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +37,16 @@ export default function CardStack() {
         options={{title: ''}}
         name="CardDetail"
         component={CardDetail}
+      />
+      <Stack.Screen
+        options={{title: 'Historique', headerBackTitle: ''}}
+        name="CardHistory"
+        component={CardHistory}
+      />
+      <Stack.Screen
+        options={{title: 'Informations', headerBackTitle: ''}}
+        name="CardInfo"
+        component={CardInfo}
       />
       <Stack.Screen
         options={{title: 'Changer le nom'}}

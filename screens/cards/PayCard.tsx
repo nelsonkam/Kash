@@ -42,6 +42,11 @@ function PayCard() {
       navigation.navigate('Cards');
     }, 1000);
   };
+  console.log(
+    purchaseVirtualCard.loading,
+    fundCard.loading,
+    purchaseVirtualCard.loading || fundCard.loading,
+  );
 
   return txnReference ? (
     <TransactionStatus

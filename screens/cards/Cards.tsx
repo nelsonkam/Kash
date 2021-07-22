@@ -1,15 +1,6 @@
 import React from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ImageBackground,
-  Image,
-} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Colors from '../../utils/colors';
 import Button from '../../components/Button';
 import {useNavigation} from '@react-navigation/native';
@@ -20,7 +11,7 @@ import useSWRNative from '@nandorojo/swr-react-native';
 function Cards() {
   const navigation = useNavigation();
   const cards = useSWRNative(`/kash/virtual-cards/`, fetcher);
-  const data = cards.data?.filter((c: any) => c.card_details);
+  const data = cards.data?.filter((c: any) => c.external_id);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({

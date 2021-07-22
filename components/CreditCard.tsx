@@ -39,9 +39,7 @@ const CreditCard = ({card, onPress}: Props) => {
                 paddingHorizontal: 12,
               }}>
               <Text style={{fontFamily: 'Inter-Semibold', color: 'white'}}>
-                {card.is_active
-                  ? `${card.card_details.amount} ${card.card_details.currency}`
-                  : 'Désactivée'}
+                {card.is_active ? `Active` : 'Désactivée'}
               </Text>
             </View>
             <View
@@ -76,13 +74,13 @@ const CreditCard = ({card, onPress}: Props) => {
                   fontSize: 16,
                   color: Colors.dark,
                 }}>
-                {card.card_details.masked_pan}
+                ****{card.last_4}
               </Text>
             </View>
             <Image
               style={{height: 32, width: 64}}
               source={{
-                uri: `https://cdn.kweek.shop/cards/issuer/${card.card_details.card_type}.png`,
+                uri: `https://cdn.kweek.shop/cards/issuer/${card.card_type}.png`,
               }}
             />
           </View>

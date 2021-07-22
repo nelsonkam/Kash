@@ -269,7 +269,7 @@ export function ChoosePaymentMethod({
             amount={total.amount}
             currency={total.currency}
             onNext={onPaymentMethodSelected}
-            loading={false}
+            loading={nextLoading}
           />
         </>
       ) : (

@@ -1,9 +1,8 @@
 import 'react-native-gesture-handler';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
 
 import {Provider, useDispatch, useSelector} from 'react-redux';
-import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import store, {persistor, RootState} from './utils/store';
 import {PersistGate} from 'redux-persist/integration/react';
 import AuthStack from './navigation/auth';

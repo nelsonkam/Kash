@@ -21,189 +21,6 @@ import AsyncActionSheet from '../../components/AsyncActionSheet';
 import {useAsync} from '../../utils/hooks';
 import useSWRNative from '@nandorojo/swr-react-native';
 import ConfirmSheet from '../../components/ConfirmSheet';
-import toast from '../../utils/toast';
-
-const TransactionItem = ({transaction}: {transaction: any}) => {
-  const isDebit =
-    transaction.indicator === 'D' ||
-    transaction.type?.toLowerCase() === 'debit';
-  let iconName = isDebit ? 'arrow-top-right' : 'arrow-bottom-left';
-  iconName = transaction.status.toLowerCase() === 'failed' ? 'close' : iconName;
-  return (
-    <View style={{flexDirection: 'row', padding: 12, alignItems: 'center'}}>
-      <View
-        style={{
-          height: 48,
-          width: 48,
-          borderRadius: 50,
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          backgroundColor: isDebit
-            ? 'rgba(244, 84, 29, 0.05)'
-            : 'rgba(26, 206, 76, 0.05)',
-        }}>
-        <MaterialCommunityIcons
-          size={24}
-          name={iconName}
-          color={isDebit ? Colors.danger : Colors.success}
-        />
-      </View>
-      <View
-        style={{
-          marginLeft: 16,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flex: 1,
-        }}>
-        <View>
-          <Text
-            style={{
-              fontFamily: 'Inter-Semibold',
-              fontSize: 16,
-              color: Colors.dark,
-            }}>
-            {transaction.gateway_reference_details || transaction.merchant}
-          </Text>
-          {!!transaction.narration && (
-            <Text
-              style={{
-                marginTop: 8,
-                color: Colors.medium,
-                fontFamily: 'Inter-Regular',
-              }}>
-              {transaction.narration || transaction.product}
-            </Text>
-          )}
-        </View>
-        <Text
-          style={{fontSize: 16, color: Colors.dark, fontFamily: 'Inter-Bold'}}>
-          $
-          {(
-            parseFloat(transaction.amount) + (transaction.fee || 0)
-          ).toLocaleString()}
-        </Text>
-      </View>
-    </View>
-  );
-};
-
-const CardDetailsHeader = ({
-  card,
-  onDetailClick,
-  currentTab,
-  onSwitchTab,
-}: {
-  card: any;
-  currentTab: 'statement' | 'transactions';
-  onDetailClick: () => void;
-  onSwitchTab: (tab: 'statement' | 'transactions') => void;
-}) => {
-  return (
-    <React.Fragment>
-      {!card.is_active && (
-        <View style={{backgroundColor: Colors.warning, padding: 12}}>
-          <Text
-            style={{
-              color: 'white',
-              fontFamily: 'Inter-Semibold',
-              textAlign: 'center',
-            }}>
-            Cette carte est désactivée
-          </Text>
-        </View>
-      )}
-      <View
-        style={{
-          padding: 16,
-          paddingBottom: 16,
-          backgroundColor: 'white',
-        }}>
-        <CreditCard card={card} />
-        <View style={{marginVertical: 18, alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={onDetailClick}
-            style={{
-              backgroundColor: Colors.brand,
-              paddingHorizontal: 24,
-              paddingVertical: 8,
-              borderRadius: 90,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Ionicons size={24} name={'eye'} color={'white'} />
-            <Text
-              style={{
-                color: 'white',
-                fontFamily: 'Inter-Bold',
-                fontSize: 16,
-                marginLeft: 10,
-              }}>
-              Voir les infos
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            height: 1,
-            backgroundColor: Colors.border,
-            width: '100%',
-            marginTop: 8,
-          }}
-        />
-        <View
-          style={{
-            backgroundColor: Colors.lightGrey,
-            borderRadius: 100,
-            flexDirection: 'row',
-            marginTop: 24,
-          }}>
-          <TouchableOpacity
-            onPress={() => onSwitchTab('statement')}
-            style={{
-              paddingVertical: 12,
-              paddingHorizontal: 16,
-              borderRadius: 100,
-              flex: 1,
-              alignItems: 'center',
-              backgroundColor:
-                currentTab === 'statement' ? Colors.brand : Colors.lightGrey,
-            }}>
-            <Text
-              style={{
-                fontFamily: 'Inter-Bold',
-                fontSize: 16,
-                color: currentTab === 'statement' ? 'white' : 'black',
-              }}>
-              Relevé
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => onSwitchTab('transactions')}
-            style={{
-              paddingVertical: 12,
-              paddingHorizontal: 16,
-              borderRadius: 100,
-              flex: 1,
-              alignItems: 'center',
-              backgroundColor:
-                currentTab === 'transactions' ? Colors.brand : Colors.lightGrey,
-            }}>
-            <Text
-              style={{
-                fontFamily: 'Inter-Bold',
-                fontSize: 16,
-                color: currentTab === 'transactions' ? 'white' : 'black',
-              }}>
-              Transactions
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </React.Fragment>
-  );
-};
 
 function CardDetail() {
   const {params} = useRoute();
@@ -243,17 +60,6 @@ function CardDetail() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: card.nickname,
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => menuRef.current?.open()}
-          style={{paddingHorizontal: 16}}>
-          <Ionicons
-            name={'ellipsis-horizontal'}
-            color={Colors.brand}
-            size={28}
-          />
-        </TouchableOpacity>
-      ),
     });
   }, [navigation, card]);
 
@@ -283,299 +89,90 @@ function CardDetail() {
   };
 
   if (transactionsQuery.data && statementQuery.data) {
-    const data =
-      currentTab === 'transactions'
-        ? transactionsQuery.data.filter((item: any) => item.currency === 'USD')
-        : statementQuery.data;
-
-    const groups = data.reduce((groups: any[], txn: any) => {
-      const date = txn.created_at?.split('T')[0];
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      groups[date].push(txn);
-      return groups;
-    }, {});
-
-    const sections = Object.keys(groups).map(date => {
-      return {
-        title: isToday(new Date(date))
-          ? "Aujourd'hui"
-          : new Date(date).toLocaleDateString(),
-        data: groups[date].sort((a: any, b: any) => {
-          if (a.created_at > b.created_at) {
-            return -1;
-          } else if (a.created_at < b.created_at) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }),
-      };
-    });
-
-    const handleCopy = str => {
-      Clipboard.setString(str);
-      toast.success('', 'Copié');
-    };
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
-        <SectionList
-          onRefresh={() => {
-            cardQuery.revalidate();
-            transactionsQuery.revalidate();
-          }}
-          refreshing={cardQuery.isValidating || transactionsQuery.isValidating}
-          ListHeaderComponent={
-            <CardDetailsHeader
-              card={card}
-              currentTab={currentTab}
-              onDetailClick={() => detailsRef.current?.open()}
-              onSwitchTab={tab => setTab(tab)}
-            />
-          }
-          ItemSeparatorComponent={() => (
-            <View
-              style={{
-                height: 1,
-                backgroundColor: Colors.grey,
-                width: '100%',
-              }}
-            />
-          )}
-          ListEmptyComponent={() => (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginHorizontal: 24,
-                marginVertical: 56,
-              }}>
-              <AntDesign name="swap" size={64} color={Colors.disabled} />
+      <>
+        <ScrollView
+          style={{flex: 1, backgroundColor: 'white'}}
+          showsVerticalScrollIndicator={false}>
+          {!card.is_active && (
+            <View style={{backgroundColor: Colors.warning, padding: 12}}>
               <Text
                 style={{
+                  color: 'white',
                   fontFamily: 'Inter-Semibold',
-                  color: Colors.disabled,
-                  marginTop: 16,
+                  textAlign: 'center',
                 }}>
-                Aucune transaction effectuée
+                Cette carte est désactivée
               </Text>
             </View>
           )}
-          contentContainerStyle={{paddingBottom: 16, backgroundColor: 'white'}}
-          sections={sections}
-          renderItem={({item}) => <TransactionItem transaction={item} />}
-          renderSectionHeader={({section}) => (
+          <View
+            style={{
+              padding: 16,
+              paddingBottom: 8,
+              backgroundColor: 'white',
+            }}>
+            <CreditCard card={card} />
             <View
               style={{
-                flexDirection: 'row',
+                marginVertical: 12,
                 alignItems: 'center',
-                backgroundColor: 'white',
-                paddingTop: 12,
-                paddingBottom: 12,
-                paddingLeft: 16,
-              }}>
-              <View
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 4,
-                  borderRadius: 50,
-                  backgroundColor: Colors.brand,
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontFamily: 'Inter-Semibold',
-                    fontSize: 16,
-                    textTransform: 'uppercase',
-                  }}>
-                  {section.title}
-                </Text>
-              </View>
-              <View
-                style={{height: 2, flex: 1, backgroundColor: Colors.brand}}
-              />
-            </View>
-          )}
-        />
-        <KBottomSheet ref={detailsRef} snapPoints={[360, 0]}>
-          <View style={{backgroundColor: 'white', padding: 16, height: 360}}>
-            <Text
-              style={{
-                fontFamily: 'Inter-Semibold',
-                fontSize: 18,
-                marginTop: 16,
-                color: Colors.dark,
-              }}>
-              {card.card_details.name_on_card}
-            </Text>
-            <View
-              style={{
+                justifyContent: 'space-between',
                 flexDirection: 'row',
-                marginTop: 12,
-                alignItems: 'center',
               }}>
               <Text
                 style={{
-                  fontSize: 24,
-                  fontFamily: 'Inter-Semibold',
-                  marginRight: 18,
+                  fontFamily: 'Inter-Bold',
+                  color: Colors.dark,
+                  marginTop: 8,
+                  fontSize: 16,
                 }}>
-                {spaceFour(card.card_details.card_pan)}
+                Solde actuel
               </Text>
-              <TouchableOpacity
-                onPress={() => handleCopy(card.card_details.card_pan)}>
-                <Ionicons
-                  name={'copy-outline'}
-                  size={28}
-                  color={Colors.brand}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={{flexDirection: 'row', marginTop: 20}}>
-              <View style={{marginRight: 48}}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.medium,
-                  }}>
-                  EXP
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.dark,
-                    marginTop: 4,
-                  }}>
-                  {card.card_details.expiration.split('-')[1]}/
-                  {card.card_details.expiration.split('-')[0]}
-                </Text>
-              </View>
-              <View>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.medium,
-                  }}>
-                  CVV
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.dark,
-                    marginTop: 4,
-                  }}>
-                  {card.card_details.cvv || card.card_details.cvc}
-                </Text>
-              </View>
-            </View>
-            <View style={{flexDirection: 'row', marginTop: 20}}>
-              <View style={{marginRight: 48}}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.medium,
-                  }}>
-                  Adresse de facturation
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.dark,
-                    marginTop: 8,
-                  }}>
-                  {card.card_details.address_1}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{flexDirection: 'row', marginTop: 20, flexWrap: 'wrap'}}>
-              <View style={{marginRight: 48}}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.medium,
-                  }}>
-                  Ville
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.dark,
-                    marginTop: 4,
-                  }}>
-                  {card.card_details.city}
-                </Text>
-              </View>
-              <View style={{marginRight: 48}}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.medium,
-                  }}>
-                  État/Province
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.dark,
-                    marginTop: 4,
-                  }}>
-                  {card.card_details.state}
-                </Text>
-              </View>
-              <View>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.medium,
-                  }}>
-                  Code Postale
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontFamily: 'Inter-Semibold',
-                    color: Colors.dark,
-                    marginTop: 4,
-                  }}>
-                  {card.card_details.zip_code}
-                </Text>
-              </View>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Semibold',
+                  color: Colors.dark,
+                  marginTop: 8,
+                  fontSize: 16,
+                }}>
+                {card.card_details.amount} {card.card_details.currency}
+              </Text>
             </View>
           </View>
-        </KBottomSheet>
-        <KBottomSheet ref={menuRef} snapPoints={[300, 0]}>
+          <View
+            style={{
+              height: 1,
+              backgroundColor: Colors.border,
+              width: '100%',
+            }}
+          />
           <View
             style={{
               backgroundColor: 'white',
-              padding: 16,
-              paddingTop: 24,
-              height: 300,
+              paddingHorizontal: 16,
             }}>
             <TouchableOpacity
               onPress={() => {
-                menuRef.current?.close();
-                navigation.navigate('EditNickname', {card});
+                navigation.navigate('CardInfo', {card});
               }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                marginVertical: 12,
+                paddingVertical: 12,
+                borderBottomColor: Colors.border,
+                borderBottomWidth: 1,
               }}>
-              <AntDesign name={'edit'} color={Colors.medium} size={28} />
+              <View
+                style={{
+                  backgroundColor: Colors.grey,
+                  padding: 8,
+                  borderRadius: 100,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Ionicons size={24} name={'eye'} color={Colors.medium} />
+              </View>
               <Text
                 style={{
                   marginLeft: 16,
@@ -583,24 +180,67 @@ function CardDetail() {
                   fontSize: 16,
                   color: Colors.dark,
                 }}>
-                Changer le nom de la carte
+                Informations de la carte
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                menuRef.current?.close();
+                navigation.navigate('CardHistory', {card});
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 12,
+                borderBottomColor: Colors.border,
+                borderBottomWidth: 1,
+              }}>
+              <View
+                style={{
+                  backgroundColor: Colors.grey,
+                  padding: 8,
+                  borderRadius: 100,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <AntDesign name={'bars'} color={Colors.medium} size={22} />
+              </View>
+              <Text
+                style={{
+                  marginLeft: 16,
+                  fontFamily: 'Inter-Semibold',
+                  fontSize: 16,
+                  color: Colors.dark,
+                }}>
+                Relevé & transactions
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
                 navigation.navigate('RechargeCard', {card});
               }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                marginVertical: 12,
+                paddingVertical: 12,
+                borderBottomColor: Colors.border,
+                borderBottomWidth: 1,
               }}>
-              <MaterialCommunityIcons
-                name={'arrow-bottom-left'}
-                color={Colors.medium}
-                size={28}
-              />
+              <View
+                style={{
+                  backgroundColor: Colors.grey,
+                  padding: 8,
+                  borderRadius: 100,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <MaterialCommunityIcons
+                  name={'arrow-bottom-left'}
+                  color={Colors.medium}
+                  size={22}
+                />
+              </View>
+
               <Text
                 style={{
                   marginLeft: 16,
@@ -613,19 +253,30 @@ function CardDetail() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                menuRef.current?.close();
                 navigation.navigate('Withdrawal', {card});
               }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                marginVertical: 12,
+                paddingVertical: 12,
+                borderBottomColor: Colors.border,
+                borderBottomWidth: 1,
               }}>
-              <MaterialCommunityIcons
-                name={'arrow-top-right'}
-                color={Colors.medium}
-                size={28}
-              />
+              <View
+                style={{
+                  backgroundColor: Colors.grey,
+                  padding: 8,
+                  borderRadius: 100,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <MaterialCommunityIcons
+                  name={'arrow-top-right'}
+                  color={Colors.medium}
+                  size={22}
+                />
+              </View>
+
               <Text
                 style={{
                   marginLeft: 16,
@@ -642,13 +293,25 @@ function CardDetail() {
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                marginVertical: 12,
+                paddingVertical: 12,
+                borderBottomColor: Colors.border,
+                borderBottomWidth: 1,
               }}>
-              <AntDesign
-                name={card.is_active ? 'pausecircleo' : 'playcircleo'}
-                color={Colors.medium}
-                size={28}
-              />
+              <View
+                style={{
+                  backgroundColor: Colors.grey,
+                  padding: 8,
+                  borderRadius: 100,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <AntDesign
+                  name={card.is_active ? 'pausecircleo' : 'playcircleo'}
+                  color={Colors.medium}
+                  size={22}
+                />
+              </View>
+
               <Text
                 style={{
                   marginLeft: 16,
@@ -663,19 +326,26 @@ function CardDetail() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                menuRef.current?.close();
                 terminateConfirmRef.current?.open();
               }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                marginVertical: 12,
+                paddingVertical: 12,
+                borderBottomColor: Colors.border,
+                borderBottomWidth: 1,
               }}>
-              <AntDesign
-                name={'closecircleo'}
-                color={Colors.danger}
-                size={28}
-              />
+              <View
+                style={{
+                  backgroundColor: Colors.danger,
+                  padding: 8,
+                  borderRadius: 100,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <AntDesign name={'closecircleo'} color={'white'} size={22} />
+              </View>
+
               <Text
                 style={{
                   marginLeft: 16,
@@ -687,7 +357,7 @@ function CardDetail() {
               </Text>
             </TouchableOpacity>
           </View>
-        </KBottomSheet>
+        </ScrollView>
         <AsyncActionSheet
           ref={freezeActionRef}
           asyncAction={freezeCard}
@@ -729,7 +399,7 @@ function CardDetail() {
             terminateConfirmRef.current?.close();
           }}
         />
-      </View>
+      </>
     );
   }
   return (
