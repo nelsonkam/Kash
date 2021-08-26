@@ -1,18 +1,19 @@
-import React, {useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import Colors from '../../utils/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import {toUsername} from '../../utils';
-import {useAsync} from '../../utils/hooks';
-import api, {BASE_URL} from '../../utils/api';
-import {useDispatch} from 'react-redux';
+import { toUsername } from '../../utils';
+import { useAsync } from '../../utils/hooks';
+import api, { BASE_URL } from '../../utils/api';
+import { useDispatch } from 'react-redux';
 import authSlice from '../../slices/auth';
 import toast from '../../utils/toast';
-import {identify} from '../../utils/track';
-import {useNavigation} from '@react-navigation/native';
-import {AuthHeaderBar} from '../../components/HeaderBar';
+import { identify } from '../../utils/track';
+import { useNavigation } from '@react-navigation/native';
+import { AuthHeaderBar } from '../../components/HeaderBar';
 import axios from 'axios';
 
 function Signup() {
@@ -20,6 +21,7 @@ function Signup() {
     name: '',
     password: '',
     confirm: '',
+    referral_code: ''
   });
   const [kashtag, setKashTag] = useState<string>('');
   const [showKashtagSection, setShowKashtagSection] = useState(false);
@@ -71,8 +73,8 @@ function Signup() {
 
   const handleNext = () => {
     createProfile
-      .execute({...form, kashtag})
-      .then(({data}) => {
+      .execute({ ...form, kashtag })
+      .then(({ data }) => {
         dispatch(
           authSlice.actions.setTokens({
             access: data.access,
@@ -100,82 +102,91 @@ function Signup() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {showKashtagSection ? (
-        <View>
-          <AuthHeaderBar title={'Choisis ton $kashtag'} />
-          <View style={{padding: 18}}>
-            <Text style={styles.subtitle}>
-              Ton $kashtag est ton nom d'utilisateur sur Kash, tes potes s'en
-              serviront pour t'envoyer du cash.
-            </Text>
-            <View style={{marginTop: 16}}>
-              <Input
-                value={'$' + kashtag}
-                description={
-                  'Ton kashtag ne peut contenir que des lettres miniscules, des chiffres et/ou un tiret de huit ( _ )'
-                }
-                onChangeText={text => setKashTag(toUsername(text))}
-                error={getKashtagError()}
-                label={'Ton $kashtag'}
-              />
-            </View>
-            <Button
-              style={{marginTop: 16}}
-              color={Colors.brand}
-              disabled={!kashtag || !!getKashtagError()}
-              loading={createProfile.loading}
-              onPress={handleNext}>
-              Suivant
-            </Button>
-            <Text style={{fontSize: 12, color: Colors.disabled, marginTop: 16}}>
-              En cliquant "Suivant", tu acceptes notre Politique de
-              Confidentialité et nos Conditions Générales d'Utilisation que tu
-              peux retrouver sur notre site web.
-            </Text>
-          </View>
-        </View>
-      ) : (
-        <View>
-          <StatusBar barStyle="default" />
-          <AuthHeaderBar title={'Crée ton compte'} />
-          <View
-            style={{
-              padding: 18,
-            }}>
-            <Text style={styles.subtitle}>
-              Saisis les informations suivantes afin de créer ton compte.
-            </Text>
-            <View style={{marginTop: 16}}>
-              <Input
-                value={form.name}
-                onChangeText={text => setForm({...form, name: text})}
-                label={'Nom et prénom'}
-                error={errors.name}
-              />
-              <Input
-                value={form.password}
-                secureTextEntry={true}
-                onChangeText={text => setForm({...form, password: text})}
-                label={'Mot de passe'}
-                error={errors.password}
-              />
-              <Input
-                value={form.confirm}
-                secureTextEntry={true}
-                onChangeText={text => setForm({...form, confirm: text})}
-                label={'Confirmes ton mot de passe'}
-                error={errors.confirm}
-              />
+      <StatusBar barStyle="default" />
+      <AuthHeaderBar title={showKashtagSection ? 'Choisis ton $kashtag' : 'Crée ton compte'} />
+      <KeyboardAwareScrollView>
+        {showKashtagSection ? (
+          <View>
+            <View style={{ padding: 18 }}>
+              <Text style={styles.subtitle}>
+                Ton $kashtag est ton nom d'utilisateur sur Kash, tes potes s'en
+                serviront pour t'envoyer du cash.
+              </Text>
+              <View style={{ marginTop: 16 }}>
+                <Input
+                  value={'$' + kashtag}
+                  description={
+                    'Ton kashtag ne peut contenir que des lettres miniscules, des chiffres et/ou un tiret de huit ( _ )'
+                  }
+                  onChangeText={text => setKashTag(toUsername(text))}
+                  error={getKashtagError()}
+                  label={'Ton $kashtag'}
+                />
+              </View>
               <Button
-                onPress={handleAccountNext}
-                style={{marginTop: 16}}
-                color={Colors.brand}>
+                style={{ marginTop: 16 }}
+                color={Colors.brand}
+                disabled={!kashtag || !!getKashtagError()}
+                loading={createProfile.loading}
+                onPress={handleNext}>
                 Suivant
               </Button>
+              <Text style={{ fontSize: 12, color: Colors.disabled, marginTop: 16 }}>
+                En cliquant "Suivant", tu acceptes notre Politique de
+                Confidentialité et nos Conditions Générales d'Utilisation que tu
+                peux retrouver sur notre site web.
+              </Text>
             </View>
           </View>
-        </View>
-      )}
+        ) : (
+          <View>
+            <View
+              style={{
+                padding: 18,
+              }}>
+              <Text style={styles.subtitle}>
+                Saisis les informations suivantes afin de créer ton compte.
+              </Text>
+              <View style={{ marginTop: 16 }}>
+                <Input
+                  value={form.name}
+                  onChangeText={text => setForm({ ...form, name: text })}
+                  label={'Nom et prénom'}
+                  error={errors.name}
+                />
+                <Input
+                  value={form.password}
+                  secureTextEntry={true}
+                  onChangeText={text => setForm({ ...form, password: text })}
+                  label={'Mot de passe'}
+                  error={errors.password}
+                />
+                <Input
+                  value={form.confirm}
+                  secureTextEntry={true}
+                  onChangeText={text => setForm({ ...form, confirm: text })}
+                  label={'Confirmes ton mot de passe'}
+                  error={errors.confirm}
+                />
+                <Input
+                  value={form.referral_code}
+                  onChangeText={text => setForm({ ...form, referral_code: text.toUpperCase() })}
+                  label={"Code d'invitation (facultatif)"}
+                  error={errors.referral_code}
+                  placeholder="REF-XXXXX"
+                />
+                <Button
+                  onPress={handleAccountNext}
+                  style={{ marginTop: 16 }}
+                  color={Colors.brand}>
+                  Suivant
+                </Button>
+              </View>
+            </View>
+          </View>
+        )}
+      </KeyboardAwareScrollView>
+
     </SafeAreaView>
   );
 }

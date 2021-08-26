@@ -295,13 +295,7 @@ function NewCard() {
   );
   const limits = profileQuery.data?.limits || {};
 
-  if (profileQuery.data && profileQuery.data.kyc_level < 2) {
-    return (
-      <VerificationOnboarding
-        onNext={() => navigation.navigate('VerifyKYC', {showOnboarding: false})}
-      />
-    );
-  }
+  
 
   const handleRecharge = (usdAmount: number) => {
     setUSDAmount(usdAmount);
