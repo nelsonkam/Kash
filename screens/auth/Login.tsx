@@ -18,6 +18,7 @@ function Login() {
   const navigation = useNavigation();
   const [kashtag, setKashtag] = useState('');
   const [password, setPassword] = useState('');
+  console.log(BASE_URL);
   const login = useAsync(data =>
     axios.post(`/kash/auth/login/`, data, {
       baseURL: BASE_URL,
@@ -69,7 +70,7 @@ function Login() {
               onPress={handleLogin}
               style={{marginTop: 16}}
               color={Colors.brand}
-              loading={login.loading}>
+              loading={login.loading || getProfile.loading}>
               Suivant
             </Button>
             <Button

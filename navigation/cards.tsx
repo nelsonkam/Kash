@@ -24,7 +24,7 @@ export default function CardStack() {
   return (
     <Stack.Navigator initialRouteName="Cards">
       <Stack.Screen
-        options={{title: 'Mes Cartes'}}
+        options={{headerShown: false}}
         name="Cards"
         component={Cards}
       />

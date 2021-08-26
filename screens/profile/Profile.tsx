@@ -154,8 +154,7 @@ function Profile() {
       <View style={{backgroundColor: 'white', marginBottom: 12}}>
         <TouchableOpacity
           onPress={() => {
-            generateInviteCode.execute();
-            inviteRef.current?.open();
+            navigation.navigate("ReferralProgram")
           }}
           style={{
             flexDirection: 'row',

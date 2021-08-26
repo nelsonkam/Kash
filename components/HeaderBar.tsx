@@ -39,3 +39,38 @@ export function AuthHeaderBar(props: any) {
     </View>
   );
 }
+
+export function HeaderBar(props: any) {
+  return (
+    <View
+      style={{
+        padding: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.border,
+      }}>
+      <View
+        style={{flex: 2, justifyContent: 'flex-start', flexDirection: 'row'}}>
+        {props.renderLeftAction && props.renderLeftAction()}
+        {props.canGoBack && <BackButton />}
+      </View>
+      <View style={{flex: 8}}>
+        <Text
+          style={{
+            color: Colors.dark,
+            fontFamily: 'Inter-Bold',
+            fontSize: 18,
+            textAlign: 'center',
+          }}>
+          {props.title}
+        </Text>
+      </View>
+      <View style={{flex: 2, justifyContent: 'flex-end', flexDirection: 'row'}}>
+        {props.renderRightAction && props.renderRightAction()}
+      </View>
+    </View>
+  );
+}
