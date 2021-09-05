@@ -1,10 +1,11 @@
 import useSWR from 'swr/esm';
-import api, {fetcher} from '../utils/api';
-import React, {useEffect, useState} from 'react';
+import api, { fetcher } from '../utils/api';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
   ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -14,13 +15,13 @@ import Colors from '../utils/colors';
 import useSWRNative from '@nandorojo/swr-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ButtonPicker from './Picker';
-import {spaceString} from '../utils';
+import { spaceString } from '../utils';
 import Button from './Button';
 import Input from './Input';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {useAsync} from '../utils/hooks';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../utils/store';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useAsync } from '../utils/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../utils/store';
 import prefsSlice from '../slices/prefs';
 
 type TransactionStatusProps = {
@@ -133,6 +134,10 @@ type PaymentFormProps = {
     amount: number;
     currency: string;
   };
+  discount?: {
+    amount: number;
+    currency: string;
+  };
   verb?: string;
 };
 
@@ -142,6 +147,7 @@ export const PaymentForm = ({
   onNext,
   loading,
   fees,
+  discount,
   verb,
 }: PaymentFormProps) => {
   const [gateway, setGateway] = useState<string | null>(null);
@@ -150,8 +156,8 @@ export const PaymentForm = ({
 
   const handleClick = () => {
     if (gateway && phone) {
-      dispatch(prefsSlice.actions.addPaymentMethod({phone, gateway}));
-      onNext({gateway, phone});
+      dispatch(prefsSlice.actions.addPaymentMethod({ phone, gateway }));
+      onNext({ gateway, phone });
     }
   };
   return (
@@ -160,7 +166,7 @@ export const PaymentForm = ({
         backgroundColor: 'white',
         padding: 16,
       }}>
-      <View style={{marginTop: 16}}>
+      <View style={{ marginTop: 16 }}>
         <Text
           style={{
             fontFamily: 'Inter-Bold',
@@ -169,7 +175,7 @@ export const PaymentForm = ({
           }}>
           Choisis ton opérateur mobile
         </Text>
-        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
           <ButtonPicker
             style={{
               flex: 48,
@@ -179,7 +185,7 @@ export const PaymentForm = ({
             active={gateway === 'mtn-bj'}
             onPress={() => setGateway('mtn-bj')}
           />
-          <View style={{flex: 4}} />
+          <View style={{ flex: 4 }} />
           <ButtonPicker
             style={{
               flex: 48,
@@ -190,17 +196,17 @@ export const PaymentForm = ({
             onPress={() => setGateway('moov-bj')}
           />
         </View>
-        <View style={{marginVertical: 12}}>
+        <View style={{ marginVertical: 12 }}>
           <Input
             value={phone || ''}
             onChangeText={text =>
               setPhone(text.replace(/[^\d]/g, '').substring(0, 8))
             }
             keyboardType={'number-pad'}
-            label={'Ton numéro momo'}
+            label={'Ton numéro (8 chiffres)'}
           />
         </View>
-        <View style={{alignItems: 'center'}}>
+        <View style={{ alignItems: 'center' }}>
           <View
             style={{
               marginTop: 4,
@@ -208,11 +214,68 @@ export const PaymentForm = ({
               backgroundColor: Colors.border,
               paddingVertical: 8,
               paddingHorizontal: 16,
-              borderRadius: 100,
+              borderRadius: 8,
+              width: "100%"
             }}>
-            <Text style={{color: Colors.dark, fontFamily: 'Inter-Bold'}}>
-              Frais appliqués: {fees.currency} {fees.amount?.toLocaleString()}
-            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginVertical: 8,
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Medium',
+                  fontSize: 16,
+                  color: Colors.dark,
+                }}>
+                Frais appliqués
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Bold',
+                  fontSize: 16,
+                  color: Colors.dark,
+                }}>
+                {fees.currency} {fees.amount?.toLocaleString()}
+              </Text>
+            </View>
+            {discount && <View
+              style={{
+                backgroundColor: Colors.disabled,
+                height: StyleSheet.hairlineWidth,
+                width: '100%',
+                marginVertical: 8,
+              }}
+            />}
+            {discount && <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginVertical: 8,
+
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Medium',
+                  fontSize: 16,
+                  color: Colors.dark,
+                }}>
+                Réduction appliquée
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Bold',
+                  fontSize: 16,
+                  color: Colors.dark,
+                }}>
+                {discount?.currency} {discount?.amount?.toLocaleString()}
+              </Text>
+            </View>}
+
           </View>
         </View>
         <Button
@@ -235,6 +298,10 @@ type ChoosePaymentMethodProps = {
     amount: number;
     currency: string;
   };
+  discount?: {
+    amount: number;
+    currency: string;
+  };
   nextLoading: boolean;
   onPaymentMethodSelected: OnPaymentMethodSelected;
   verb?: string;
@@ -243,6 +310,7 @@ type ChoosePaymentMethodProps = {
 export function ChoosePaymentMethod({
   total,
   fees,
+  discount,
   nextLoading,
   onPaymentMethodSelected,
   verb,
@@ -261,7 +329,7 @@ export function ChoosePaymentMethod({
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
       {showForm ? (
         <>
           <PaymentForm
@@ -270,11 +338,12 @@ export function ChoosePaymentMethod({
             currency={total.currency}
             onNext={onPaymentMethodSelected}
             loading={nextLoading}
+            discount={discount}
           />
         </>
       ) : (
         <>
-          <View style={{padding: 16, paddingBottom: 120}}>
+          <View style={{ padding: 16, paddingBottom: discount ? 156 : 120 }}>
             <TouchableOpacity
               onPress={() => setShowForm(true)}
               style={{
@@ -312,13 +381,13 @@ export function ChoosePaymentMethod({
                 onPress={() => setPaymentMethod(item)}
                 imageSize={42}
                 active={paymentMethod === item}
-                style={{marginBottom: 16}}
+                style={{ marginBottom: 16 }}
                 source={
                   item.gateway === 'mtn-bj'
                     ? require('../assets/mtn.png')
                     : item.gateway === 'moov-bj'
-                    ? require('../assets/moov-africa.jpeg')
-                    : {uri: null}
+                      ? require('../assets/moov-africa.jpeg')
+                      : { uri: null }
                 }
                 text={`+229 ${spaceString(item.phone, 2)}`}
               />
@@ -331,7 +400,7 @@ export function ChoosePaymentMethod({
               width: '100%',
               padding: 8,
               paddingHorizontal: 16,
-              height: 108,
+              height: discount ? 148 : 108,
               borderTopColor: Colors.border,
               borderTopWidth: 1,
             }}>
@@ -340,7 +409,7 @@ export function ChoosePaymentMethod({
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginVertical: 10,
+                marginVertical: 8,
               }}>
               <Text
                 style={{
@@ -359,6 +428,31 @@ export function ChoosePaymentMethod({
                 {fees.currency} {fees.amount?.toLocaleString()}
               </Text>
             </View>
+            {discount && <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginVertical: 8,
+                marginBottom: 14
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Medium',
+                  fontSize: 16,
+                  color: Colors.medium,
+                }}>
+                Réduction appliquée
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Bold',
+                  fontSize: 16,
+                  color: Colors.dark,
+                }}>
+                {discount?.currency} {discount?.amount?.toLocaleString()}
+              </Text>
+            </View>}
             <Button
               loading={nextLoading}
               onPress={handlePay}
@@ -374,7 +468,7 @@ export function ChoosePaymentMethod({
 }
 
 type PayProps = {
-  onPay: (data: any) => Promise<Partial<{txn_ref: string}>>;
+  onPay: (data: any) => Promise<Partial<{ txn_ref: string }>>;
   onStatusChanged: (txn: any) => void;
   total: {
     amount: number;
@@ -389,21 +483,20 @@ type PayProps = {
 };
 
 export default function Pay(props: PayProps) {
-  const {total, fees, onPay, onStatusChanged, loading} = props;
+  const { total, fees, onPay, onStatusChanged, loading } = props;
   const navigation = useNavigation();
   const [txnReference, setTxnReference] = useState('');
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: `${props.verb || 'Payer'} ${
-        total.currency
-      } ${total.amount?.toLocaleString()}`,
+      title: `${props.verb || 'Payer'} ${total.currency
+        } ${total.amount?.toLocaleString()}`,
       headerBackTitle: '',
     });
   }, [navigation]);
 
   const handlePay = (data: any) => {
-    onPay(data).then(({txn_ref}) => {
+    onPay(data).then(({ txn_ref }) => {
       setTxnReference(txn_ref!);
     });
   };

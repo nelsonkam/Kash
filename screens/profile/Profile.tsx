@@ -181,6 +181,32 @@ function Profile() {
           <AntDesign name={'right'} color={Colors.medium} size={20} />
         </TouchableOpacity>
         <TouchableOpacity
+          onPress={() => navigation.navigate('PromoCode')}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 16,
+            paddingRight: 16,
+            marginLeft: 16,
+            borderBottomColor: Colors.border,
+            borderBottomWidth: 1,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <AntDesign name={'gift'} color={'black'} size={24} />
+            <Text
+              style={{
+                fontFamily: 'Inter-SemiBold',
+                color: Colors.dark,
+                fontSize: 16,
+                marginLeft: 12,
+              }}>
+              Promotions
+            </Text>
+          </View>
+          <AntDesign name={'right'} color={Colors.medium} size={20} />
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={() => navigation.navigate('EditProfile')}
           style={{
             flexDirection: 'row',
@@ -206,7 +232,7 @@ function Profile() {
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
         </TouchableOpacity>
-
+        
         {!profileQuery.data?.phone_number && (
           <TouchableOpacity
             onPress={() => navigation.navigate('AddPhone')}

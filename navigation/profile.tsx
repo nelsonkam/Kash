@@ -13,6 +13,7 @@ import ConfirmPassword from '../screens/shared/ConfirmPassword';
 import SetupPin from '../screens/auth/SetupPin';
 import ChangePIN from '../screens/profile/ChangePIN';
 import ReferralProgram from '../screens/profile/ReferralProgram';
+import PromoCode from '../screens/profile/PromoCode';
 
 const Stack = createStackNavigator();
 
@@ -70,6 +71,11 @@ function ProfileStack() {
         options={{title: 'Parrainage'}}
         name="ReferralProgram"
         component={ReferralProgram}
+      />
+      <Stack.Screen
+        options={{title: 'Code Promo'}}
+        name="PromoCode"
+        component={PromoCode}
       />
       <Stack.Screen
         options={{title: 'Modification de code PIN'}}

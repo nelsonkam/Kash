@@ -32,20 +32,16 @@ const RechargeCard = ({}) => {
         max: 1000,
       };
   const fundingDetails = useAsync(data =>
-    api.post(`/kash/virtual-cards/${card.id}/funding_details/`, data),
+    api.post(`/kash/virtual-cards/${card.id}/txn/preview/`, data),
   );
   const rate = getRate.value?.data.amount || Constants.defaultCardRate;
 
   const handleRecharge = (amount: number) => {
-    fundingDetails.execute({amount}).then(res => {
+    fundingDetails.execute({amount, currency: "USD", operation: "funding"}).then(res => {
       navigation.navigate('PayCard', {
         id: card.id,
-        total: {
-          amount: parseInt(res.data.amount, 10),
-          currency: 'XOF',
-        },
-        fees: {amount: parseInt(res.data.fees, 10), currency: 'XOF'},
         usdAmount: amount,
+        txnPreview: res.data,
         type: CardPaymentOperationType.fund,
       });
     });

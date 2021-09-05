@@ -8,7 +8,9 @@ import {CardPaymentOperationType} from '../../utils';
 function PayCard() {
   const {params} = useRoute();
   // @ts-ignore
-  const {id, total, fees, usdAmount, type} = params;
+  const {id, txnPreview, usdAmount, type} = params;
+  
+  const {total, fees, discount} = txnPreview;
   const navigation = useNavigation();
   const purchaseVirtualCard = useAsync((id, data) =>
     api.post(`/kash/virtual-cards/${id}/purchase/`, data),
@@ -20,7 +22,7 @@ function PayCard() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: `Payer ${total.currency} ${total.amount}`,
+      title: `Payer ${total.currency} ${total.amount.toLocaleString()}`,
     });
   }, [navigation]);
 
@@ -57,6 +59,7 @@ function PayCard() {
     <ChoosePaymentMethod
       total={total}
       fees={fees}
+      discount={discount}
       nextLoading={purchaseVirtualCard.loading || fundCard.loading}
       onPaymentMethodSelected={handlePay}
     />

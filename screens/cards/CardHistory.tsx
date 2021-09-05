@@ -92,9 +92,9 @@ function Transactions() {
     );
   }
 
-  const data = query.data.filter((item: any) => item.currency === 'USD');
+  const data = query.data?.filter((item: any) => item.currency === 'USD');
 
-  const groups = data.reduce((groups: any[], txn: any) => {
+  const groups = data?.reduce((groups: any[], txn: any) => {
     const date = txn.created_at?.split('T')[0];
     if (!groups[date]) {
       groups[date] = [];
@@ -103,7 +103,7 @@ function Transactions() {
     return groups;
   }, {});
 
-  const sections = Object.keys(groups).map(date => {
+  const sections = Object.keys(groups || []).map(date => {
     return {
       title: isToday(new Date(date))
         ? "Aujourd'hui"
@@ -203,7 +203,7 @@ function Statement() {
   );
   const data = query.data;
 
-  const groups = data.reduce((groups: any[], txn: any) => {
+  const groups = data?.reduce((groups: any[], txn: any) => {
     const date = txn.created_at?.split('T')[0];
     if (!groups[date]) {
       groups[date] = [];
@@ -212,7 +212,7 @@ function Statement() {
     return groups;
   }, {});
 
-  const sections = Object.keys(groups).map(date => {
+  const sections = Object.keys(groups || []).map(date => {
     return {
       title: isToday(new Date(date))
         ? "Aujourd'hui"

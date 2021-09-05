@@ -140,15 +140,17 @@ type RecapSheetProps = {
   onNext: () => void;
   fees: number;
   virtualCard: any;
+  txnPreview: any;
 };
 
-const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
+const RecapSheet = ({onNext, virtualCard, txnPreview}: RecapSheetProps) => {
+  const {amount, total, fees, discount} = txnPreview;
   return (
     <View
       style={{
         backgroundColor: 'white',
         padding: 16,
-        height: 360,
+        height: 400,
       }}>
       <Text
         style={{
@@ -208,7 +210,7 @@ const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
               color: Colors.medium,
             }}>
             {' '}
-            CFA {amount?.toLocaleString()}
+            CFA {(amount?.amount - virtualCard?.issuance_cost?.amount).toLocaleString()}
           </Text>
         </View>
 
@@ -234,7 +236,33 @@ const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
               color: Colors.medium,
             }}>
             {' '}
-            CFA {fees?.toLocaleString()}
+            CFA {fees?.amount?.toLocaleString()}
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginVertical: 12,
+          }}>
+          <Text
+            style={{
+              fontFamily: 'Inter-Semibold',
+              fontSize: 16,
+              color: Colors.dark,
+            }}>
+            Réduction
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Inter-Semibold',
+              fontSize: 16,
+              color: Colors.medium,
+            }}>
+            {' '}
+            CFA -{discount?.amount?.toLocaleString()}
           </Text>
         </View>
 
@@ -269,11 +297,7 @@ const RecapSheet = ({amount, onNext, fees, virtualCard}: RecapSheetProps) => {
             }}>
             {' '}
             CFA{' '}
-            {(
-              amount +
-              virtualCard?.issuance_cost?.amount +
-              fees
-            ).toLocaleString()}
+            {total?.amount?.toLocaleString()}
           </Text>
         </View>
       </View>
@@ -289,13 +313,12 @@ function NewCard() {
   const [amount, setAmount] = useState<number | null>(null);
   const [usdAmount, setUSDAmount] = useState<number | null>(null);
   const [fees, setFees] = useState<number | null>(null);
+  const [txnPreview, setTxnPreview] = useState({});
   const recapRef = useRef<KBottomSheet>(null);
   const convertAmount = useAsync((id, amount) =>
-    api.post(`/kash/virtual-cards/${id}/convert/`, {amount, currency: 'USD'}),
+    api.post(`/kash/virtual-cards/${id}/txn/preview/`, {amount, operation: "purchase", currency: 'USD'}),
   );
   const limits = profileQuery.data?.limits || {};
-
-  
 
   const handleRecharge = (usdAmount: number) => {
     setUSDAmount(usdAmount);
@@ -303,6 +326,7 @@ function NewCard() {
       setAmount(res.data.amount);
       setFees(res.data.fees);
       recapRef.current?.open();
+      setTxnPreview(res.data);
     });
   };
 
@@ -317,6 +341,7 @@ function NewCard() {
       },
       fees: {amount: fees, currency: 'XOF'},
       usdAmount,
+      txnPreview,
       type: CardPaymentOperationType.purchase,
     });
   };
@@ -332,17 +357,17 @@ function NewCard() {
           currency={'$'}
           onNext={handleRecharge}
           loading={convertAmount.loading}
+          miniText={"Montant à recharger en USD"}
           buttonText={{
             next: 'Recharger',
             cancel: 'Annuler',
           }}
         />
       )}
-      <KBottomSheet ref={recapRef} snapPoints={[360, 0]}>
+      <KBottomSheet ref={recapRef} snapPoints={[400, 0]}>
         <RecapSheet
           virtualCard={virtualCard}
-          amount={amount!}
-          fees={fees!}
+          txnPreview={txnPreview}
           onNext={handleNext}
         />
       </KBottomSheet>

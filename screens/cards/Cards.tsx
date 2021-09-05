@@ -40,7 +40,8 @@ const EmptyState = () => {
         style={{
           flex: 1,
           padding: 18,
-        }}>
+        }}
+        contentContainerStyle={{paddingBottom: 150}}>
         <Text style={styles.title}>Créez votre carte virtuelle</Text>
         <Text style={styles.subtitle}>
           Les cartes virtuelles sont des cartes VISA prépayées qui vous
@@ -190,6 +191,7 @@ function Cards() {
           onRefresh={() => cards.revalidate()}
           refreshing={cards.isValidating}
           data={data}
+          contentContainerStyle={{padding: 16}}
           renderItem={({item}) => (
             <CreditCard
               onPress={(card: any) => navigation.navigate('CardDetail', {card})}
