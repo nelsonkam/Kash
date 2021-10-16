@@ -13,12 +13,12 @@ import {
 } from 'react-native';
 import Colors from '../../utils/colors';
 import Button from '../../components/Button';
-import {useNavigation} from '@react-navigation/native';
-import {fetcher} from '../../utils/api';
+import { useNavigation } from '@react-navigation/native';
+import { fetcher } from '../../utils/api';
 import CreditCard from '../../components/CreditCard';
 import useSWRNative from '@nandorojo/swr-react-native';
-import {HeaderBar} from '../../components/HeaderBar';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { HeaderBar } from '../../components/HeaderBar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function formatValue(data: any) {
   if (!data) return <ActivityIndicator size={'small'} />;
@@ -41,7 +41,7 @@ const EmptyState = () => {
           flex: 1,
           padding: 18,
         }}
-        contentContainerStyle={{paddingBottom: 150}}>
+        contentContainerStyle={{ paddingBottom: 150 }}>
         <Text style={styles.title}>Créez votre carte virtuelle</Text>
         <Text style={styles.subtitle}>
           Les cartes virtuelles sont des cartes VISA prépayées qui vous
@@ -168,15 +168,16 @@ function Cards() {
       headerRight: () => (
         <TouchableOpacity
           onPress={() => navigation.navigate('NewCard')}
-          style={{paddingHorizontal: 16}}>
+          style={{ paddingHorizontal: 16 }}>
           <Ionicons name={'add-circle'} color={Colors.brand} size={28} />
         </TouchableOpacity>
       ),
     });
   }, [navigation]);
 
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <HeaderBar
         title={'Mes cartes'}
         renderRightAction={() => (
@@ -185,16 +186,19 @@ function Cards() {
           </TouchableOpacity>
         )}
       />
+      {!data && <View style={{ flex: 1, backgroundColor: "white", alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size={'large'} />
+      </View>}
       {data?.length > 0 && (
         <FlatList
           showsVerticalScrollIndicator={false}
           onRefresh={() => cards.revalidate()}
           refreshing={cards.isValidating}
           data={data}
-          contentContainerStyle={{padding: 16}}
-          renderItem={({item}) => (
+          contentContainerStyle={{ padding: 16 }}
+          renderItem={({ item }) => (
             <CreditCard
-              onPress={(card: any) => navigation.navigate('CardDetail', {card})}
+              onPress={(card: any) => navigation.navigate('CardDetail', { card })}
               card={item}
             />
           )}

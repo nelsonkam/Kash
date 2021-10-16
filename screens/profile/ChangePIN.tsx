@@ -22,7 +22,7 @@ const ConfirmPin = ({pin}: {pin: string}) => {
       setConfirmPin(
         confirmPin.toString().substring(0, confirmPin.toString().length - 1),
       );
-    } else {
+    } else if (confirmPin.length < 4) {
       setConfirmPin(`${confirmPin}${num}`);
     }
   };
@@ -93,7 +93,7 @@ function ChangePIN() {
   const handleNumChange = (num: string) => {
     if (num === 'backspace') {
       setPin(pin.toString().substring(0, pin.toString().length - 1));
-    } else {
+    } else if (pin.length < 4) {
       setPin(`${pin}${num}`);
     }
   };

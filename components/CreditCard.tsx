@@ -27,7 +27,7 @@ const CreditCard = ({card, onPress}: Props) => {
         }}
         imageStyle={{borderRadius: 10}}
         source={{
-          uri: `https://cdn.kweek.shop/cards/bkg/${card.id % 9}.jpg`,
+          uri: `https://kweek.sgp1.cdn.digitaloceanspaces.com/cards/bkg/${card.id % 9}.jpg`,
         }}>
         <View style={{padding: 16, justifyContent: 'space-between', flex: 1}}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>

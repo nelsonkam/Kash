@@ -1,20 +1,36 @@
 import React from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, Text, TouchableOpacity, View, ActivityIndicator} from 'react-native';
 import Colors from '../../utils/colors';
 import {spaceFour} from '../../utils';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useRoute} from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import toast from '../../utils/toast';
+import useSWRNative from '@nandorojo/swr-react-native';
+import { fetcher } from '../../utils/api';
+import Button from '../../components/Button';
 
 function CardInfo() {
   const {params} = useRoute();
-  const card = params.card;
+  const cardQuery = useSWRNative(`/kash/virtual-cards/${params.card.id}/`, fetcher);
+  const card = cardQuery.data || params.card;
 
   const handleCopy = str => {
     Clipboard.setString(str);
     toast.success('', 'Copié');
   };
+
+  if (cardQuery.error) {
+    return <View style={{flex: 1, backgroundColor: "white", alignItems: "center", justifyContent:  "center"}}>
+    <Button style={{width: "inherit"}}>Rafraîchir</Button>
+  </View>
+  }
+
+  if (!card.card_details.card_pan) {
+    return <View style={{flex: 1, backgroundColor: "white", alignItems: "center", justifyContent:  "center"}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  }
 
   return (
     <ScrollView style={{flex: 1, backgroundColor: 'white'}}>
