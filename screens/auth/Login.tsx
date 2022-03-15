@@ -1,36 +1,33 @@
-import React, {useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {StyleSheet, Text, View} from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from 'react-native';
 import Colors from '../../utils/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import {toUsername} from '../../utils';
-import {useAsync} from '../../utils/hooks';
-import api, {BASE_URL} from '../../utils/api';
+import { toUsername } from '../../utils';
+import { useAsync } from '../../utils/hooks';
+import api, { BASE_URL } from '../../utils/api';
 import toast from '../../utils/toast';
 import authSlice from '../../slices/auth';
-import {useDispatch} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
-import {AuthHeaderBar} from '../../components/HeaderBar';
+import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { AuthHeaderBar } from '../../components/HeaderBar';
 import axios from 'axios';
 
 function Login() {
   const navigation = useNavigation();
   const [kashtag, setKashtag] = useState('');
   const [password, setPassword] = useState('');
-  console.log(BASE_URL);
   const login = useAsync(data =>
-    axios.post(`/kash/auth/login/`, data, {
-      baseURL: BASE_URL,
-    }),
+    api.post(`/kash/auth/login/`, data),
   );
   const dispatch = useDispatch();
   const getProfile = useAsync(() => api.get(`/kash/profiles/current/`));
 
   const handleLogin = () => {
     login
-      .execute({username: kashtag, password})
-      .then(({data}) => {
+      .execute({ username: kashtag, password })
+      .then(({ data }) => {
         dispatch(
           authSlice.actions.setTokens({
             access: data.access,
@@ -53,7 +50,7 @@ function Login() {
     <SafeAreaView style={styles.container}>
       <View>
         <AuthHeaderBar title={'Connexion'} />
-        <View style={{padding: 18}}>
+        <View style={{ padding: 18 }}>
           <View>
             <Input
               value={'$' + kashtag}
@@ -68,14 +65,14 @@ function Login() {
             />
             <Button
               onPress={handleLogin}
-              style={{marginTop: 16}}
+              style={{ marginTop: 16 }}
               color={Colors.brand}
               loading={login.loading || getProfile.loading}>
               Suivant
             </Button>
             <Button
               onPress={() => navigation.navigate('RecoverPassword')}
-              style={{marginTop: 16}}
+              style={{ marginTop: 16 }}
               color={'white'}
               textColor={Colors.primary}>
               Mot de passe ou $kashtag oublié
