@@ -4,7 +4,7 @@ import store from './store';
 import authSlice from '../slices/auth';
 
 export const BASE_URL = store.getState().prefs.env === 'beta'
-  ? 'https://beta.mykash.africa/'
+  ? 'https://beta.mykash.africa'
   : 'https://prod.mykash.africa/';
 
 const api = axios.create({
@@ -49,7 +49,7 @@ api.interceptors.request.use(async config => {
   const state = store.getState();
   const { access } = state.auth;
   const { env } = state.prefs;
-  config.baseURL = env === 'beta' ? 'https://beta.mykash.africa/'
+  config.baseURL = env === 'beta' ? 'https://dev.mykash.africa/'
     : 'https://prod.mykash.africa/';
 
   if (access) config.headers['Authorization'] = 'Bearer ' + access;

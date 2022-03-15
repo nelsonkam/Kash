@@ -75,6 +75,7 @@ function Signup() {
     createProfile
       .execute({ ...form, kashtag })
       .then(({ data }) => {
+
         dispatch(
           authSlice.actions.setTokens({
             access: data.access,
