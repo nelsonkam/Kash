@@ -58,6 +58,7 @@ function Profile() {
       },
     }),
   );
+  const isSwitchEnvButtonVisible = currentEnv === 'beta' || profile.user?.is_staff
 
   const handleChoosePhoto = () => {
     // @ts-ignore
@@ -359,7 +360,7 @@ function Profile() {
           <AntDesign name={'right'} color={Colors.medium} size={20} />
         </TouchableOpacity>
       </View>
-      <View style={{backgroundColor: 'white', marginBottom: 12}}>
+      {isSwitchEnvButtonVisible && <View style={{backgroundColor: 'white', marginBottom: 12}}>
         <TouchableOpacity
           onPress={handleSwitchEnv}
           style={{
@@ -384,7 +385,7 @@ function Profile() {
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
         </TouchableOpacity>
-      </View>
+      </View>}
       <View style={{backgroundColor: 'white', marginBottom: 12}}>
         <TouchableOpacity
           onPress={handleLogout}
