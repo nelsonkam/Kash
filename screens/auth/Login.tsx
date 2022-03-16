@@ -9,13 +9,14 @@ import { useAsync } from '../../utils/hooks';
 import api, { BASE_URL } from '../../utils/api';
 import toast from '../../utils/toast';
 import authSlice from '../../slices/auth';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { AuthHeaderBar } from '../../components/HeaderBar';
-import axios from 'axios';
+import {RootState} from "../../utils/store";
 
 function Login() {
   const navigation = useNavigation();
+  const currentEnv = useSelector((s: RootState) => s.prefs.env)
   const [kashtag, setKashtag] = useState('');
   const [password, setPassword] = useState('');
   const login = useAsync(data =>
@@ -50,6 +51,16 @@ function Login() {
     <SafeAreaView style={styles.container}>
       <View>
         <AuthHeaderBar title={'Connexion'} />
+        {currentEnv !== 'prod' && <View style={{ backgroundColor: Colors.warning, padding: 12 }}>
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: 'Inter-Semibold',
+              textAlign: 'center',
+            }}>
+            Current environment: {currentEnv.toUpperCase()}
+          </Text>
+        </View>}
         <View style={{ padding: 18 }}>
           <View>
             <Input

@@ -24,6 +24,7 @@ import {useAsync} from '../../utils/hooks';
 import authSlice from '../../slices/auth';
 import {useNavigation} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
+import prefsSlice from "../../slices/prefs";
 
 const createFormData = (photo: any, body: any = {}) => {
   const data = new FormData();
@@ -44,6 +45,7 @@ const createFormData = (photo: any, body: any = {}) => {
 function Profile() {
   const navigation = useNavigation();
   const stateProfile = useSelector((s: RootState) => s.auth.profile);
+  const currentEnv = useSelector((s: RootState) => s.prefs.env)
   const profileQuery = useSWRNative(`/kash/profiles/current/`, fetcher);
   const generateInviteCode = useAsync(() => api.post(`/kash/invites/`));
   const inviteRef = useRef<KBottomSheet>(null);
@@ -71,8 +73,23 @@ function Profile() {
   const handleLogout = () => {
     dispatch(authSlice.actions.logout(null));
   };
+
+  const handleSwitchEnv = () => {
+    dispatch(prefsSlice.actions.switchEnv(currentEnv === 'prod' ? 'beta' : 'prod'));
+    handleLogout();
+  }
   return (
     <ScrollView style={{flex: 1, backgroundColor: Colors.lightGrey}}>
+      {currentEnv !== 'prod' && <View style={{ backgroundColor: Colors.warning, padding: 12 }}>
+        <Text
+          style={{
+            color: 'white',
+            fontFamily: 'Inter-Semibold',
+            textAlign: 'center',
+          }}>
+          Current environment: {currentEnv.toUpperCase()}
+        </Text>
+      </View>}
       <View
         style={{
           flexDirection: 'row',
@@ -337,6 +354,32 @@ function Profile() {
                 marginLeft: 12,
               }}>
               Questions & Service Client
+            </Text>
+          </View>
+          <AntDesign name={'right'} color={Colors.medium} size={20} />
+        </TouchableOpacity>
+      </View>
+      <View style={{backgroundColor: 'white', marginBottom: 12}}>
+        <TouchableOpacity
+          onPress={handleSwitchEnv}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 16,
+            paddingRight: 16,
+            marginLeft: 16,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <AntDesign name={'swap'} color={Colors.dark} size={24} />
+            <Text
+              style={{
+                fontFamily: 'Inter-Semibold',
+                color: Colors.dark,
+                fontSize: 16,
+                marginLeft: 12,
+              }}>
+              Passer à la {currentEnv === 'prod' ? 'beta' : 'prod'}
             </Text>
           </View>
           <AntDesign name={'right'} color={Colors.medium} size={20} />
