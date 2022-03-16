@@ -8,13 +8,14 @@ import Button from '../../components/Button';
 import { toUsername } from '../../utils';
 import { useAsync } from '../../utils/hooks';
 import api, { BASE_URL } from '../../utils/api';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import authSlice from '../../slices/auth';
 import toast from '../../utils/toast';
 import { identify } from '../../utils/track';
 import { useNavigation } from '@react-navigation/native';
 import { AuthHeaderBar } from '../../components/HeaderBar';
 import axios from 'axios';
+import {RootState} from "../../utils/store";
 
 function Signup() {
   const [form, setForm] = useState({
@@ -23,6 +24,7 @@ function Signup() {
     confirm: '',
     referral_code: ''
   });
+  const currentEnv = useSelector((s: RootState) => s.prefs.env)
   const [kashtag, setKashTag] = useState<string>('');
   const [showKashtagSection, setShowKashtagSection] = useState(false);
   const createProfile = useAsync(data =>
@@ -105,6 +107,16 @@ function Signup() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="default" />
       <AuthHeaderBar title={showKashtagSection ? 'Choisis ton $kashtag' : 'Crée ton compte'} />
+      {currentEnv !== 'prod' && <View style={{ backgroundColor: Colors.warning, padding: 12 }}>
+        <Text
+          style={{
+            color: 'white',
+            fontFamily: 'Inter-Semibold',
+            textAlign: 'center',
+          }}>
+          Current environment: {currentEnv.toUpperCase()}
+        </Text>
+      </View>}
       <KeyboardAwareScrollView>
         {showKashtagSection ? (
           <View>
