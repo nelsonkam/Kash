@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
-import { StatusBar, StyleSheet, Text, View } from 'react-native';
+import React, {useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import Colors from '../../utils/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import { toUsername } from '../../utils';
-import { useAsync } from '../../utils/hooks';
-import api, { BASE_URL } from '../../utils/api';
+import {toUsername} from '../../utils';
+import {useAsync} from '../../utils/hooks';
+import api, {BASE_URL} from '../../utils/api';
 import {useDispatch, useSelector} from 'react-redux';
 import authSlice from '../../slices/auth';
 import toast from '../../utils/toast';
-import { identify } from '../../utils/track';
-import { useNavigation } from '@react-navigation/native';
-import { AuthHeaderBar } from '../../components/HeaderBar';
+import {identify} from '../../utils/track';
+import {useNavigation} from '@react-navigation/native';
+import {AuthHeaderBar} from '../../components/HeaderBar';
 import axios from 'axios';
-import {RootState} from "../../utils/store";
+import {RootState} from '../../utils/store';
+import {Formik} from 'formik';
+import {validateRegistration} from '../../utils/validationSchemas';
 
 function Signup() {
   const [form, setForm] = useState({
     name: '',
     password: '',
     confirm: '',
-    referral_code: ''
+    referral_code: '',
   });
-  const currentEnv = useSelector((s: RootState) => s.prefs.env)
+  const currentEnv = useSelector((s: RootState) => s.prefs.env);
   const [kashtag, setKashTag] = useState<string>('');
   const [showKashtagSection, setShowKashtagSection] = useState(false);
   const createProfile = useAsync(data =>
@@ -75,9 +77,8 @@ function Signup() {
 
   const handleNext = () => {
     createProfile
-      .execute({ ...form, kashtag })
-      .then(({ data }) => {
-
+      .execute({...form, kashtag})
+      .then(({data}) => {
         dispatch(
           authSlice.actions.setTokens({
             access: data.access,
@@ -106,26 +107,30 @@ function Signup() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="default" />
-      <AuthHeaderBar title={showKashtagSection ? 'Choisis ton $kashtag' : 'Crée ton compte'} />
-      {currentEnv !== 'prod' && <View style={{ backgroundColor: Colors.warning, padding: 12 }}>
-        <Text
-          style={{
-            color: 'white',
-            fontFamily: 'Inter-Semibold',
-            textAlign: 'center',
-          }}>
-          Current environment: {currentEnv.toUpperCase()}
-        </Text>
-      </View>}
+      <AuthHeaderBar
+        title={showKashtagSection ? 'Choisis ton $kashtag' : 'Crée ton compte'}
+      />
+      {currentEnv !== 'prod' && (
+        <View style={{backgroundColor: Colors.warning, padding: 12}}>
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: 'Inter-Semibold',
+              textAlign: 'center',
+            }}>
+            Current environment: {currentEnv.toUpperCase()}
+          </Text>
+        </View>
+      )}
       <KeyboardAwareScrollView>
         {showKashtagSection ? (
           <View>
-            <View style={{ padding: 18 }}>
+            <View style={{padding: 18}}>
               <Text style={styles.subtitle}>
                 Ton $kashtag est ton nom d'utilisateur sur Kash, tes potes s'en
                 serviront pour t'envoyer du cash.
               </Text>
-              <View style={{ marginTop: 16 }}>
+              <View style={{marginTop: 16}}>
                 <Input
                   value={'$' + kashtag}
                   description={
@@ -137,14 +142,15 @@ function Signup() {
                 />
               </View>
               <Button
-                style={{ marginTop: 16 }}
+                style={{marginTop: 16}}
                 color={Colors.brand}
                 disabled={!kashtag || !!getKashtagError()}
                 loading={createProfile.loading}
                 onPress={handleNext}>
                 Suivant
               </Button>
-              <Text style={{ fontSize: 12, color: Colors.disabled, marginTop: 16 }}>
+              <Text
+                style={{fontSize: 12, color: Colors.disabled, marginTop: 16}}>
                 En cliquant "Suivant", tu acceptes notre Politique de
                 Confidentialité et nos Conditions Générales d'Utilisation que tu
                 peux retrouver sur notre site web.
@@ -152,54 +158,69 @@ function Signup() {
             </View>
           </View>
         ) : (
-          <View>
-            <View
-              style={{
-                padding: 18,
-              }}>
-              <Text style={styles.subtitle}>
-                Saisis les informations suivantes afin de créer ton compte.
-              </Text>
-              <View style={{ marginTop: 16 }}>
-                <Input
-                  value={form.name}
-                  onChangeText={text => setForm({ ...form, name: text })}
-                  label={'Nom et prénom'}
-                  error={errors.name}
-                />
-                <Input
-                  value={form.password}
-                  secureTextEntry={true}
-                  onChangeText={text => setForm({ ...form, password: text })}
-                  label={'Mot de passe'}
-                  error={errors.password}
-                />
-                <Input
-                  value={form.confirm}
-                  secureTextEntry={true}
-                  onChangeText={text => setForm({ ...form, confirm: text })}
-                  label={'Confirmes ton mot de passe'}
-                  error={errors.confirm}
-                />
-                <Input
-                  value={form.referral_code}
-                  onChangeText={text => setForm({ ...form, referral_code: text.toUpperCase() })}
-                  label={"Code d'invitation (facultatif)"}
-                  error={errors.referral_code}
-                  placeholder="REF-XXXXX"
-                />
-                <Button
-                  onPress={handleAccountNext}
-                  style={{ marginTop: 16 }}
-                  color={Colors.brand}>
-                  Suivant
-                </Button>
+          <Formik
+            initialValues={{
+              name: '',
+              password: '',
+              confirmPassword: '',
+              referral_code: '',
+            }}
+            validationSchema={validateRegistration}
+            onSubmit={handleAccountNext}>
+            {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+              <View>
+                <View
+                  style={{
+                    padding: 18,
+                  }}>
+                  <Text style={styles.subtitle}>
+                    Saisis les informations suivantes afin de créer ton compte.
+                  </Text>
+                  <View style={{marginTop: 16}}>
+                    <Input
+                      value={values.name}
+                      onChangeText={handleChange('name')}
+                      onBlur={handleBlur('name')}
+                      label={'Nom et prénom'}
+                      error={errors.name}
+                    />
+                    <Input
+                      value={values.password}
+                      secureTextEntry={true}
+                      onChangeText={handleChange('password')}
+                      onBlur={handleBlur('password')}
+                      label={'Mot de passe'}
+                      error={errors.password}
+                    />
+                    <Input
+                      value={values.confirmPassword}
+                      secureTextEntry={true}
+                      onChangeText={handleChange('confirmPassword')}
+                      onBlur={handleBlur('confirmPassword')}
+                      label={'Confirmes ton mot de passe'}
+                      error={errors.confirmPassword}
+                    />
+                    <Input
+                      value={values.referral_code.toUpperCase()}
+                      onChangeText={handleChange('referral_code')}
+                      label={"Code d'invitation (facultatif)"}
+                      onBlur={handleBlur('referral_code')}
+                      error={errors.referral_code}
+                      placeholder="REF-XXXXX"
+                    />
+                    <Button
+                      onPress={handleSubmit}
+                      style={{marginTop: 16}}
+                      color={Colors.brand}>
+                      Suivant
+                    </Button>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
+            )}
+          </Formik>
         )}
       </KeyboardAwareScrollView>
-
     </SafeAreaView>
   );
 }

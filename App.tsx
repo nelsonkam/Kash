@@ -90,7 +90,7 @@ function App() {
   return <MainStack />;
 }
 
-export default codePush(() => (
+export default (() => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <NotifierWrapper>

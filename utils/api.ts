@@ -4,7 +4,7 @@ import store from './store';
 import authSlice from '../slices/auth';
 
 export const BASE_URL = store.getState().prefs.env === 'beta'
-  ? 'https://beta.mykash.africa'
+  ? 'https://dev.mykash.africa'
   : 'https://prod.mykash.africa/';
 
 const api = axios.create({
