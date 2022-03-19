@@ -1,11 +1,17 @@
 import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Colors from '../../utils/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import {toUsername} from '../../utils';
+import {makeKashtag, toUsername} from '../../utils';
 import {useAsync} from '../../utils/hooks';
 import api, {BASE_URL} from '../../utils/api';
 import {useDispatch, useSelector} from 'react-redux';
@@ -18,6 +24,8 @@ import axios from 'axios';
 import {RootState} from '../../utils/store';
 import {Formik} from 'formik';
 import {validateRegistration} from '../../utils/validationSchemas';
+import {moderateScale} from 'react-native-size-matters';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 function Signup() {
   const [form, setForm] = useState({
@@ -51,28 +59,29 @@ function Signup() {
     return error;
   };
 
-  const getErrors = () => {
-    const errors: any = {};
-    if (!form.name) {
-      errors.name = 'Ce champs est requis';
-    }
+  // const getErrors = () => {
+  //   const errors: any = {};
+  //   if (!form.name) {
+  //     errors.name = 'Ce champs est requis';
+  //   }
+  //
+  //   if (!form.password || form.password.length < 8) {
+  //     errors.password = 'Ton mot de passe doit contenir au moins 8 caractères.';
+  //   }
+  //
+  //   if (form.password !== form.confirmPassword) {
+  //     errors.confirm = 'Les mots de passe ne correspondent pas.';
+  //   }
+  //   return errors;
+  // };
 
-    if (!form.password || form.password.length < 8) {
-      errors.password = 'Ton mot de passe doit contenir au moins 8 caractères.';
-    }
-
-    if (form.password !== form.confirm) {
-      errors.confirm = 'Les mots de passe ne correspondent pas.';
-    }
-    return errors;
-  };
-
-  const handleAccountNext = () => {
-    const errors = getErrors();
-    setErrors(errors);
-    if (Object.keys(errors).length === 0) {
-      setShowKashtagSection(true);
-    }
+  const handleAccountNext = values => {
+    // const errors = getErrors();
+    // setErrors(errors);
+    // if (Object.keys(errors).length === 0) {
+    setForm(values);
+    setShowKashtagSection(true);
+    // }
   };
 
   const handleNext = () => {
@@ -94,8 +103,14 @@ function Signup() {
       })
       .catch(err => {
         if (err.response && err.response.status === 400) {
-          setError('Oops! Ce $kashtag est déjà pris.');
+          toast.error(
+            'Oops! ',
+            'Ce $kashtag est déjà pris. Réessaie un autre.',
+          );
+          // setError('Oops! Ce $kashtag est déjà pris. Réessaie un autre');
+          setKashTag('');
         } else {
+          console.log(err.response);
           toast.error(
             'Une erreur est survenue',
             'Vérifies ta connexion internet puis réessaies.',
@@ -109,9 +124,11 @@ function Signup() {
       <StatusBar barStyle="default" />
       <AuthHeaderBar
         title={showKashtagSection ? 'Choisis ton $kashtag' : 'Crée ton compte'}
+        onPress={() => setShowKashtagSection(false)}
       />
       {currentEnv !== 'prod' && (
-        <View style={{backgroundColor: Colors.warning, padding: 12}}>
+        <View
+          style={{backgroundColor: Colors.warning, padding: moderateScale(12)}}>
           <Text
             style={{
               color: 'white',
@@ -125,12 +142,12 @@ function Signup() {
       <KeyboardAwareScrollView>
         {showKashtagSection ? (
           <View>
-            <View style={{padding: 18}}>
+            <View style={{padding: moderateScale(18)}}>
               <Text style={styles.subtitle}>
                 Ton $kashtag est ton nom d'utilisateur sur Kash, tes potes s'en
                 serviront pour t'envoyer du cash.
               </Text>
-              <View style={{marginTop: 16}}>
+              <View style={{marginTop: moderateScale(16)}}>
                 <Input
                   value={'$' + kashtag}
                   description={
@@ -141,8 +158,33 @@ function Signup() {
                   label={'Ton $kashtag'}
                 />
               </View>
+              <View style={{paddingVertical: 5}}>
+                <Text>Suggestions de $kashtag</Text>
+              </View>
+
+              <View style={{flexDirection: 'row'}}>
+                {[1, 2].map(item => {
+                  let suggestedKashtag = makeKashtag(form.name);
+                  return (
+                    <TouchableOpacity
+                      key={item}
+                      onPress={() => setKashTag(suggestedKashtag)}
+                      style={{
+                        backgroundColor: Colors.brand,
+                        padding: moderateScale(8),
+                        borderRadius: 20,
+                        justifyContent: 'center',
+                        margin: moderateScale(5),
+                      }}>
+                      <Text style={{color: Colors.lightGrey}}>
+                        ${makeKashtag(form.name)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
               <Button
-                style={{marginTop: 16}}
+                style={{marginTop: moderateScale(16)}}
                 color={Colors.brand}
                 disabled={!kashtag || !!getKashtagError()}
                 loading={createProfile.loading}
@@ -150,7 +192,11 @@ function Signup() {
                 Suivant
               </Button>
               <Text
-                style={{fontSize: 12, color: Colors.disabled, marginTop: 16}}>
+                style={{
+                  fontSize: RFValue(12),
+                  color: Colors.disabled,
+                  marginTop: moderateScale(16),
+                }}>
                 En cliquant "Suivant", tu acceptes notre Politique de
                 Confidentialité et nos Conditions Générales d'Utilisation que tu
                 peux retrouver sur notre site web.
@@ -160,29 +206,37 @@ function Signup() {
         ) : (
           <Formik
             initialValues={{
-              name: '',
-              password: '',
-              confirmPassword: '',
-              referral_code: '',
+              name: form.name,
+              password: form.password,
+              confirm: form.confirm,
+              referral_code: form.referral_code,
             }}
             validationSchema={validateRegistration}
             onSubmit={handleAccountNext}>
-            {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+            }) => (
               <View>
                 <View
                   style={{
-                    padding: 18,
+                    padding: moderateScale(18),
                   }}>
                   <Text style={styles.subtitle}>
                     Saisis les informations suivantes afin de créer ton compte.
                   </Text>
-                  <View style={{marginTop: 16}}>
+                  <View style={{marginTop: moderateScale(16)}}>
                     <Input
                       value={values.name}
                       onChangeText={handleChange('name')}
                       onBlur={handleBlur('name')}
                       label={'Nom et prénom'}
                       error={errors.name}
+                      touched={touched.name}
                     />
                     <Input
                       value={values.password}
@@ -191,14 +245,16 @@ function Signup() {
                       onBlur={handleBlur('password')}
                       label={'Mot de passe'}
                       error={errors.password}
+                      touched={touched.password}
                     />
                     <Input
-                      value={values.confirmPassword}
+                      value={values.confirm}
                       secureTextEntry={true}
-                      onChangeText={handleChange('confirmPassword')}
-                      onBlur={handleBlur('confirmPassword')}
+                      onChangeText={handleChange('confirm')}
+                      onBlur={handleBlur('confirm')}
                       label={'Confirmes ton mot de passe'}
-                      error={errors.confirmPassword}
+                      error={errors.confirm}
+                      touched={touched.confirm}
                     />
                     <Input
                       value={values.referral_code.toUpperCase()}
@@ -210,7 +266,7 @@ function Signup() {
                     />
                     <Button
                       onPress={handleSubmit}
-                      style={{marginTop: 16}}
+                      style={{marginTop: moderateScale(16)}}
                       color={Colors.brand}>
                       Suivant
                     </Button>
@@ -233,16 +289,16 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Inter-Black',
-    fontSize: 28,
+    fontSize: RFValue(28),
     color: Colors.dark,
-    marginBottom: 10,
-    marginTop: 4,
+    marginBottom: moderateScale(10),
+    marginTop: moderateScale(4),
   },
   subtitle: {
     color: Colors.medium,
-    fontSize: 16,
-    marginTop: 4,
-    lineHeight: 22,
+    fontSize: RFValue(16),
+    marginTop: moderateScale(4),
+    lineHeight: moderateScale(22),
   },
 });
 

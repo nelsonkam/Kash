@@ -15,7 +15,7 @@ export function AuthHeaderBar(props: any) {
         borderBottomWidth: 1,
         borderBottomColor: Colors.border,
       }}>
-      <BackButton style={{flex: 2}} />
+      <BackButton style={{flex: 2}} onPress={props.onPress} />
       <View style={{flex: 8}}>
         <Text
           style={{

@@ -13,9 +13,10 @@ type Props = {
   label?: string;
   description?: string;
   error?: string;
+  touched?: boolean;
 } & TextInputProps;
 
-const Input = ({label, description, error, ...rest}: Props) => {
+const Input = ({label, description, error, touched, ...rest}: Props) => {
   const [isSecure, setSecure] = useState(rest.secureTextEntry);
   return (
     <View style={styles.container}>
@@ -41,7 +42,7 @@ const Input = ({label, description, error, ...rest}: Props) => {
         placeholderTextColor={Colors.medium}
         secureTextEntry={isSecure}
       />
-      {!!error && <Text style={styles.error}>{error}</Text>}
+      {!!error && touched && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 };

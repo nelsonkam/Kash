@@ -36,6 +36,17 @@ export const toUsername = (str: string) => {
     .replace(/[\u0300-\u036f]/g, '');
 };
 
+export const makeKashtag = (str: string) => {
+  let result = str;
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < 4; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result.replace(/\s/gi, '_');
+};
+
 export const getAppURL = (refresh: string, deviceId: string) => {
   const base = __DEV__
     ? 'https://kweek-business.ngrok.io'
