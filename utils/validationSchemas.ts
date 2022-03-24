@@ -23,3 +23,9 @@ export const validateLoginWithPhone = Yup.object({
     .required('Ce champ est requis')
     .min(8, 'Ton mot de passe doit contenir au moins 8 caractères.'),
 });
+
+export const validateEmail = Yup.object({
+  email: Yup.string()
+    .required('Ce champ est requis')
+    .email("L'email ci n'est pas valide"),
+});

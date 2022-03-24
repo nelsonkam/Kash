@@ -9,6 +9,7 @@ import OnboardingScreen from '../screens/auth/Onboarding';
 import Signup from '../screens/auth/Signup';
 import Login from '../screens/auth/Login';
 import RecoverPassword from '../screens/auth/RecoverPassword';
+import AddEmail from '../screens/auth/AddEmail';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,11 @@ export default function AuthStack() {
         initialParams={{stack: 'auth'}}
         name="AddPhone"
         component={AddPhone}
+      />
+      <Stack.Screen
+        initialParams={{stack: 'auth'}}
+        name="AddEmail"
+        component={AddEmail}
       />
       <Stack.Screen
         initialParams={{stack: 'auth'}}

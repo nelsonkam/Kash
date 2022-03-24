@@ -14,10 +14,8 @@ import {useNavigation} from '@react-navigation/native';
 import {AuthHeaderBar} from '../../components/HeaderBar';
 import {RootState} from '../../utils/store';
 import {
-  validateLoginWithEmail,
   validateLoginWithEmailOrKashtag,
   validateLoginWithPhone,
-  validateRegistration,
 } from '../../utils/validationSchemas';
 import {Formik} from 'formik';
 import PhoneInput from '../../components/PhoneInput';

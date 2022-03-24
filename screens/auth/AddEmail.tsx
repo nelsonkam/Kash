@@ -20,8 +20,14 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import PhoneInput from '../../components/PhoneInput';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {moderateScale} from 'react-native-size-matters';
+import {
+  validateEmail,
+  validateLoginWithPhone,
+} from '../../utils/validationSchemas';
+import {Formik} from 'formik';
+import Input from '../../components/Input';
 
-const AddPhone = () => {
+const AddEmail = () => {
   const dispatch = useDispatch();
   const {params} = useRoute();
   const navigation = useNavigation();
@@ -36,14 +42,12 @@ const AddPhone = () => {
   const handleSubmit = async () => {
     sendCode
       .execute({
-        phone_number: phone,
+        email: phone,
       })
       .then(data => {
         dispatch(authSlice.actions.setSessionToken(data.session_token));
         dispatch(authSlice.actions.setPhone(phone));
-        navigation.navigate('Verification', {
-          verification_type: 'phone_number',
-        });
+        navigation.navigate('Verification', {verification_type: 'email'});
       })
       .catch(err => {
         if (err.response && err.response.status === 403) {
@@ -103,7 +107,7 @@ const AddPhone = () => {
                 fontSize: 18,
                 textAlign: 'center',
               }}>
-              Numéro de téléphone
+              Adresse email
             </Text>
           </View>
           <TouchableOpacity
@@ -120,44 +124,54 @@ const AddPhone = () => {
             />
           </TouchableOpacity>
         </View>
-        <View style={{padding: 18}}>
-          <Text style={styles.subtitle}>
-            Ajouter ton numéro de téléphone te permettra de changer ton mot de
-            passe en cas d'oubli.
-          </Text>
-          <View style={{marginTop: 20}}>
-            <PhoneInput
-              onChange={text => {
-                setPhone(text);
-              }}
-            />
-            <Button
-              style={{marginTop: 8}}
-              color={Colors.brand}
-              onPress={handleSubmit}
-              loading={sendCode.loading}>
-              Vérifier mon numéro
-            </Button>
-            <Button
-              underline={true}
-              onPress={() => navigation.navigate('AddEmail')}
-              style={{marginTop: moderateScale(16)}}
-              color={'white'}
-              textColor={Colors.brand}>
-              Ou ajoutez votre adresse mail
-            </Button>
+        <Formik
+          initialValues={{
+            email: '',
+          }}
+          validationSchema={validateEmail}
+          onSubmit={handleSubmit}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <View style={{padding: 18}}>
+              <Text style={styles.subtitle}>
+                Veuillez entrer votre adresse email afin de recevoir un code de
+                vérification.
+              </Text>
+              <View style={{marginTop: 20}}>
+                <Input
+                  value={values.email}
+                  onChangeText={handleChange('email')}
+                  touched={touched.email}
+                  error={errors.email}
+                  label={'Adresse email'}
+                />
+                <Button
+                  style={{marginTop: 8}}
+                  color={Colors.brand}
+                  onPress={handleSubmit}
+                  loading={sendCode.loading}>
+                  Vérifier mon adresse email
+                </Button>
 
-            {/*{params.stack === 'auth' && (*/}
-            {/*  <Button*/}
-            {/*    onPress={handleSkip}*/}
-            {/*    style={{marginTop: 16}}*/}
-            {/*    color={'white'}*/}
-            {/*    textColor={Colors.primary}>*/}
-            {/*    Sauter cette étape*/}
-            {/*  </Button>*/}
-            {/*)}*/}
-          </View>
-        </View>
+                {/*{params.stack === 'auth' && (*/}
+                {/*  <Button*/}
+                {/*    onPress={handleSkip}*/}
+                {/*    style={{marginTop: 16}}*/}
+                {/*    color={'white'}*/}
+                {/*    textColor={Colors.primary}>*/}
+                {/*    Sauter cette étape*/}
+                {/*  </Button>*/}
+                {/*)}*/}
+              </View>
+            </View>
+          )}
+        </Formik>
       </View>
     </SafeAreaView>
   );
@@ -189,4 +203,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddPhone;
+export default AddEmail;

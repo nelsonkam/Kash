@@ -123,8 +123,11 @@ function Signup() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="default" />
       <AuthHeaderBar
-        title={showKashtagSection ? 'Choisis ton $kashtag' : 'Crée ton compte'}
-        onPress={() => setShowKashtagSection(false)}
+        title={'Inscription'}
+        onPress={() => {
+          if (showKashtagSection) setShowKashtagSection(false);
+          else navigation.goBack();
+        }}
       />
       {currentEnv !== 'prod' && (
         <View
@@ -144,8 +147,8 @@ function Signup() {
           <View>
             <View style={{padding: moderateScale(18)}}>
               <Text style={styles.subtitle}>
-                Ton $kashtag est ton nom d'utilisateur sur Kash, tes potes s'en
-                serviront pour t'envoyer du cash.
+                Choisissez un nom d’utilisateur. Vous pouvez le changer à tout
+                moment.
               </Text>
               <View style={{marginTop: moderateScale(16)}}>
                 <Input
@@ -155,41 +158,48 @@ function Signup() {
                   }
                   onChangeText={text => setKashTag(toUsername(text))}
                   error={getKashtagError()}
-                  label={'Ton $kashtag'}
+                  label={"Nom d'utilisateur"}
                 />
               </View>
-              <View style={{paddingVertical: 5}}>
-                <Text>Suggestions de $kashtag</Text>
-              </View>
+              {getKashtagError() == 'Ce $kashtag est déjà pris' && (
+                <>
+                  <View style={{paddingVertical: 5}}>
+                    <Text>Utilisez l’un des noms d’utilisateurs suivants:</Text>
+                  </View>
 
-              <View style={{flexDirection: 'row'}}>
-                {[1, 2].map(item => {
-                  let suggestedKashtag = makeKashtag(form.name);
-                  return (
-                    <TouchableOpacity
-                      key={item}
-                      onPress={() => setKashTag(suggestedKashtag)}
-                      style={{
-                        backgroundColor: Colors.brand,
-                        padding: moderateScale(8),
-                        borderRadius: 20,
-                        justifyContent: 'center',
-                        margin: moderateScale(5),
-                      }}>
-                      <Text style={{color: Colors.lightGrey}}>
-                        ${makeKashtag(form.name)}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
+                  <View style={{flexDirection: 'row'}}>
+                    {[1, 2].map(item => {
+                      let suggestedKashtag = makeKashtag(form.name);
+                      return (
+                        <TouchableOpacity
+                          key={item}
+                          onPress={() => setKashTag(suggestedKashtag)}
+                          style={{
+                            backgroundColor: 'transparent',
+                            padding: moderateScale(8),
+                            borderRadius: 4,
+                            justifyContent: 'center',
+                            margin: moderateScale(5),
+                            borderWidth: 1.5,
+                            borderColor: Colors.brand,
+                          }}>
+                          <Text
+                            style={{color: Colors.brand, fontWeight: '700'}}>
+                            ${makeKashtag(form.name)}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </>
+              )}
               <Button
                 style={{marginTop: moderateScale(16)}}
                 color={Colors.brand}
                 disabled={!kashtag || !!getKashtagError()}
                 loading={createProfile.loading}
                 onPress={handleNext}>
-                Suivant
+                Continuer
               </Button>
               <Text
                 style={{
@@ -268,7 +278,7 @@ function Signup() {
                       onPress={handleSubmit}
                       style={{marginTop: moderateScale(16)}}
                       color={Colors.brand}>
-                      Suivant
+                      Continuer
                     </Button>
                   </View>
                 </View>

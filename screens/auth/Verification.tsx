@@ -22,6 +22,7 @@ const Verification = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const pinInput = useRef(null);
   const getProfile = useAsync(() => api.get(`/kash/profiles/current/`));
+  const [counter, setCounter] = useState(0);
 
   const verifyCode = useAsync(data =>
     api

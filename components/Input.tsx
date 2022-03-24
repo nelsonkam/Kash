@@ -10,6 +10,7 @@ import {
 import Colors from '../utils/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {moderateScale} from 'react-native-size-matters';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 type Props = {
   label?: string;
@@ -65,13 +66,13 @@ export const PinInput = ({
   return (
     <View
       style={{
-        height: 16,
-        width: 16,
+        height: moderateScale(16),
+        width: moderateScale(16),
         backgroundColor: color,
         borderRadius: 24,
         borderColor: error ? 'red' : 'black',
         borderWidth: 1,
-        marginHorizontal: 12,
+        marginHorizontal: moderateScale(12),
       }}
     />
   );
@@ -79,16 +80,16 @@ export const PinInput = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
+    marginVertical: moderateScale(10),
   },
   input: {
     flexDirection: 'row',
-    paddingHorizontal: 14,
+    paddingHorizontal: moderateScale(14),
     borderColor: Colors.border,
     color: 'black',
-    fontSize: 16,
-    borderWidth: 2,
-    marginTop: 8,
+    fontSize: RFValue(16),
+    borderWidth: moderateScale(2),
+    marginTop: moderateScale(8),
     borderRadius: 6,
     fontFamily: 'Inter-Regular',
     alignItems: 'center',
@@ -106,12 +107,12 @@ const styles = StyleSheet.create({
   description: {
     color: Colors.medium,
     fontFamily: 'Inter-Regular',
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: RFValue(12),
+    marginTop: moderateScale(4),
   },
   error: {
     color: Colors.danger,
-    marginTop: 2,
+    marginTop: moderateScale(2),
   },
 });
 
