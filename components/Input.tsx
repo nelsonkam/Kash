@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Colors from '../utils/colors';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {moderateScale} from 'react-native-size-matters';
 
 type Props = {
   label?: string;
@@ -27,21 +29,26 @@ const Input = ({label, description, error, touched, ...rest}: Props) => {
           alignItems: 'center',
         }}>
         {label && <Text style={styles.label}>{label}</Text>}
+      </View>
+      {!!description && <Text style={styles.description}>{description}</Text>}
+      <View style={styles.input}>
+        <TextInput
+          {...rest}
+          style={styles.textInput}
+          placeholderTextColor={Colors.medium}
+          secureTextEntry={isSecure}
+        />
         {rest.secureTextEntry && (
           <TouchableOpacity onPress={() => setSecure(!isSecure)}>
-            <Text style={{color: Colors.primary, fontFamily: 'Inter-Medium'}}>
-              {isSecure ? 'Afficher' : 'Cacher'}
-            </Text>
+            <Ionicons
+              name={!isSecure ? 'eye-outline' : 'eye-off-outline'}
+              color={Colors.dark}
+              size={moderateScale(28)}
+            />
           </TouchableOpacity>
         )}
       </View>
-      {!!description && <Text style={styles.description}>{description}</Text>}
-      <TextInput
-        {...rest}
-        style={styles.input}
-        placeholderTextColor={Colors.medium}
-        secureTextEntry={isSecure}
-      />
+
       {!!error && touched && <Text style={styles.error}>{error}</Text>}
     </View>
   );
@@ -75,14 +82,20 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   input: {
+    flexDirection: 'row',
     paddingHorizontal: 14,
-    paddingVertical: 8,
     borderColor: Colors.border,
     color: 'black',
     fontSize: 16,
     borderWidth: 2,
     marginTop: 8,
     borderRadius: 6,
+    fontFamily: 'Inter-Regular',
+    alignItems: 'center',
+  },
+  textInput: {
+    flex: 1,
+    color: 'black',
     fontFamily: 'Inter-Regular',
   },
   label: {

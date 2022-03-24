@@ -9,3 +9,17 @@ export const validateRegistration = Yup.object({
     .oneOf([Yup.ref('password')], 'Tes mots de passe ne correspondent pas')
     .required('Ce champ est requis'),
 });
+
+export const validateLoginWithEmailOrKashtag = Yup.object({
+  username: Yup.string().required('Ce champ est requis'),
+  password: Yup.string()
+    .required('Ce champ est requis.')
+    .min(8, 'Ton mot de passe doit contenir au moins 8 caractères.'),
+});
+
+export const validateLoginWithPhone = Yup.object({
+  phone: Yup.string().required('Ce champ est requis'),
+  password: Yup.string()
+    .required('Ce champ est requis')
+    .min(8, 'Ton mot de passe doit contenir au moins 8 caractères.'),
+});

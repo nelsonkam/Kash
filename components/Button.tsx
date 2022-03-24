@@ -19,6 +19,7 @@ type Props = {
   textColor?: string;
   style?: ViewStyle;
   loading?: boolean;
+  underline?: boolean;
 } & TouchableOpacityProps;
 
 function Button(props: Props) {
@@ -43,6 +44,7 @@ function Button(props: Props) {
             color: props.disabled ? 'white' : props.textColor || 'white',
             fontSize: 16,
             textAlign: 'center',
+            textDecorationLine: props.underline ? 'underline' : 'none',
           }}>
           {props.children}
         </Text>
