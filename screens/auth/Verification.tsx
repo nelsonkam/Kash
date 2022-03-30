@@ -1,5 +1,5 @@
-import React, {useRef, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Colors from '../../utils/colors';
 import Button from '../../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,6 +13,7 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AuthHeaderBar} from '../../components/HeaderBar';
 import authSlice from '../../slices/auth';
+import {moderateScale} from 'react-native-size-matters';
 
 const Verification = () => {
   const {sessionToken, phone} = useSelector((s: RootState) => s.auth);
@@ -23,11 +24,21 @@ const Verification = () => {
   const pinInput = useRef(null);
   const getProfile = useAsync(() => api.get(`/kash/profiles/current/`));
   const [counter, setCounter] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [resendCode, setResendCode] = useState(true);
+  const [showVerifyToEmail, setShowVerifyToEmail] = useState(false);
+  const [timerCount, setTimer] = useState(59);
+  const [activator, setActivator] = useState(0);
 
   const verifyCode = useAsync(data =>
     api
       .post('/kash/profiles/current/otp/verify/phone/', data)
       .then(res => res.data),
+  );
+  const sendCode = useAsync(
+    data =>
+      api.post('/kash/profiles/current/otp/phone/', data).then(res => res.data),
+    false,
   );
 
   const handleSubmit = async () => {
@@ -54,7 +65,53 @@ const Verification = () => {
         );
       });
   };
+  const sendCodeAgain = () => {
+    sendCode
+      .execute({
+        phone_number: phone,
+      })
+      .then(data => {
+        setCounter(prevState => prevState + 1);
+        setResendCode(false);
+        setTimeout(() => {
+          setResendCode(true);
+          setTimer(59);
+        }, 60000);
+      })
+      .catch(err => {
+        if (err.response && err.response.status === 403) {
+          Alert.alert(
+            '',
+            'Ce numéro de téléphone est déjà associé à un compte Kash. Réessaie avec un autre numéro.',
+          );
+        } else {
+          toast.error(
+            "Erreur lors de l'envoi du code de vérification",
+            'Verifies ton numéro de téléphone puis réessaies.',
+          );
+        }
+      });
+  };
 
+  useEffect(() => {
+    let interval: number;
+    if (!resendCode) {
+      interval = setInterval(() => {
+        if (timerCount > 0) {
+          setTimer(lastTimerCount => {
+            lastTimerCount <= 1 && clearInterval(interval);
+            return lastTimerCount - 1;
+          });
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (!resendCode) {
+        clearInterval(interval);
+      }
+    };
+  }, [activator]);
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -99,6 +156,20 @@ const Verification = () => {
                 }}
               />
             </View>
+            {counter <= 3 && (
+              <TouchableOpacity
+                disabled={!resendCode}
+                style={{alignItems: 'center', padding: moderateScale(12)}}
+                onPress={() => {
+                  sendCodeAgain();
+                  setActivator(Math.random);
+                }}>
+                <Text style={{color: resendCode ? Colors.brand : Colors.light}}>
+                  Renvoyer
+                  {!resendCode ? ' (' + minutes + ':' + timerCount + ')' : ''}
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <Button
               color={Colors.brand}
@@ -106,6 +177,16 @@ const Verification = () => {
               loading={verifyCode.loading}>
               Vérifier le code
             </Button>
+            {counter > 3 && (
+              <Button
+                underline={true}
+                onPress={() => navigation.navigate('AddEmail')}
+                style={{marginTop: moderateScale(16)}}
+                color={'white'}
+                textColor={Colors.brand}>
+                Ou ajoutez votre adresse mail
+              </Button>
+            )}
           </View>
         </View>
       </View>
