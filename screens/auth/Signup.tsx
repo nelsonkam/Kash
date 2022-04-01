@@ -56,7 +56,7 @@ function Signup() {
         return 'Ton $kashtag doit avoir au plus 20 caractères.';
       }
     }
-    return error;
+    return '';
   };
 
   // const getErrors = () => {
@@ -103,6 +103,7 @@ function Signup() {
       })
       .catch(err => {
         if (err.response && err.response.status === 400) {
+          setError('Ce $kashtag est déjà pris');
           toast.error(
             'Oops! ',
             'Ce $kashtag est déjà pris. Réessaie un autre.',
@@ -161,7 +162,7 @@ function Signup() {
                   label={"Nom d'utilisateur"}
                 />
               </View>
-              {getKashtagError() == 'Ce $kashtag est déjà pris' && (
+              {error == 'Ce $kashtag est déjà pris' && (
                 <>
                   <View style={{paddingVertical: 5}}>
                     <Text>Utilisez l’un des noms d’utilisateurs suivants:</Text>

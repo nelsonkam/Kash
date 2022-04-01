@@ -28,17 +28,18 @@ const AddPhone = () => {
   const [phone, setPhone] = useState('');
 
   const sendCode = useAsync(
-    data =>
-      api.post('/kash/profiles/current/otp/phone/', data).then(res => res.data),
+    data => api.post('/auth/verification/link/', data).then(res => res.data),
     false,
   );
 
   const handleSubmit = async () => {
     sendCode
       .execute({
-        phone_number: phone,
+        type: 'phone',
+        value: phone,
       })
       .then(data => {
+        console.log(data);
         dispatch(authSlice.actions.setSessionToken(data.session_token));
         dispatch(authSlice.actions.setPhone(phone));
         navigation.navigate('Verification', {

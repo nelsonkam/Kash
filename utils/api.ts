@@ -3,26 +3,26 @@ import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import store from './store';
 import authSlice from '../slices/auth';
 
-export const BASE_URL = store.getState().prefs.env === 'beta'
-  ? 'https://dev.mykash.africa'
-  : 'https://prod.mykash.africa/';
+export const BASE_URL =
+  store.getState().prefs.env === 'beta'
+    ? 'https://dev.mykash.africa'
+    : 'https://prod.mykash.africa/';
 
 const api = axios.create({
   baseURL: BASE_URL,
 });
 
-
 const refreshAuthLogic = async (failedRequest: any) => {
   const state = store.getState();
-  const { refresh } = state.auth;
+  const {refresh} = state.auth;
   const resp = await api
     .post(
       '/token/refresh',
-      { refresh },
-      { headers: { Authorization: 'Bearer ' + refresh } },
+      {refresh},
+      {headers: {Authorization: 'Bearer ' + refresh}},
     )
     .catch(async err => {
-      console.log(err.response.status)
+      console.log(err.response.status);
       if (
         err.response &&
         (err.response.status === 401 || err.response.status === 400)
@@ -47,12 +47,19 @@ createAuthRefreshInterceptor(api, refreshAuthLogic);
 
 api.interceptors.request.use(async config => {
   const state = store.getState();
-  const { access } = state.auth;
-  const { env } = state.prefs;
-  config.baseURL = env === 'beta' ? 'https://dev.mykash.africa/'
-    : 'https://prod.mykash.africa/';
+  const {access} = state.auth;
+  const {env} = state.prefs;
+  config.baseURL =
+    env === 'beta'
+      ? 'https://dev.mykash.africa'
+      : 'https://prod.mykash.africa/';
 
   if (access) config.headers['Authorization'] = 'Bearer ' + access;
+  console.debug(
+    '[Request]',
+    config.baseURL + config.url,
+    JSON.stringify(access),
+  );
   return config;
 });
 

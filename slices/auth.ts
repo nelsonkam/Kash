@@ -6,6 +6,7 @@ type State = {
   access: string | null;
   refresh: string | null;
   phone: string | null;
+  email: string | null;
   deviceId: string | null;
   sessionToken: string | null;
   pincode: string | null;
@@ -21,6 +22,7 @@ const initialState: State = {
   sessionToken: null,
   pincode: null,
   skipPhone: null,
+  email: null,
 };
 
 const authSlice = createSlice<State, SliceCaseReducers<State>>({
@@ -40,6 +42,9 @@ const authSlice = createSlice<State, SliceCaseReducers<State>>({
     },
     setPhone(state, action) {
       state.phone = action.payload;
+    },
+    setEmail(state, action) {
+      state.email = action.payload;
     },
     setSessionToken(state, action) {
       state.sessionToken = action.payload;

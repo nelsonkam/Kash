@@ -16,7 +16,7 @@ import authSlice from '../../slices/auth';
 import {moderateScale} from 'react-native-size-matters';
 
 const Verification = () => {
-  const {sessionToken, phone} = useSelector((s: RootState) => s.auth);
+  const {sessionToken, phone, email} = useSelector((s: RootState) => s.auth);
   const {params} = useRoute();
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -31,13 +31,10 @@ const Verification = () => {
   const [activator, setActivator] = useState(0);
 
   const verifyCode = useAsync(data =>
-    api
-      .post('/kash/profiles/current/otp/verify/phone/', data)
-      .then(res => res.data),
+    api.post('/auth/verification/verify/', data).then(res => res.data),
   );
   const sendCode = useAsync(
-    data =>
-      api.post('/kash/profiles/current/otp/phone/', data).then(res => res.data),
+    data => api.post('/auth/verification/link/', data).then(res => res.data),
     false,
   );
 
@@ -45,7 +42,6 @@ const Verification = () => {
     verifyCode
       .execute({
         session_token: sessionToken,
-        phone_number: phone,
         security_code: verificationCode,
       })
       .then(res => {
@@ -66,11 +62,15 @@ const Verification = () => {
       });
   };
   const sendCodeAgain = () => {
+    setCounter(prevState => prevState + 1);
     sendCode
       .execute({
-        phone_number: phone,
+        type: params?.verification_type == 'phone_number' ? 'phone' : 'email',
+        value: params?.verification_type == 'phone_number' ? phone : email,
       })
       .then(data => {
+        dispatch(authSlice.actions.setSessionToken(data.session_token));
+        console.log(data);
         setCounter(prevState => prevState + 1);
         setResendCode(false);
         setTimeout(() => {
@@ -177,7 +177,7 @@ const Verification = () => {
               loading={verifyCode.loading}>
               Vérifier le code
             </Button>
-            {counter > 3 && (
+            {counter > 3 && params?.verification_type == 'phone_number' && (
               <Button
                 underline={true}
                 onPress={() => navigation.navigate('AddEmail')}

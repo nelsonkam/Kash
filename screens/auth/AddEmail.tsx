@@ -34,19 +34,19 @@ const AddEmail = () => {
   const [phone, setPhone] = useState('');
 
   const sendCode = useAsync(
-    data =>
-      api.post('/kash/profiles/current/otp/phone/', data).then(res => res.data),
+    data => api.post('/auth/verification/link/', data).then(res => res.data),
     false,
   );
 
-  const handleSubmit = async () => {
+  const handleSubmit = async values => {
     sendCode
       .execute({
-        email: phone,
+        type: 'email',
+        value: values.email,
       })
       .then(data => {
         dispatch(authSlice.actions.setSessionToken(data.session_token));
-        dispatch(authSlice.actions.setPhone(phone));
+        dispatch(authSlice.actions.setEmail(values.email));
         navigation.navigate('Verification', {verification_type: 'email'});
       })
       .catch(err => {

@@ -19,7 +19,7 @@ export default function AuthStack() {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="Verification">
+      initialRouteName="GetStartedn">
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       <Stack.Screen name="GetStarted" component={GetStarted} />
       <Stack.Screen name="Signup" component={Signup} />
